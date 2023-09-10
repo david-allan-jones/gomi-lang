@@ -36,7 +36,7 @@ export interface NumericLiteral extends Expr {
 
 export interface NullLiteral extends Expr {
     kind: "NullLiteral"
-    value: "mu"
+    value: "無"
 }
 
 export interface BooleanLiteral extends Expr {

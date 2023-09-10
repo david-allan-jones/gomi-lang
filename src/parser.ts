@@ -104,7 +104,7 @@ export default class Parser {
             case TokenType.Null:
                 return {
                     kind: "NullLiteral",
-                    value: "mu"
+                    value: "無"
                 } as NullLiteral
             case TokenType.Boolean:
                 return {

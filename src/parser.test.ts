@@ -5,7 +5,7 @@ import { BinaryExpr, Identifier, NullLiteral, NumericLiteral } from "./ast";
 
 describe('parser', () => {
     let parser: Parser
-    
+
     beforeEach(() => {
         parser = new Parser()
     })
@@ -20,7 +20,7 @@ describe('parser', () => {
         try {
             const program = parser.produceAST('%')
             fail('Produced an AST with invalid tokens')
-        } catch(e) {}
+        } catch (e) { }
     })
 
     it('parses number literal', () => {
@@ -103,15 +103,15 @@ describe('parser', () => {
     })
 
     it('parses null literals', () => {
-        const program = parser.produceAST('mu')
+        const program = parser.produceAST('無')
         expect(program.body.length).toBe(1)
         const token = program.body[0] as NullLiteral
         expect(token.kind).toBe('NullLiteral')
-        expect(token.value).toBe('mu')
+        expect(token.value).toBe('無')
     })
 
     it('parses boolean literals', () => {
-        const program = parser.produceAST('hontou + uso')
+        const program = parser.produceAST('本当 + 嘘')
         expect(program.body.length).toBe(1)
         const token = program.body[0] as BinaryExpr
         const { kind, left, right } = token

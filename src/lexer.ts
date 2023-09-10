@@ -2,10 +2,10 @@ export enum TokenVal {
 	Equals = '=',
 	OpenParen = '(',
 	CloseParen = ')',
-	Let = 'sengen',
-	Null = 'mu',
-	True = 'hontou',
-	False = 'uso',
+	Let = '宣言',
+	Null = '無',
+	True = '本当',
+	False = '嘘',
 	EOF = 'EOF'
 }
 
@@ -36,8 +36,9 @@ export interface Token {
 
 const binaryOperators = ['+', '-', '*', '/', '%', '^']
 
-export function isAlpha(source: string): boolean {
-	return /^[a-zA-Z]+$/.test(source)
+export function identifierBeginAllowed(source: string): boolean {
+	const regex = /[\p{L}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}]/u
+	return regex.test(source)
 }
 
 export function isInt(source: string): boolean {
@@ -45,7 +46,7 @@ export function isInt(source: string): boolean {
 }
 
 export function identifierAllowed(source: string): boolean {
-	return isAlpha(source) || isInt(source) || source === '_'
+	return identifierBeginAllowed(source) || isInt(source) || source === '_'
 }
 
 function skippable(source: string): boolean {
@@ -102,7 +103,7 @@ export function tokenize(source: string): Token[] {
 			continue
 		}
 
-		if (isAlpha(src[i])) {
+		if (identifierBeginAllowed(src[i])) {
 			let value = `${src[i++]}`
 			while (i < src.length && identifierAllowed(src[i])) {
 				value += src[i++]

@@ -1,22 +1,22 @@
 import { describe, expect, it } from "bun:test"
-import { TokenType, isAlpha, isInt, tokenize, unrecognizedError } from "./lexer"
+import { TokenType, identifierBeginAllowed, isInt, tokenize, unrecognizedError } from "./lexer"
 import { fail } from "assert"
 
 describe('isAlpha', () => {
     it('return false on empty string', () => {
-        expect(isAlpha('')).toBe(false)
+        expect(identifierBeginAllowed('')).toBe(false)
     })
 
     it('returns false on numbers', () => {
-        expect(isAlpha('1234567890')).toBe(false)
+        expect(identifierBeginAllowed('1234567890')).toBe(false)
     })
 
     it('returns true on lower case alpha strings', () => {
-        expect(isAlpha('abcdefghijklmnopqrstuvwxyz')).toBe(true)
+        expect(identifierBeginAllowed('abcdefghijklmnopqrstuvwxyz')).toBe(true)
     })
 
     it('returns true on upper case alpha strings', () => {
-        expect(isAlpha('ABCDEFGHIJKLMNOPQRSTUVWXYZ')).toBe(true)
+        expect(identifierBeginAllowed('ABCDEFGHIJKLMNOPQRSTUVWXYZ')).toBe(true)
     })
 })
 
@@ -36,27 +36,27 @@ describe('isInteger', () => {
     it('floating numbers not accepted', () => {
         expect(isInt('1.23')).toBe(false)
     })
-    
+
     it('empty string not accepted', () => {
-      expect(isInt('')).toBe(false)
+        expect(isInt('')).toBe(false)
     })
 
     it('no numeric characters not accepted', () => {
-      expect(isInt('abc')).toBe(false)
+        expect(isInt('abc')).toBe(false)
     })
 
     it('leading zeros not accepted', () => {
-      expect(isInt('01')).toBe(false)
+        expect(isInt('01')).toBe(false)
     })
 
     it('negative zero not acceepted', () => {
-      expect(isInt('-0')).toBe(false)
+        expect(isInt('-0')).toBe(false)
     })
-    
+
     it('Negative sign only at the beginning is allowed', () => {
-      expect(isInt('-42')).toBe(true)
-      expect(isInt('42-')).toBe(false)
-      expect(isInt('--42')).toBe(false)
+        expect(isInt('-42')).toBe(true)
+        expect(isInt('42-')).toBe(false)
+        expect(isInt('--42')).toBe(false)
     })
 })
 
@@ -88,30 +88,30 @@ describe('tokenize', () => {
     })
 
     it('null', () => {
-        const src = 'mu'
+        const src = '無'
         const tokens = tokenize(src)
-        expect(tokens[0].value).toBe('mu')
+        expect(tokens[0].value).toBe('無')
         expect(tokens[0].type).toBe(TokenType.Null)
     })
 
     it('true', () => {
-        const src = 'hontou'
+        const src = '本当'
         const tokens = tokenize(src)
-        expect(tokens[0].value).toBe('hontou')
+        expect(tokens[0].value).toBe('本当')
         expect(tokens[0].type).toBe(TokenType.Boolean)
     })
 
     it('false', () => {
-        const src = 'uso'
+        const src = '嘘'
         const tokens = tokenize(src)
-        expect(tokens[0].value).toBe('uso')
+        expect(tokens[0].value).toBe('嘘')
         expect(tokens[0].type).toBe(TokenType.Boolean)
     })
 
     it('let', () => {
-        const src = 'sengen a = 5'
+        const src = '宣言 a = 5'
         const tokens = tokenize(src)
-        expect(tokens[0].value).toBe('sengen')
+        expect(tokens[0].value).toBe('宣言')
         expect(tokens[0].type).toBe(TokenType.Let)
     })
 
@@ -165,8 +165,8 @@ describe('tokenize', () => {
             `
             tokenize(src)
             fail('Was able to tokenize bad characters')
-        } catch(e) {
+        } catch (e) {
             expect(e).toBe(unrecognizedError(2, '$'))
-        } 
+        }
     })
 })
