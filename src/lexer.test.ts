@@ -87,6 +87,27 @@ describe('tokenize', () => {
         expect(tokens[0].type).toBe(TokenType.Number)
     })
 
+    it('null', () => {
+        const src = 'mu'
+        const tokens = tokenize(src)
+        expect(tokens[0].value).toBe('mu')
+        expect(tokens[0].type).toBe(TokenType.Null)
+    })
+
+    it('true', () => {
+        const src = 'hontou'
+        const tokens = tokenize(src)
+        expect(tokens[0].value).toBe('hontou')
+        expect(tokens[0].type).toBe(TokenType.Boolean)
+    })
+
+    it('false', () => {
+        const src = 'uso'
+        const tokens = tokenize(src)
+        expect(tokens[0].value).toBe('uso')
+        expect(tokens[0].type).toBe(TokenType.Boolean)
+    })
+
     it('let', () => {
         const src = 'sengen a = 5'
         const tokens = tokenize(src)

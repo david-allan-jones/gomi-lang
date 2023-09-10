@@ -3,11 +3,16 @@ export enum TokenVal {
 	OpenParen = '(',
 	CloseParen = ')',
 	Let = 'sengen',
+	Null = 'mu',
+	True = 'hontou',
+	False = 'uso',
 	EOF = 'EOF'
 }
 
 export enum TokenType {
 	Number = 'NUMBER',
+	Boolean = 'BOOLEAN',
+	Null = 'NULL',
 	Identifier = 'IDENTIFIER',
 	Equals = 'EQUALS',
 	OpenParen = 'OPEN_PAREN',
@@ -17,8 +22,11 @@ export enum TokenType {
 	EOF = 'EOF'
 }
 
-const KEYWORD: Record<string, TokenType> = {
-	"sengen": TokenType.Let
+const RESERVED: Record<string, TokenType> = {
+	[TokenVal.Let]: TokenType.Let,
+	[TokenVal.Null]: TokenType.Null,
+	[TokenVal.True]: TokenType.Boolean,
+	[TokenVal.False]: TokenType.Boolean
 }
 
 export interface Token {
@@ -99,9 +107,9 @@ export function tokenize(source: string): Token[] {
 			while (i < src.length && identifierAllowed(src[i])) {
 				value += src[i++]
 			}
-			const reserved = KEYWORD[value]
+			const reserved = RESERVED[value]
 			if (reserved !== undefined) {
-				tokens.push({ type: KEYWORD[value], value })
+				tokens.push({ type: RESERVED[value], value })
 				continue
 			}
 			tokens.push({ type: TokenType.Identifier, value })
