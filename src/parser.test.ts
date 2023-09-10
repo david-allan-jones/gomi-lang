@@ -70,6 +70,15 @@ describe('parser', () => {
         expect(leftOp).toBe('*')
     })
 
+    it('parses modulo operator expression', () => {
+        const program = parser.produceAST('n % 2')
+        expect(program.body.length).toBe(1)
+        const token = program.body[0] as BinaryExpr
+        expect(token.operator).toBe('%')
+        expect(token.left.kind).toBe('Identifier')
+        expect(token.right.kind).toBe('NumericLiteral')
+    })
+
     it('parses parenthesized expressions', () => {
         const program = parser.produceAST('(1)+a')
         expect(program.body.length).toBe(1)

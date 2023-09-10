@@ -60,7 +60,7 @@ export default class Parser {
 
     private parseMultiplicativeExpr(): Expr {
         let left = this.parsePrimaryExpr()
-        while (this.tokens[this.i].value === '*' || this.tokens[this.i].value === '/') {
+        while (this.tokens[this.i].value === '*' || this.tokens[this.i].value === '/' || this.tokens[this.i].value === '%') {
             const operator = this.consumeToken().value
             const right = this.parsePrimaryExpr()
             left = {
