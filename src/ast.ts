@@ -1,3 +1,5 @@
+import { BinaryOperator } from "./lexer"
+
 export type NodeType =
     | "Program"
     | "NumericLiteral"
@@ -21,7 +23,7 @@ export interface BinaryExpr extends Expr {
     kind: "BinaryExpr"
     left: Expr
     right: Expr
-    operator: string
+    operator: BinaryOperator
 }
 
 export interface Identifier extends Expr {

@@ -1,4 +1,5 @@
 import Parser from "./src/parser";
+import { evaluate } from "./src/runtime/interpreter";
 
 repl()
 
@@ -12,6 +13,9 @@ function repl() {
         }
 
         const program = parser.produceAST(input)
-        console.log(program)
+
+        const result = evaluate(program)
+        if (result)
+        console.log(result)
     }
 }

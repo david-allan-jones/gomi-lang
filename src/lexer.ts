@@ -34,7 +34,15 @@ export interface Token {
 	type: TokenType
 }
 
-const binaryOperators = ['+', '-', '*', '/', '%', '^']
+export type BinaryOperator = '+' | '-' | '*' | '/' | '%' | '^'
+const binaryOperators: BinaryOperator[] = [
+	'+',
+	'-',
+	'*',
+	'/',
+	'%',
+	'^'
+]
 
 export function identifierBeginAllowed(source: string): boolean {
 	const regex = /[\p{L}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}]/u
