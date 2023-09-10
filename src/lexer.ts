@@ -36,6 +36,10 @@ export function isInt(source: string): boolean {
 	return /^(0|[-]?[1-9]+\d*)$/.test(source)
 }
 
+export function identifierAllowed(source: string): boolean {
+	return isAlpha(source) || isInt(source) || source === '_'
+}
+
 function skippable(source: string): boolean {
 	return source === ' ' || source === '\t'
 }
@@ -92,7 +96,7 @@ export function tokenize(source: string): Token[] {
 
 		if (isAlpha(src[i])) {
 			let value = `${src[i++]}`
-			while (i < src.length && isAlpha(src[i]) || isInt(src[i])) {
+			while (i < src.length && identifierAllowed(src[i])) {
 				value += src[i++]
 			}
 			const reserved = KEYWORD[value]
