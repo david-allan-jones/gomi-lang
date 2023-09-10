@@ -39,7 +39,7 @@ describe('parser', () => {
         expect(token.symbol).toBe('id')
     })
 
-    it('parses binary expression', () => {
+    it('parses binary additive expression', () => {
         const program = parser.produceAST('a + 1')
         expect(program.body.length).toBe(1)
         const token = program.body[0] as BinaryExpr
@@ -48,5 +48,25 @@ describe('parser', () => {
         expect(operator).toBe('+')
         expect(left.kind).toBe('Identifier')
         expect(right.kind).toBe('NumericLiteral')
+    })
+
+    it('parses binary multiplicative expression', () => {
+        const program = parser.produceAST('a*b + 1')
+        expect(program.body.length).toBe(1)
+        const token = program.body[0] as BinaryExpr
+        const { kind, left, right, operator } = token
+        expect(kind).toBe("BinaryExpr")
+        expect(right.kind).toBe('NumericLiteral')
+        expect(operator).toBe('+')
+        const {
+            kind: leftKind,
+            left: leftLeft,
+            right: leftRight,
+            operator: leftOp
+        } = left as BinaryExpr
+        expect(leftKind).toBe('BinaryExpr')
+        expect(leftLeft.kind).toBe('Identifier')
+        expect(leftRight.kind).toBe('Identifier')
+        expect(leftOp).toBe('*')
     })
 })
