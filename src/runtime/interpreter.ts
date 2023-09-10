@@ -10,7 +10,7 @@ function evalProgram(program: Program): RuntimeVal<unknown> {
     return lastResult
 }
 
-function evalNumericBinaryExpr(
+export function evalNumericBinaryExpr(
     n: RuntimeVal<number>,
     m: RuntimeVal<number>,
     op: BinaryOperator
