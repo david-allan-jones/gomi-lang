@@ -7,14 +7,14 @@ export enum TokenVal {
 }
 
 export enum TokenType {
-	Number,
-	Identifier,
-	Equals,
-	OpenParen,
-	CloseParen,
-	BinaryOperator,
-	Let,
-	EOF
+	Number = 'NUMBER',
+	Identifier = 'IDENTIFIER',
+	Equals = 'EQUALS',
+	OpenParen = 'OPEN_PAREN',
+	CloseParen = 'CLOSE_PAREN',
+	BinaryOperator = 'BINARY_EXPR',
+	Let = 'LET',
+	EOF = 'EOF'
 }
 
 const KEYWORD: Record<string, TokenType> = {

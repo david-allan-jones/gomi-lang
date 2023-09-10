@@ -69,4 +69,13 @@ describe('parser', () => {
         expect(leftRight.kind).toBe('Identifier')
         expect(leftOp).toBe('*')
     })
+
+    it('parses parenthesized expressions', () => {
+        const program = parser.produceAST('(1)+a')
+        expect(program.body.length).toBe(1)
+        const token = program.body[0] as BinaryExpr
+        expect(token.operator).toBe('+')
+        expect(token.left.kind).toBe('NumericLiteral')
+        expect(token.right.kind).toBe('Identifier')
+    })
 })

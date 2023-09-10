@@ -20,10 +20,19 @@ export default class Parser {
         return program
     }
     
-    private nextToken(): Token {
+    private consumeToken(): Token {
         const token = this.tokens[this.i]
         this.i = this.i + 1
         return token
+    }
+
+    private nextTokenValidate(type: TokenType): Token {
+        const prev = this.consumeToken()
+        if (!prev || prev.type !== type) {
+            console.error(`Parser Error. Expected: ${type}. Received: ${prev.type}`)
+            process.exit(1)
+        }
+        return prev
     }
 
     private parseStmt(): Stmt {
@@ -37,7 +46,7 @@ export default class Parser {
     private parseAdditiveExpr(): Expr {
         let left = this.parseMultiplicativeExpr()
         while (this.tokens[this.i].value === '+' || this.tokens[this.i].value === '-') {
-            const operator = this.nextToken().value
+            const operator = this.consumeToken().value
             const right = this.parseMultiplicativeExpr()
             left = {
                 kind: 'BinaryExpr',
@@ -52,7 +61,7 @@ export default class Parser {
     private parseMultiplicativeExpr(): Expr {
         let left = this.parsePrimaryExpr()
         while (this.tokens[this.i].value === '*' || this.tokens[this.i].value === '/') {
-            const operator = this.nextToken().value
+            const operator = this.consumeToken().value
             const right = this.parsePrimaryExpr()
             left = {
                 kind: 'BinaryExpr',
@@ -65,7 +74,7 @@ export default class Parser {
     }
 
     private parsePrimaryExpr(): Expr {
-        const token = this.nextToken()
+        const token = this.consumeToken()
         switch (token.type) {
             case TokenType.Identifier:
                 return {
@@ -77,6 +86,10 @@ export default class Parser {
                     kind: "NumericLiteral",
                     value: parseFloat(token.value)
                 } as NumericLiteral
+            case TokenType.OpenParen:
+                const expr =  this.parseExpr()
+                this.nextTokenValidate(TokenType.CloseParen)
+                return expr
             default:
                 console.error(`Unexpected token found during parsing: ${JSON.stringify(token)}`)
                 return {} as Expr
