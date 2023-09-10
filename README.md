@@ -25,7 +25,7 @@ There are also REPLs that just output the results of the lexing and parsing step
 The `index.ts` file of this package is a script runner. You can have the interpreter evalate an arbitrary input source by running
 
 ```bash
-bun run index.ts path_to_file.gomi
+bun index.ts path_to_file.gomi
 ```
 
 ## Documentation
