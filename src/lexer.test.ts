@@ -102,7 +102,7 @@ describe('tokenize', () => {
     })
 
     it('binary operator', () => {
-        const src = 'let a = 1 + 2 - 3 * 4 / 5 % 6'
+        const src = 'let a = 1 + 2 - 3 * 4 / 5 % 6 ^ 7'
         const tokens = tokenize(src)
         expect(tokens[4].value).toBe('+')
         expect(tokens[4].type).toBe(TokenType.BinaryOperator)
@@ -114,6 +114,8 @@ describe('tokenize', () => {
         expect(tokens[10].type).toBe(TokenType.BinaryOperator)
         expect(tokens[12].value).toBe('%')
         expect(tokens[12].type).toBe(TokenType.BinaryOperator)
+        expect(tokens[14].value).toBe('^')
+        expect(tokens[14].type).toBe(TokenType.BinaryOperator)
     })
 
     it('skips whitespace, newlines and tabs', () => {
@@ -131,12 +133,12 @@ describe('tokenize', () => {
     it('errors on unrecognized character', () => {
         try {
             const src = `
-                let a = 1^
+                let a = 1$
             `
             tokenize(src)
             fail('Was able to tokenize bad characters')
         } catch(e) {
-            expect(e).toBe(unrecognizedError(2, '^'))
+            expect(e).toBe(unrecognizedError(2, '$'))
         } 
     })
 })

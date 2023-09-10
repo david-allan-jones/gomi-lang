@@ -79,6 +79,20 @@ describe('parser', () => {
         expect(token.right.kind).toBe('NumericLiteral')
     })
 
+    it('parses exponential opeator expressions', () => {
+        const program = parser.produceAST('n ^ m ^ k')
+        expect(program.body.length).toBe(1)
+        const token = program.body[0] as BinaryExpr
+        expect(token.operator).toBe('^')
+        expect(token.left.kind).toBe('Identifier')
+        expect(token.right.kind).toBe('BinaryExpr')
+        const { kind, left, right, operator } = token.right as BinaryExpr
+        expect(kind).toBe('BinaryExpr')
+        expect(left.kind === 'Identifier').toBeTrue()
+        expect(right.kind === 'Identifier').toBeTrue()
+        expect(operator === '^').toBeTrue()
+    })
+
     it('parses parenthesized expressions', () => {
         const program = parser.produceAST('(1)+a')
         expect(program.body.length).toBe(1)

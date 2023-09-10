@@ -59,10 +59,25 @@ export default class Parser {
     }
 
     private parseMultiplicativeExpr(): Expr {
-        let left = this.parsePrimaryExpr()
+        let left = this.parseExponentialExpr()
         while (this.tokens[this.i].value === '*' || this.tokens[this.i].value === '/' || this.tokens[this.i].value === '%') {
             const operator = this.consumeToken().value
-            const right = this.parsePrimaryExpr()
+            const right = this.parseExponentialExpr()
+            left = {
+                kind: 'BinaryExpr',
+                left,
+                right,
+                operator
+            } as BinaryExpr
+        }
+        return left
+    }
+
+    private parseExponentialExpr(): Expr {
+        let left = this.parsePrimaryExpr()
+        while (this.tokens[this.i].value === '^') {
+            const operator = this.consumeToken().value
+            const right = this.parseExponentialExpr()
             left = {
                 kind: 'BinaryExpr',
                 left,

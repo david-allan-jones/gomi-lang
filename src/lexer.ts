@@ -26,7 +26,7 @@ export interface Token {
 	type: TokenType
 }
 
-const binaryOperators = ['+', '-', '*', '/', '%']
+const binaryOperators = ['+', '-', '*', '/', '%', '^']
 
 export function isAlpha(source: string): boolean {
 	return /^[a-zA-Z]+$/.test(source)
