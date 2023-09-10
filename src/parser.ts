@@ -44,10 +44,10 @@ export default class Parser {
     }
 
     private parseComparisonExpr(): Expr {
-        let left = this.parseMultiplicativeExpr()
+        let left = this.parseAdditiveExpr()
         while (this.tokens[this.i].value === '<' || this.tokens[this.i].value === '>') {
             const operator = this.consumeToken().value
-            const right = this.parseMultiplicativeExpr()
+            const right = this.parseAdditiveExpr()
             left = {
                 kind: 'BinaryExpr',
                 left,
