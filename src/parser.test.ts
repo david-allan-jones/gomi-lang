@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import Parser from "./parser";
 import { fail } from "assert";
-import { BinaryExpr, Identifier, NumericLiteral } from "./ast";
+import { BinaryExpr, Identifier, NullLiteral, NumericLiteral } from "./ast";
 
 describe('parser', () => {
     let parser: Parser
@@ -88,8 +88,8 @@ describe('parser', () => {
         expect(token.right.kind).toBe('BinaryExpr')
         const { kind, left, right, operator } = token.right as BinaryExpr
         expect(kind).toBe('BinaryExpr')
-        expect(left.kind === 'Identifier').toBeTrue()
-        expect(right.kind === 'Identifier').toBeTrue()
+        expect(left.kind).toBe('Identifier')
+        expect(right.kind).toBe('Identifier')
         expect(operator === '^').toBeTrue()
     })
 
@@ -100,5 +100,23 @@ describe('parser', () => {
         expect(token.operator).toBe('+')
         expect(token.left.kind).toBe('NumericLiteral')
         expect(token.right.kind).toBe('Identifier')
+    })
+
+    it('parses null literals', () => {
+        const program = parser.produceAST('mu')
+        expect(program.body.length).toBe(1)
+        const token = program.body[0] as NullLiteral
+        expect(token.kind).toBe('NullLiteral')
+        expect(token.value).toBe('mu')
+    })
+
+    it('parses boolean literals', () => {
+        const program = parser.produceAST('hontou + uso')
+        expect(program.body.length).toBe(1)
+        const token = program.body[0] as BinaryExpr
+        const { kind, left, right } = token
+        expect(kind).toBe('BinaryExpr')
+        expect(left.kind).toBe('BooleanLiteral')
+        expect(right.kind).toBe('BooleanLiteral')
     })
 })

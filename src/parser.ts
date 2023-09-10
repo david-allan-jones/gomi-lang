@@ -1,5 +1,5 @@
-import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier } from './ast'
-import { tokenize, Token, TokenType } from './lexer'
+import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral, BooleanLiteral } from './ast'
+import { tokenize, Token, TokenType, TokenVal } from './lexer'
 
 export default class Parser {
     private tokens: Token[] = []
@@ -101,6 +101,16 @@ export default class Parser {
                     kind: "NumericLiteral",
                     value: parseFloat(token.value)
                 } as NumericLiteral
+            case TokenType.Null:
+                return {
+                    kind: "NullLiteral",
+                    value: "mu"
+                } as NullLiteral
+            case TokenType.Boolean:
+                return {
+                    kind: "BooleanLiteral",
+                    value: token.value === TokenVal.True ? true : false
+                } as BooleanLiteral
             case TokenType.OpenParen:
                 const expr =  this.parseExpr()
                 this.nextTokenValidate(TokenType.CloseParen)
