@@ -32,12 +32,26 @@ export default class Parser {
 
     private parseExpr(): Expr {
         return this.parseAdditiveExpr()
-        return this.parsePrimaryExpr()
     }
 
     private parseAdditiveExpr(): Expr {
-        let left = this.parsePrimaryExpr()
+        let left = this.parseMultiplicativeExpr()
         while (this.tokens[this.i].value === '+' || this.tokens[this.i].value === '-') {
+            const operator = this.nextToken().value
+            const right = this.parseMultiplicativeExpr()
+            left = {
+                kind: 'BinaryExpr',
+                left,
+                right,
+                operator
+            } as BinaryExpr
+        }
+        return left
+    }
+
+    private parseMultiplicativeExpr(): Expr {
+        let left = this.parsePrimaryExpr()
+        while (this.tokens[this.i].value === '*' || this.tokens[this.i].value === '/') {
             const operator = this.nextToken().value
             const right = this.parsePrimaryExpr()
             left = {
