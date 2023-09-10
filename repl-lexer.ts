@@ -1,5 +1,5 @@
 import Parser from "./src/parser";
-import { evaluate } from "./src/runtime/interpreter";
+import { tokenize } from "./src/lexer";
 
 repl()
 
@@ -12,9 +12,7 @@ function repl() {
             process.exit(0)
         }
 
-        const program = parser.produceAST(input)
-
-        const result = evaluate(program)
+        const result = tokenize(input)
         console.log(result)
     }
 }

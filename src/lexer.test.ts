@@ -130,7 +130,7 @@ describe('tokenize', () => {
     })
 
     it('binary operator', () => {
-        const src = 'let a = 1 + 2 - 3 * 4 / 5 % 6 ^ 7'
+        const src = 'let a = 1 + 2 - 3 * 4 / 5 % 6 ^ 7 > 8 < 9'
         const tokens = tokenize(src)
         expect(tokens[4].value).toBe('+')
         expect(tokens[4].type).toBe(TokenType.BinaryOperator)
@@ -144,6 +144,10 @@ describe('tokenize', () => {
         expect(tokens[12].type).toBe(TokenType.BinaryOperator)
         expect(tokens[14].value).toBe('^')
         expect(tokens[14].type).toBe(TokenType.BinaryOperator)
+        expect(tokens[16].value).toBe('>')
+        expect(tokens[16].type).toBe(TokenType.BinaryOperator)
+        expect(tokens[18].value).toBe('<')
+        expect(tokens[18].type).toBe(TokenType.BinaryOperator)
     })
 
     it('skips whitespace, newlines and tabs', () => {

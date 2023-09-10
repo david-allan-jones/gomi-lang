@@ -14,31 +14,30 @@ function evalNumericBinaryExpr(
     n: RuntimeVal<number>,
     m: RuntimeVal<number>,
     op: BinaryOperator
-): RuntimeVal<number> {
-    let result: RuntimeVal<number> = { type: 'number', value: 0 }
+): RuntimeVal<number | boolean> {
     switch (op) {
         case '+':
-            result.value = n.value + m.value
-            break
+            return { type: 'number', value: n.value + m.value }
         case '-':
-            result.value = n.value - m.value
-            break
+            return { type: 'number', value: n.value - m.value }
         case '*':
-            result.value = n.value * m.value
-            break
+            return { type: 'number', value: n.value * m.value }
         case '/':
             // TODO: Decide how to handle divide 0
-            result.value = n.value / m.value
-            break
+            return { type: 'number', value: n.value / m.value }
         case '%':
             // TODO: Decide how to handle mod 0
-            result.value = n.value % m.value
-            break
+            return { type: 'number', value: n.value % m.value }
         case '^':
-            result.value = Math.pow(n.value, m.value)
-            break
+            return { type: 'number', value: Math.pow(n.value, m.value) }
+        case '>':
+            return { type: 'boolean', value: n.value > m.value }
+        case '<':
+            return { type: 'boolean', value: n.value < m.value }
+        default:
+            console.error(`Runtime Error: An unexpected operator was received by the interpreter: '${op}'`)
+            process.exit(1)
     }
-    return result
 }
 
 function evalBinaryExpr(expr: BinaryExpr): RuntimeVal<unknown> {

@@ -34,14 +34,16 @@ export interface Token {
 	type: TokenType
 }
 
-export type BinaryOperator = '+' | '-' | '*' | '/' | '%' | '^'
+export type BinaryOperator = '+' | '-' | '*' | '/' | '%' | '^' | '>' | '<'
 const binaryOperators: BinaryOperator[] = [
 	'+',
 	'-',
 	'*',
 	'/',
 	'%',
-	'^'
+	'^',
+	'>',
+	'<'
 ]
 
 export function identifierBeginAllowed(source: string): boolean {

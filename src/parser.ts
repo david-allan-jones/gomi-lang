@@ -40,7 +40,22 @@ export default class Parser {
     }
 
     private parseExpr(): Expr {
-        return this.parseAdditiveExpr()
+        return this.parseComparisonExpr()
+    }
+
+    private parseComparisonExpr(): Expr {
+        let left = this.parseMultiplicativeExpr()
+        while (this.tokens[this.i].value === '<' || this.tokens[this.i].value === '>') {
+            const operator = this.consumeToken().value
+            const right = this.parseMultiplicativeExpr()
+            left = {
+                kind: 'BinaryExpr',
+                left,
+                right,
+                operator
+            } as BinaryExpr
+        }
+        return left
     }
 
     private parseAdditiveExpr(): Expr {
