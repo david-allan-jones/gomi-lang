@@ -94,6 +94,20 @@ describe('tokenize', () => {
         expect(tokens[0].type).toBe(TokenType.Let)
     })
 
+    it('identifier', () => {
+        const src = 'let a = 5'
+        const tokens = tokenize(src)
+        expect(tokens[1].value).toBe('a')
+        expect(tokens[1].type).toBe(TokenType.Identifier)
+    })
+
+    it('supports identifiers that have numbers after first character', () => {
+        const src = 'let foo1 = 5'
+        const tokens = tokenize(src)
+        expect(tokens[1].value).toBe('foo1')
+        expect(tokens[1].type).toBe(TokenType.Identifier)
+    })
+
     it('equals', () => {
         const src = 'let a = 5'
         const tokens = tokenize(src)

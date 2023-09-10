@@ -92,7 +92,7 @@ export function tokenize(source: string): Token[] {
 
 		if (isAlpha(src[i])) {
 			let value = `${src[i++]}`
-			while (i < src.length && isAlpha(src[i])) {
+			while (i < src.length && isAlpha(src[i]) || isInt(src[i])) {
 				value += src[i++]
 			}
 			const reserved = KEYWORD[value]
