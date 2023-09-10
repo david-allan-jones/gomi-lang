@@ -95,7 +95,8 @@ export function tokenize(source: string): Token[] {
 			i++
 			continue
 		}
-		if (binaryOperators.includes(src[i])) {
+		// We need to lie to the TS compiler here just to check
+		if (binaryOperators.includes(src[i] as BinaryOperator)) {
 			tokens.push({ type: TokenType.BinaryOperator, value: src[i] })
 			i++
 			continue
