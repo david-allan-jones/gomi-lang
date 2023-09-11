@@ -31,7 +31,7 @@ export default class Parser {
         if (!prev || prev.type !== type) {
             console.error(`Parser Error. Expected: ${type}. Received: ${prev.type}`)
             if (context !== undefined) {
-                console.log(context)
+                console.error(context)
             }
             process.exit(1)
         }

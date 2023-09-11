@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test"
-import { evalNumericBinaryExpr } from "./interpreter";
+import { evalNumericBinaryExpr } from "./expressions";
 
 describe('evalNumericBinaryExpr', () => {
     it('should perform addition correctly', () => {
