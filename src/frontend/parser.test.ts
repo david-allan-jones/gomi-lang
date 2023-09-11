@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import Parser from "./parser";
 import { fail } from "assert";
-import { BinaryExpr, BooleanLiteral, Identifier, NullLiteral, NumericLiteral, VarDeclaration } from "./ast";
+import { BinaryExpr, BooleanLiteral, Identifier, NullLiteral, NumericLiteral, VarAssignment, VarDeclaration } from "./ast";
 
 describe('parser', () => {
     let parser: Parser
@@ -142,8 +142,8 @@ describe('parser', () => {
     })
 
     it('parses variable declaration with literals', () => {
-        const stmts = ['宣言　あ　＝１', 'let a = 1']
-        const symbols = ['あ', 'a']
+        const stmts = ['let a = 1', '宣言　あ　＝１']
+        const symbols = ['a', 'あ']
         for (let i = 0; i < stmts.length; i++) {
             const program = parser.produceAST(stmts[i])
             expect(program.body.length).toBe(1)
@@ -154,16 +154,17 @@ describe('parser', () => {
         }
     })
 
-    it('parses variable declaration with binary expressions', () => {
-        const stmts = ['宣言　あ　＝１+２', 'let a = 1 + 2']
-        const symbols = ['あ', 'a']
+    it('parses variable assignemnt with literals', () => {
+        const stmts = ['a = 1', 'あ　＝　１']
+        const symbols = ['a', 'あ']
         for (let i = 0; i < stmts.length; i++) {
             const program = parser.produceAST(stmts[i])
             expect(program.body.length).toBe(1)
-            const node = program.body[0] as VarDeclaration
-            expect(node.kind).toBe('VarDeclaration')
-            expect(node.symbol).toBe(symbols[i])
-            expect(node.value.kind).toBe('BinaryExpr')
+            const node = program.body[0] as VarAssignment
+            expect(node.kind).toBe('VarAssignment')
+            const assignee = node.assignee as Identifier
+            expect(assignee.symbol).toBe(symbols[i])
+            expect(node.value.kind).toBe('NumericLiteral')
         }
     })
 })
