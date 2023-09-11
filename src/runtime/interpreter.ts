@@ -1,13 +1,19 @@
 import { RuntimeVal } from './types'
-import { BinaryExpr, NumericLiteral, Program, Stmt } from '../ast'
+import { BinaryExpr, Identifier, NumericLiteral, Program, Stmt } from '../ast'
 import { BinaryOperator } from '../lexer'
+import Scope from './scope'
 
-function evalProgram(program: Program): RuntimeVal<unknown> {
+function evalProgram(program: Program, scope: Scope): RuntimeVal<unknown> {
     let lastResult: RuntimeVal<unknown> = { type: 'null', value: 'null' }
     for (let i = 0; i < program.body.length; i++) {
-        lastResult = evaluate(program.body[i])
+        lastResult = evaluate(program.body[i], scope)
     }
     return lastResult
+}
+
+function evalIdentifier(identifier: Identifier, scope: Scope): RuntimeVal<unknown> {
+    const val = scope.lookupVar(identifier.symbol)
+    return val
 }
 
 export function evalNumericBinaryExpr(
@@ -40,9 +46,9 @@ export function evalNumericBinaryExpr(
     }
 }
 
-function evalBinaryExpr(expr: BinaryExpr): RuntimeVal<unknown> {
-    const left = evaluate(expr.left)
-    const right = evaluate(expr.right)
+function evalBinaryExpr(expr: BinaryExpr, scope: Scope): RuntimeVal<unknown> {
+    const left = evaluate(expr.left, scope)
+    const right = evaluate(expr.right, scope)
     if (left.type === 'number' && right.type === 'number') {
         return evalNumericBinaryExpr(
             left as RuntimeVal<number>,
@@ -53,12 +59,14 @@ function evalBinaryExpr(expr: BinaryExpr): RuntimeVal<unknown> {
     return { type: 'null', value: 'null' } as RuntimeVal<'null'>
 }
 
-export function evaluate(ast: Stmt): RuntimeVal<unknown> {
+export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
     switch (ast.kind) {
         case "Program":
-            return evalProgram(ast as Program)
+            return evalProgram(ast as Program, scope)
+        case "Identifier":
+            return evalIdentifier(ast as Identifier, scope)
         case "BinaryExpr":
-            return evalBinaryExpr(ast as BinaryExpr)
+            return evalBinaryExpr(ast as BinaryExpr, scope)
         case "NumericLiteral":
             return {
                 type: 'number',

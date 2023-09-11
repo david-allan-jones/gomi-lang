@@ -1,10 +1,13 @@
 import Parser from "./src/parser";
 import { evaluate } from "./src/runtime/interpreter";
+import Scope from "./src/runtime/scope";
 
 repl()
 
 function repl() {
     const parser = new Parser()
+    const scope = new Scope()
+
     console.log("ゴミ箱へようこそ")
     while (true) {
         const input = prompt("＞ ")
@@ -14,7 +17,7 @@ function repl() {
 
         const program = parser.produceAST(input)
 
-        const result = evaluate(program)
+        const result = evaluate(program, scope)
         console.log(result)
     }
 }
