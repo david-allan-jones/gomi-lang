@@ -137,4 +137,24 @@ describe('parser', () => {
         expect(token.symbol).toBe('a')
         expect(token.value.kind).toBe('BinaryExpr')
     })
+
+    it('parses full-width identifier properly', () => {
+        const identifiers = ['あ', 'あ１', 'あ０', 'あa', 'aあ']
+        for (let i = 0; i < identifiers.length; i++) {
+            const program = parser.produceAST(identifiers[i])
+            const token = program.body[0] as Identifier
+            expect(token.kind).toBe('Identifier')
+            expect(token.symbol).toBe(identifiers[i])
+        }
+    })
+
+    it('parses full-width numbers properly', () => {
+        const numbers = ['１', '２', '３', '４', '５', '６', '７', '８', '９', '１０']
+        for (let i = 0; i < numbers.length; i++) {
+            const program = parser.produceAST(numbers[i])
+            const token = program.body[0] as NumericLiteral
+            expect(token.kind).toBe('NumericLiteral')
+            expect(token.value).toBe(i + 1)
+        }
+    })
 })
