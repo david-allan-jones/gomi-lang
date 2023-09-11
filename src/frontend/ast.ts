@@ -49,7 +49,7 @@ export interface NumericLiteral extends Expr {
 
 export interface NullLiteral extends Expr {
     kind: "NullLiteral"
-    value: "無"
+    value: null
 }
 
 export interface BooleanLiteral extends Expr {

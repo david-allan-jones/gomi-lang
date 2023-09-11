@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import Parser from "./parser";
 import { fail } from "assert";
-import { BinaryExpr, Identifier, NullLiteral, NumericLiteral, VarDeclaration } from "./ast";
+import { BinaryExpr, BooleanLiteral, Identifier, NullLiteral, NumericLiteral, VarDeclaration } from "./ast";
 
 describe('parser', () => {
     let parser: Parser
@@ -79,7 +79,7 @@ describe('parser', () => {
         expect(token.right.kind).toBe('NumericLiteral')
     })
 
-    it('parses exponential opeator expressions', () => {
+    it('parses exponential operator expressions', () => {
         const program = parser.produceAST('n ^ m ^ k')
         expect(program.body.length).toBe(1)
         const token = program.body[0] as BinaryExpr
@@ -103,39 +103,52 @@ describe('parser', () => {
     })
 
     it('parses null literals', () => {
-        const program = parser.produceAST('無')
-        expect(program.body.length).toBe(1)
-        const token = program.body[0] as NullLiteral
-        expect(token.kind).toBe('NullLiteral')
-        expect(token.value).toBe('無')
+        const literals = ['null', '無']
+        for (let i = 0; i < literals.length; i++) {
+            const { body } = parser.produceAST(literals[i])
+            expect(body.length).toBe(1)
+            const stmt = body[0] as NullLiteral
+            expect(stmt.kind).toBe('NullLiteral')
+            expect(stmt.value).toBe(null)
+        }
     })
 
     it('parses boolean literals', () => {
-        const program = parser.produceAST('本当 + 嘘')
-        expect(program.body.length).toBe(1)
-        const token = program.body[0] as BinaryExpr
-        const { kind, left, right } = token
-        expect(kind).toBe('BinaryExpr')
-        expect(left.kind).toBe('BooleanLiteral')
-        expect(right.kind).toBe('BooleanLiteral')
+        const literals = ['true', 'false', '本当', '嘘']
+        const values = [true, false, true, false]
+        for (let i = 0; i < literals.length; i++) {
+            const { body } = parser.produceAST(literals[i])
+            expect(body.length).toBe(1)
+            const stmt = body[0] as BooleanLiteral
+            expect(stmt.kind).toBe('BooleanLiteral')
+            expect(stmt.value).toBe(values[i])
+        }
     })
 
     it('parses variable declaration with literals', () => {
-        const program = parser.produceAST('宣言 a = 1')
-        expect(program.body.length).toBe(1)
-        const token = program.body[0] as VarDeclaration
-        expect(token.kind).toBe('VarDeclaration')
-        expect(token.symbol).toBe('a')
-        expect(token.value.kind).toBe('NumericLiteral')
+        const stmts = ['宣言　あ　＝１', 'let a = 1']
+        const symbols = ['あ', 'a']
+        for (let i = 0; i < stmts.length; i++) {
+            const program = parser.produceAST(stmts[i])
+            expect(program.body.length).toBe(1)
+            const token = program.body[0] as VarDeclaration
+            expect(token.kind).toBe('VarDeclaration')
+            expect(token.symbol).toBe(symbols[i])
+            expect(token.value.kind).toBe('NumericLiteral')
+        }
     })
 
     it('parses variable declaration with binary expressions', () => {
-        const program = parser.produceAST('宣言 a = 1 + 2')
-        expect(program.body.length).toBe(1)
-        const token = program.body[0] as VarDeclaration
-        expect(token.kind).toBe('VarDeclaration')
-        expect(token.symbol).toBe('a')
-        expect(token.value.kind).toBe('BinaryExpr')
+        const stmts = ['宣言　あ　＝１+２', 'let a = 1 + 2']
+        const symbols = ['あ', 'a']
+        for (let i = 0; i < stmts.length; i++) {
+            const program = parser.produceAST(stmts[i])
+            expect(program.body.length).toBe(1)
+            const token = program.body[0] as VarDeclaration
+            expect(token.kind).toBe('VarDeclaration')
+            expect(token.symbol).toBe(symbols[i])
+            expect(token.value.kind).toBe('BinaryExpr')
+        }
     })
 
     it('parses full-width identifier properly', () => {

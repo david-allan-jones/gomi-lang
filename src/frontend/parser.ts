@@ -161,12 +161,12 @@ export default class Parser {
             case TokenType.Null:
                 return {
                     kind: "NullLiteral",
-                    value: "無"
+                    value: null
                 } as NullLiteral
             case TokenType.Boolean:
                 return {
                     kind: "BooleanLiteral",
-                    value: token.value === TokenVal.True ? true : false
+                    value: [TokenVal.True1, TokenVal.True2].includes(token.value as TokenVal) ? true : false
                 } as BooleanLiteral
             case TokenType.OpenParen:
                 const expr =  this.parseExpr()

@@ -1,12 +1,18 @@
 export enum TokenVal {
 	Equals1 = '=',
 	Equals2 = '＝',
-	OpenParen = '(',
-	CloseParen = ')',
-	Let = '宣言',
-	Null = '無',
-	True = '本当',
-	False = '嘘',
+	OpenParen1 = '(',
+	OpenParen2 = '（',
+	CloseParen1 = ')',
+	CloseParen2 = '）',
+	Let1 = 'let',
+	Let2 = '宣言',
+	Null1 = 'null',
+	Null2 = '無',
+	True1 = 'true',
+	True2 = '本当',
+	False1 = 'false',
+	False2 = '嘘',
 	EOF = 'EOF'
 }
 
@@ -24,10 +30,14 @@ export enum TokenType {
 }
 
 const RESERVED: Record<string, TokenType> = {
-	[TokenVal.Let]: TokenType.Let,
-	[TokenVal.Null]: TokenType.Null,
-	[TokenVal.True]: TokenType.Boolean,
-	[TokenVal.False]: TokenType.Boolean
+	[TokenVal.Let1]: TokenType.Let,
+	[TokenVal.Let2]: TokenType.Let,
+	[TokenVal.Null1]: TokenType.Null,
+	[TokenVal.Null2]: TokenType.Null,
+	[TokenVal.True1]: TokenType.Boolean,
+	[TokenVal.True2]: TokenType.Boolean,
+	[TokenVal.False1]: TokenType.Boolean,
+	[TokenVal.False2]: TokenType.Boolean
 }
 
 export interface Token {
@@ -88,13 +98,13 @@ export function tokenize(source: string): Token[] {
 			i++
 			continue
 		}
-		if (src[i] === TokenVal.OpenParen) {
-			tokens.push({ type: TokenType.OpenParen, value: TokenVal.OpenParen })
+		if (src[i] === TokenVal.OpenParen1 || src[i] === TokenVal.OpenParen2) {
+			tokens.push({ type: TokenType.OpenParen, value: src[i] })
 			i++
 			continue
 		}
-		if (src[i] === TokenVal.CloseParen) {
-			tokens.push({ type: TokenType.CloseParen, value: TokenVal.CloseParen })
+		if (src[i] === TokenVal.CloseParen1 || src[i] === TokenVal.CloseParen2) {
+			tokens.push({ type: TokenType.CloseParen, value: src[i] })
 			i++
 			continue
 		}
