@@ -1,18 +1,13 @@
 export enum TokenVal {
-	Equals1 = '=',
-	Equals2 = '＝',
-	OpenParen1 = '(',
-	OpenParen2 = '（',
-	CloseParen1 = ')',
-	CloseParen2 = '）',
-	Let1 = 'let',
-	Let2 = '宣言',
-	Null1 = 'null',
-	Null2 = '無',
-	True1 = 'true',
-	True2 = '本当',
-	False1 = 'false',
-	False2 = '嘘',
+	HW_EQUALS = '=', FW_EQUALS = '＝',
+	HW_OPEN_PAREN = '(', FW_OPEN_PAREN = '（',
+	HW_CLOSE_PAREN = ')', FW_CLOSE_PAREN = '）',
+	HW_OPEN_BRACKET = '{', FW_OPEN_BRACKET = '｛',
+	HW_CLOSE_BRACKET = '}', FW_CLOSE_BRACKET = '｝',
+	EN_LET = 'let', JP_LET = '宣言',
+	EN_NULL = 'null', JP_NULL = '無',
+	EN_TRUE = 'true', JP_TRUE = '本当',
+	EN_FALSE = 'false', JP_FALSE = '嘘',
 	EOF = 'EOF'
 }
 
@@ -30,14 +25,14 @@ export enum TokenType {
 }
 
 const RESERVED: Record<string, TokenType> = {
-	[TokenVal.Let1]: TokenType.Let,
-	[TokenVal.Let2]: TokenType.Let,
-	[TokenVal.Null1]: TokenType.Null,
-	[TokenVal.Null2]: TokenType.Null,
-	[TokenVal.True1]: TokenType.Boolean,
-	[TokenVal.True2]: TokenType.Boolean,
-	[TokenVal.False1]: TokenType.Boolean,
-	[TokenVal.False2]: TokenType.Boolean
+	[TokenVal.EN_LET]: TokenType.Let,
+	[TokenVal.JP_LET]: TokenType.Let,
+	[TokenVal.EN_NULL]: TokenType.Null,
+	[TokenVal.JP_NULL]: TokenType.Null,
+	[TokenVal.EN_TRUE]: TokenType.Boolean,
+	[TokenVal.JP_TRUE]: TokenType.Boolean,
+	[TokenVal.EN_FALSE]: TokenType.Boolean,
+	[TokenVal.JP_FALSE]: TokenType.Boolean
 }
 
 export interface Token {
@@ -108,17 +103,17 @@ export function tokenize(source: string): Token[] {
 		}
 
 		// Single character tokens
-		if (src[i] === TokenVal.Equals1 || src[i] === TokenVal.Equals2) {
+		if (src[i] === TokenVal.HW_EQUALS || src[i] === TokenVal.FW_EQUALS) {
 			tokens.push({ type: TokenType.Equals, value: src[i] })
 			i++
 			continue
 		}
-		if (src[i] === TokenVal.OpenParen1 || src[i] === TokenVal.OpenParen2) {
+		if (src[i] === TokenVal.HW_OPEN_PAREN || src[i] === TokenVal.FW_OPEN_PAREN) {
 			tokens.push({ type: TokenType.OpenParen, value: src[i] })
 			i++
 			continue
 		}
-		if (src[i] === TokenVal.CloseParen1 || src[i] === TokenVal.CloseParen2) {
+		if (src[i] === TokenVal.HW_CLOSE_PAREN || src[i] === TokenVal.FW_CLOSE_PAREN) {
 			tokens.push({ type: TokenType.CloseParen, value: src[i] })
 			i++
 			continue
