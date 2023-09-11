@@ -29,10 +29,6 @@ describe('isInteger', () => {
         expect(isInt('42')).toBe(true)
     })
 
-    it('negatives accepted', () => {
-        expect(isInt('-123456')).toBe(true)
-    })
-
     it('floating numbers not accepted', () => {
         expect(isInt('1.23')).toBe(false)
     })
@@ -51,12 +47,6 @@ describe('isInteger', () => {
 
     it('negative zero not acceepted', () => {
         expect(isInt('-0')).toBe(false)
-    })
-
-    it('Negative sign only at the beginning is allowed', () => {
-        expect(isInt('-42')).toBe(true)
-        expect(isInt('42-')).toBe(false)
-        expect(isInt('--42')).toBe(false)
     })
 })
 

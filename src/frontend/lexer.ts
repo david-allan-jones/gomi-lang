@@ -72,7 +72,7 @@ export function identifierBeginAllowed(source: string): boolean {
 }
 
 export function isInt(source: string): boolean {
-	return /^((0|[-]?[1-9]+\d*)|(０|[ー]?[１-９]+[０-９]*))$/.test(source)
+	return /^((0|[1-9]+\d*)|(０|[１-９]+[０-９]*))$/.test(source)
 }
 
 export function identifierAllowed(source: string): boolean {
