@@ -28,14 +28,14 @@ describe('parser', () => {
         const fullWidth = ['１', '２', '３', '４', '５', '６', '７', '８', '９', '１０']
         for (let i = 0; i < fullWidth.length; i++) {
             let program = parser.produceAST(halfWidth[i])
-            let token = program.body[0] as NumericLiteral
-            expect(token.kind).toBe('NumericLiteral')
-            expect(token.value).toBe(i + 1)
+            let node = program.body[0] as NumericLiteral
+            expect(node.kind).toBe('NumericLiteral')
+            expect(node.value).toBe(i + 1)
 
             program = parser.produceAST(fullWidth[i])
-            token = program.body[0] as NumericLiteral
-            expect(token.kind).toBe('NumericLiteral')
-            expect(token.value).toBe(i + 1)
+            node = program.body[0] as NumericLiteral
+            expect(node.kind).toBe('NumericLiteral')
+            expect(node.value).toBe(i + 1)
         }
     })
 
@@ -43,17 +43,17 @@ describe('parser', () => {
         const identifiers = ['a', 'a0', 'a_b', 'あ', 'あ_１', 'あ０', 'あa', 'aあ']
         for (let i = 0; i < identifiers.length; i++) {
             const program = parser.produceAST(identifiers[i])
-            const token = program.body[0] as Identifier
-            expect(token.kind).toBe('Identifier')
-            expect(token.symbol).toBe(identifiers[i])
+            const node = program.body[0] as Identifier
+            expect(node.kind).toBe('Identifier')
+            expect(node.symbol).toBe(identifiers[i])
         }
     })
 
     it('parses binary additive expression', () => {
         const program = parser.produceAST('a + 1')
         expect(program.body.length).toBe(1)
-        const token = program.body[0] as BinaryExpr
-        const { kind, left, right, operator } = token
+        const node = program.body[0] as BinaryExpr
+        const { kind, left, right, operator } = node
         expect(kind).toBe("BinaryExpr")
         expect(operator).toBe('+')
         expect(left.kind).toBe('Identifier')
@@ -63,8 +63,8 @@ describe('parser', () => {
     it('parses binary multiplicative expression', () => {
         const program = parser.produceAST('a*b + 1')
         expect(program.body.length).toBe(1)
-        const token = program.body[0] as BinaryExpr
-        const { kind, left, right, operator } = token
+        const node = program.body[0] as BinaryExpr
+        const { kind, left, right, operator } = node
         expect(kind).toBe("BinaryExpr")
         expect(right.kind).toBe('NumericLiteral')
         expect(operator).toBe('+')
@@ -85,10 +85,10 @@ describe('parser', () => {
         for (let i = 0; i < expressions.length; i++) {
             const program = parser.produceAST(expressions[i])
             expect(program.body.length).toBe(1)
-            const token = program.body[0] as BinaryExpr
-            expect(token.operator).toBe('%')
-            expect(token.left.kind).toBe('Identifier')
-            expect(token.right.kind).toBe('NumericLiteral')
+            const node = program.body[0] as BinaryExpr
+            expect(node.operator).toBe('%')
+            expect(node.left.kind).toBe('Identifier')
+            expect(node.right.kind).toBe('NumericLiteral')
         }
     })
 
@@ -97,11 +97,11 @@ describe('parser', () => {
         for (let i = 0; i < expressions.length; i++) {
             const program = parser.produceAST(expressions[i])
             expect(program.body.length).toBe(1)
-            const token = program.body[0] as BinaryExpr
-            expect(token.operator).toBe('^')
-            expect(token.left.kind).toBe('Identifier')
-            expect(token.right.kind).toBe('BinaryExpr')
-            const { kind, left, right, operator } = token.right as BinaryExpr
+            const node = program.body[0] as BinaryExpr
+            expect(node.operator).toBe('^')
+            expect(node.left.kind).toBe('Identifier')
+            expect(node.right.kind).toBe('BinaryExpr')
+            const { kind, left, right, operator } = node.right as BinaryExpr
             expect(kind).toBe('BinaryExpr')
             expect(left.kind).toBe('Identifier')
             expect(right.kind).toBe('Identifier')
@@ -112,10 +112,10 @@ describe('parser', () => {
     it('parses parenthesized expressions', () => {
         const program = parser.produceAST('(1)+a')
         expect(program.body.length).toBe(1)
-        const token = program.body[0] as BinaryExpr
-        expect(token.operator).toBe('+')
-        expect(token.left.kind).toBe('NumericLiteral')
-        expect(token.right.kind).toBe('Identifier')
+        const node = program.body[0] as BinaryExpr
+        expect(node.operator).toBe('+')
+        expect(node.left.kind).toBe('NumericLiteral')
+        expect(node.right.kind).toBe('Identifier')
     })
 
     it('parses null literals', () => {
@@ -123,9 +123,9 @@ describe('parser', () => {
         for (let i = 0; i < literals.length; i++) {
             const { body } = parser.produceAST(literals[i])
             expect(body.length).toBe(1)
-            const stmt = body[0] as NullLiteral
-            expect(stmt.kind).toBe('NullLiteral')
-            expect(stmt.value).toBe(null)
+            const node = body[0] as NullLiteral
+            expect(node.kind).toBe('NullLiteral')
+            expect(node.value).toBe(null)
         }
     })
 
@@ -135,9 +135,9 @@ describe('parser', () => {
         for (let i = 0; i < literals.length; i++) {
             const { body } = parser.produceAST(literals[i])
             expect(body.length).toBe(1)
-            const stmt = body[0] as BooleanLiteral
-            expect(stmt.kind).toBe('BooleanLiteral')
-            expect(stmt.value).toBe(values[i])
+            const node = body[0] as BooleanLiteral
+            expect(node.kind).toBe('BooleanLiteral')
+            expect(node.value).toBe(values[i])
         }
     })
 
@@ -147,10 +147,10 @@ describe('parser', () => {
         for (let i = 0; i < stmts.length; i++) {
             const program = parser.produceAST(stmts[i])
             expect(program.body.length).toBe(1)
-            const token = program.body[0] as VarDeclaration
-            expect(token.kind).toBe('VarDeclaration')
-            expect(token.symbol).toBe(symbols[i])
-            expect(token.value.kind).toBe('NumericLiteral')
+            const node = program.body[0] as VarDeclaration
+            expect(node.kind).toBe('VarDeclaration')
+            expect(node.symbol).toBe(symbols[i])
+            expect(node.value.kind).toBe('NumericLiteral')
         }
     })
 
@@ -160,10 +160,10 @@ describe('parser', () => {
         for (let i = 0; i < stmts.length; i++) {
             const program = parser.produceAST(stmts[i])
             expect(program.body.length).toBe(1)
-            const token = program.body[0] as VarDeclaration
-            expect(token.kind).toBe('VarDeclaration')
-            expect(token.symbol).toBe(symbols[i])
-            expect(token.value.kind).toBe('BinaryExpr')
+            const node = program.body[0] as VarDeclaration
+            expect(node.kind).toBe('VarDeclaration')
+            expect(node.symbol).toBe(symbols[i])
+            expect(node.value.kind).toBe('BinaryExpr')
         }
     })
 })

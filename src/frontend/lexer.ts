@@ -47,7 +47,7 @@ export interface Token {
 
 export type BinaryOperator = 
 	| '+' | '＋'
-	| '-' | 'ー'
+	| '-'
 	| '*' | '＊'
 	| '/' | '／'
 	| '%' | '％'
@@ -57,7 +57,7 @@ export type BinaryOperator =
 
 const binaryOperators: BinaryOperator[] = [
 	'+', '＋',
-	'-', 'ー',
+	'-',
 	'*', '＊',
 	'/', '／',
 	'%', '％',
@@ -83,7 +83,10 @@ export function identifierAllowed(source: string): boolean {
 }
 
 function skippable(source: string): boolean {
-	return source === ' ' || source === '\t' || source === '　'
+	return source === ' '
+		|| source === '\t'
+		|| source === '　'
+		|| source === '\r'
 }
 
 export function unrecognizedError(line: number, c: string) {

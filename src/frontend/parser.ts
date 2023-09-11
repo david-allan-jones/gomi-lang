@@ -104,9 +104,9 @@ export default class Parser {
 
     private parseAdditiveExpr(): Expr {
         let left = this.parseMultiplicativeExpr()
-        while (['+', '-', '＋', 'ー'].includes(this.tokens[this.i].value)) {
+        while (['+', '-', '＋'].includes(this.tokens[this.i].value)) {
             let operator = this.consumeToken().value as BinaryOperator
-            operator = (operator === '+' || operator === '＋') ? '+' : '-'
+            operator = (operator === '-') ? '-' : '+'
 
             const right = this.parseMultiplicativeExpr()
             left = {
