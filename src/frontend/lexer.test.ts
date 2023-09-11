@@ -73,6 +73,9 @@ describe('tokenize', () => {
     it('close paren', () => {
         testSources(['}', '｝'], TokenType.CloseBrace)
     })
+    it('colon', () => {
+        testSources([':', '：'], TokenType.Colon)
+    })
     it('number', () => {
         testSources(['1', '１', '10', '１０'], TokenType.Number)
     })

@@ -1,15 +1,16 @@
 export enum TokenVal {
-	HW_EQUALS = '=', FW_EQUALS = '＝',
-	HW_OPEN_PAREN = '(', FW_OPEN_PAREN = '（',
-	HW_CLOSE_PAREN = ')', FW_CLOSE_PAREN = '）',
-	HW_OPEN_BRACKET = '[', FW_OPEN_BRACKET = '【',
+	HW_EQUALS = '=', 		FW_EQUALS = '＝',
+	HW_OPEN_PAREN = '(', 	FW_OPEN_PAREN = '（',
+	HW_CLOSE_PAREN = ')', 	FW_CLOSE_PAREN = '）',
+	HW_OPEN_BRACKET = '[', 	FW_OPEN_BRACKET = '【',
 	HW_CLOSE_BRACKET = ']', FW_CLOSE_BRACKET = '】',
-	HW_OPEN_BRACE = '{', FW_OPEN_BRACE = '｛',
-	HW_CLOSE_BRACE = '}', FW_CLOSE_BRACE = '｝',
-	EN_LET = 'let', JP_LET = '宣言',
-	EN_NULL = 'null', JP_NULL = '無',
-	EN_TRUE = 'true', JP_TRUE = '本当',
-	EN_FALSE = 'false', JP_FALSE = '嘘',
+	HW_OPEN_BRACE = '{', 	FW_OPEN_BRACE = '｛',
+	HW_CLOSE_BRACE = '}', 	FW_CLOSE_BRACE = '｝',
+	HW_COLON = ':', 		FW_COLON = '：',
+	EN_LET = 'let', 		JP_LET = '宣言',
+	EN_NULL = 'null', 		JP_NULL = '無',
+	EN_TRUE = 'true', 		JP_TRUE = '本当',
+	EN_FALSE = 'false', 	JP_FALSE = '嘘',
 	EOF = 'EOF'
 }
 
@@ -26,6 +27,7 @@ export enum TokenType {
 	CloseBracket = 'CLOSE_BRACKET',
 	OpenBrace = 'OPEN_BRACE',
 	CloseBrace = 'CLOSE_BRACE',
+	Colon = 'COLON',
 	Let = 'LET',
 	EOF = 'EOF'
 }
@@ -141,6 +143,11 @@ export function tokenize(source: string): Token[] {
 		}
 		if (src[i] === TokenVal.HW_CLOSE_BRACE || src[i] === TokenVal.FW_CLOSE_BRACE) {
 			tokens.push({ type: TokenType.CloseBrace, value: src[i] })
+			i++
+			continue
+		}
+		if (src[i] === TokenVal.HW_COLON || src[i] === TokenVal.FW_COLON) {
+			tokens.push({ type: TokenType.Colon, value: src[i] })
 			i++
 			continue
 		}
