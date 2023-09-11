@@ -1,3 +1,4 @@
+import { normalizeInt } from '../utils/japanese'
 import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral, BooleanLiteral, VarDeclaration, VarAssignment } from './ast'
 import { tokenize, Token, TokenType, TokenVal, identifierAllowed } from './lexer'
 
@@ -155,7 +156,7 @@ export default class Parser {
             case TokenType.Number:
                 return {
                     kind: "NumericLiteral",
-                    value: parseFloat(token.value)
+                    value: normalizeInt(token.value)
                 } as NumericLiteral
             case TokenType.Null:
                 return {

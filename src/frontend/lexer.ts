@@ -1,5 +1,6 @@
 export enum TokenVal {
-	Equals = '=',
+	Equals1 = '=',
+	Equals2 = '＝',
 	OpenParen = '(',
 	CloseParen = ')',
 	Let = '宣言',
@@ -52,7 +53,7 @@ export function identifierBeginAllowed(source: string): boolean {
 }
 
 export function isInt(source: string): boolean {
-	return /^(0|[-]?[1-9]+\d*)$/.test(source)
+	return /^((0|[-]?[1-9]+\d*)|(０|[ー]?[１-９]+[０-９]*))$/.test(source)
 }
 
 export function identifierAllowed(source: string): boolean {
@@ -60,7 +61,7 @@ export function identifierAllowed(source: string): boolean {
 }
 
 function skippable(source: string): boolean {
-	return source === ' ' || source === '\t'
+	return source === ' ' || source === '\t' || source === '　'
 }
 
 export function unrecognizedError(line: number, c: string) {
@@ -82,8 +83,8 @@ export function tokenize(source: string): Token[] {
 		}
 
 		// Single character tokens
-		if (src[i] === TokenVal.Equals) {
-			tokens.push({ type: TokenType.Equals, value: TokenVal.Equals })
+		if (src[i] === TokenVal.Equals1 || src[i] === TokenVal.Equals2) {
+			tokens.push({ type: TokenType.Equals, value: src[i] })
 			i++
 			continue
 		}
