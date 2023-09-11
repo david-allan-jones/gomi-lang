@@ -1,5 +1,5 @@
-import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral, BooleanLiteral, VarDeclaration } from './ast'
-import { tokenize, Token, TokenType, TokenVal } from './lexer'
+import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral, BooleanLiteral, VarDeclaration, VarAssignment } from './ast'
+import { tokenize, Token, TokenType, TokenVal, identifierAllowed } from './lexer'
 
 export default class Parser {
     private tokens: Token[] = []
@@ -67,7 +67,21 @@ export default class Parser {
     }
 
     private parseExpr(): Expr {
-        return this.parseComparisonExpr()
+        return this.parseVarAssignment()
+    }
+
+    private parseVarAssignment(): Expr {
+        const left = this.parseComparisonExpr()
+        if (this.tokens[this.i].type === TokenType.Equals) {
+            this.consumeToken()
+            const value = this.parseVarAssignment()
+            return {
+                kind: 'VarAssignment',
+                assignee: left,
+                value,
+            } as VarAssignment
+        }
+        return left
     }
 
     private parseComparisonExpr(): Expr {

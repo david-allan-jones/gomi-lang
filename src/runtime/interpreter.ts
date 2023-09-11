@@ -1,7 +1,7 @@
 import { RuntimeVal } from './types'
-import { BinaryExpr, Identifier, NumericLiteral, Program, Stmt, VarDeclaration } from '../frontend/ast'
+import { BinaryExpr, Identifier, NumericLiteral, Program, Stmt, VarAssignment, VarDeclaration } from '../frontend/ast'
 import Scope from './scope'
-import { evalBinaryExpr, evalIdentifier } from './eval/expressions'
+import { evalBinaryExpr, evalIdentifier, evalAssignmentExpr } from './eval/expressions'
 import { evalProgram, evalVarDeclaration } from './eval/statements'
 
 export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
@@ -11,6 +11,8 @@ export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
             return evalProgram(ast as Program, scope)
         case "VarDeclaration":
             return evalVarDeclaration(ast as VarDeclaration, scope)
+        case "VarAssignment":
+            return evalAssignmentExpr(ast as VarAssignment, scope)
 
         // Expressions
         case "Identifier":

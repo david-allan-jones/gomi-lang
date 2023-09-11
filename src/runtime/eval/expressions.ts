@@ -1,5 +1,5 @@
-import { BinaryExpr, Identifier } from "../../frontend/ast"
-import { BinaryOperator } from "../../lexer"
+import { BinaryExpr, Identifier, VarAssignment } from "../../frontend/ast"
+import { BinaryOperator } from "../../frontend/lexer"
 import { evaluate } from "../interpreter"
 import Scope from "../scope"
 import { RuntimeVal } from "../types"
@@ -50,4 +50,16 @@ export function evalBinaryExpr(expr: BinaryExpr, scope: Scope): RuntimeVal<unkno
         )
     }
     return { type: 'null', value: 'null' } as RuntimeVal<'null'>
+}
+
+export function evalAssignmentExpr(assignment: VarAssignment, scope: Scope): RuntimeVal<unknown> {
+    if (assignment.assignee.kind !== 'Identifier') {
+        throw `Invalid LHS inside assingment expr ${JSON.stringify(assignment.assignee)}`
+    }
+    const identifier = (assignment.assignee as Identifier).symbol
+
+    return scope.assignVar(
+        identifier,
+        evaluate(assignment.value, scope)
+    )
 }

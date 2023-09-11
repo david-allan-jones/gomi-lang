@@ -11,9 +11,9 @@ export function evalProgram(program: Program, scope: Scope): RuntimeVal<unknown>
     return lastResult
 }
 
-export function evalVarDeclaration(varDelcaration: VarDeclaration, scope: Scope): RuntimeVal<unknown> {
+export function evalVarDeclaration(declaration: VarDeclaration, scope: Scope): RuntimeVal<unknown> {
     return scope.declareVar(
-        varDelcaration.symbol,
-        evaluate(varDelcaration.value, scope)
+        declaration.symbol,
+        evaluate(declaration.value, scope)
     )
 }

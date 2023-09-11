@@ -56,3 +56,9 @@ export interface BooleanLiteral extends Expr {
     kind: "BooleanLiteral"
     value: boolean
 }
+
+export interface VarAssignment extends Expr {
+    kind: "VarAssignment"
+    assignee: Expr
+    value: Expr
+}
