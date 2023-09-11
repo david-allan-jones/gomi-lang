@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
 import { evalVarDeclaration } from "./statements";
 import Scope from "../scope";
-import { BinaryExpr, NumericLiteral } from "../../ast";
+import { BinaryExpr, NumericLiteral } from "../../frontend/ast";
 
-describe('GOMI Statements', () => {
+describe('GOMI Statements:', () => {
     describe("VarDeclaration", () => {
         it('can persist numeric literals', () => {
             const symbol = 'a'

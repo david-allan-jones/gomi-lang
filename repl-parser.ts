@@ -1,4 +1,4 @@
-import Parser from "./src/parser";
+import Parser from "./src/frontend/parser";
 
 repl()
 

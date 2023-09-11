@@ -17,7 +17,7 @@ export enum TokenType {
 	Equals = 'EQUALS',
 	OpenParen = 'OPEN_PAREN',
 	CloseParen = 'CLOSE_PAREN',
-	BinaryOperator = 'BINARY_EXPR',
+	BinaryOperator = 'BINARY_OP',
 	Let = 'LET',
 	EOF = 'EOF'
 }

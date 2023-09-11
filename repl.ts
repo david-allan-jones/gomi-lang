@@ -1,4 +1,4 @@
-import Parser from "./src/parser";
+import Parser from "./src/frontend/parser";
 import { evaluate } from "./src/runtime/interpreter";
 import Scope from "./src/runtime/scope";
 

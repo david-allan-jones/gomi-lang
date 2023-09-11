@@ -1,5 +1,5 @@
 import { RuntimeVal } from './types'
-import { BinaryExpr, Identifier, NumericLiteral, Program, Stmt, VarDeclaration } from '../ast'
+import { BinaryExpr, Identifier, NumericLiteral, Program, Stmt, VarDeclaration } from '../frontend/ast'
 import Scope from './scope'
 import { evalBinaryExpr, evalIdentifier } from './eval/expressions'
 import { evalProgram, evalVarDeclaration } from './eval/statements'

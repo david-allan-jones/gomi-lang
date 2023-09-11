@@ -1,10 +1,8 @@
-import Parser from "./src/parser";
-import { tokenize } from "./src/lexer";
+import { tokenize } from "./src/frontend/lexer";
 
 repl()
 
 function repl() {
-    const parser = new Parser()
     console.log("ゴミ箱へようこそ")
     while (true) {
         const input = prompt("＞ ")

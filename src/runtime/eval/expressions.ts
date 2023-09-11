@@ -1,4 +1,4 @@
-import { BinaryExpr, Identifier } from "../../ast"
+import { BinaryExpr, Identifier } from "../../frontend/ast"
 import { BinaryOperator } from "../../lexer"
 import { evaluate } from "../interpreter"
 import Scope from "../scope"

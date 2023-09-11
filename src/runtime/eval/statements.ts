@@ -1,4 +1,4 @@
-import { Program, VarDeclaration } from "../../ast"
+import { Program, VarDeclaration } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope"
 import { RuntimeVal } from "../types"
