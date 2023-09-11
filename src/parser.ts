@@ -1,4 +1,4 @@
-import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral, BooleanLiteral } from './ast'
+import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral, BooleanLiteral, VarDeclaration } from './ast'
 import { tokenize, Token, TokenType, TokenVal } from './lexer'
 
 export default class Parser {
@@ -26,17 +26,44 @@ export default class Parser {
         return token
     }
 
-    private nextTokenValidate(type: TokenType): Token {
+    private consumeTokenValidate(type: TokenType, context?: string): Token {
         const prev = this.consumeToken()
         if (!prev || prev.type !== type) {
             console.error(`Parser Error. Expected: ${type}. Received: ${prev.type}`)
+            if (context !== undefined) {
+                console.log(context)
+            }
             process.exit(1)
         }
         return prev
     }
 
     private parseStmt(): Stmt {
-        return this.parseExpr()
+        switch (this.tokens[this.i].type) {
+            case TokenType.Let:
+                return this.parseVarDeclaration()
+            default:
+                return this.parseExpr()
+        }
+    }
+
+    private parseVarDeclaration(): VarDeclaration {
+        // Consume the keyword
+        this.consumeToken()
+
+        const symbol = this.consumeTokenValidate(
+            TokenType.Identifier,
+            'Expected identifier following declaration keyword'
+        ).value
+        this.consumeTokenValidate(
+            TokenType.Equals,
+            'Expected equals sign following identifier in variable declaration'
+        )
+        return {
+            kind: 'VarDeclaration',
+            symbol,
+            value: this.parseExpr()
+        }
     }
 
     private parseExpr(): Expr {
@@ -128,7 +155,7 @@ export default class Parser {
                 } as BooleanLiteral
             case TokenType.OpenParen:
                 const expr =  this.parseExpr()
-                this.nextTokenValidate(TokenType.CloseParen)
+                this.consumeTokenValidate(TokenType.CloseParen)
                 return expr
             default:
                 console.error(`Unexpected token found during parsing: ${JSON.stringify(token)}`)

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import Parser from "./parser";
 import { fail } from "assert";
-import { BinaryExpr, Identifier, NullLiteral, NumericLiteral } from "./ast";
+import { BinaryExpr, Identifier, NullLiteral, NumericLiteral, VarDeclaration } from "./ast";
 
 describe('parser', () => {
     let parser: Parser
@@ -118,5 +118,23 @@ describe('parser', () => {
         expect(kind).toBe('BinaryExpr')
         expect(left.kind).toBe('BooleanLiteral')
         expect(right.kind).toBe('BooleanLiteral')
+    })
+
+    it('parses variable declaration with literals', () => {
+        const program = parser.produceAST('宣言 a = 1')
+        expect(program.body.length).toBe(1)
+        const token = program.body[0] as VarDeclaration
+        expect(token.kind).toBe('VarDeclaration')
+        expect(token.symbol).toBe('a')
+        expect(token.value.kind).toBe('NumericLiteral')
+    })
+
+    it('parses variable declaration with binary expressions', () => {
+        const program = parser.produceAST('宣言 a = 1 + 2')
+        expect(program.body.length).toBe(1)
+        const token = program.body[0] as VarDeclaration
+        expect(token.kind).toBe('VarDeclaration')
+        expect(token.symbol).toBe('a')
+        expect(token.value.kind).toBe('BinaryExpr')
     })
 })
