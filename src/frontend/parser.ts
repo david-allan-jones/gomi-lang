@@ -1,6 +1,6 @@
 import { normalizeInt } from '../utils/japanese'
 import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral, BooleanLiteral, VarDeclaration, VarAssignment } from './ast'
-import { tokenize, Token, TokenType, TokenVal, identifierAllowed } from './lexer'
+import { tokenize, Token, TokenType, TokenVal, identifierAllowed, BinaryOperator } from './lexer'
 
 export default class Parser {
     private tokens: Token[] = []
@@ -88,7 +88,9 @@ export default class Parser {
     private parseComparisonExpr(): Expr {
         let left = this.parseAdditiveExpr()
         while (['<', '>', '＜', '＞'].includes(this.tokens[this.i].value)) {
-            const operator = this.consumeToken().value
+            let operator = this.consumeToken().value as BinaryOperator
+            operator = (operator === '>' || operator === '＞') ? '>' : '<'
+
             const right = this.parseAdditiveExpr()
             left = {
                 kind: 'BinaryExpr',
@@ -103,7 +105,9 @@ export default class Parser {
     private parseAdditiveExpr(): Expr {
         let left = this.parseMultiplicativeExpr()
         while (['+', '-', '＋', 'ー'].includes(this.tokens[this.i].value)) {
-            const operator = this.consumeToken().value
+            let operator = this.consumeToken().value as BinaryOperator
+            operator = (operator === '+' || operator === '＋') ? '+' : '-'
+
             const right = this.parseMultiplicativeExpr()
             left = {
                 kind: 'BinaryExpr',
@@ -118,7 +122,17 @@ export default class Parser {
     private parseMultiplicativeExpr(): Expr {
         let left = this.parseExponentialExpr()
         while (['*', '/', '%', '＊', '／', '％'].includes(this.tokens[this.i].value)) {
-            const operator = this.consumeToken().value
+            let operator = this.consumeToken().value as BinaryOperator
+            if (operator === '*' || operator === '＊') {
+                operator = '*'
+            }
+            else if (operator === '/' || operator === '／') {
+                operator = '/'
+            }
+            else {
+                operator = '%'
+            }
+
             const right = this.parseExponentialExpr()
             left = {
                 kind: 'BinaryExpr',
@@ -139,7 +153,7 @@ export default class Parser {
                 kind: 'BinaryExpr',
                 left,
                 right,
-                operator
+                operator: '^'
             } as BinaryExpr
         }
         return left

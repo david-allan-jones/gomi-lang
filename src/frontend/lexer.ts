@@ -76,7 +76,10 @@ export function isInt(source: string): boolean {
 }
 
 export function identifierAllowed(source: string): boolean {
-	return identifierBeginAllowed(source) || isInt(source) || source === '_'
+	return identifierBeginAllowed(source)
+		|| isInt(source)
+		|| source === '_'
+		|| source === '＿'
 }
 
 function skippable(source: string): boolean {

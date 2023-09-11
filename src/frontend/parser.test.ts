@@ -81,26 +81,32 @@ describe('parser', () => {
     })
 
     it('parses modulo operator expression', () => {
-        const program = parser.produceAST('n % 2')
-        expect(program.body.length).toBe(1)
-        const token = program.body[0] as BinaryExpr
-        expect(token.operator).toBe('%')
-        expect(token.left.kind).toBe('Identifier')
-        expect(token.right.kind).toBe('NumericLiteral')
+        const expressions = ['n%2', 'n % 2', 'あ　％　２', 'あ％２']
+        for (let i = 0; i < expressions.length; i++) {
+            const program = parser.produceAST(expressions[i])
+            expect(program.body.length).toBe(1)
+            const token = program.body[0] as BinaryExpr
+            expect(token.operator).toBe('%')
+            expect(token.left.kind).toBe('Identifier')
+            expect(token.right.kind).toBe('NumericLiteral')
+        }
     })
 
     it('parses exponential operator expressions', () => {
-        const program = parser.produceAST('n ^ m ^ k')
-        expect(program.body.length).toBe(1)
-        const token = program.body[0] as BinaryExpr
-        expect(token.operator).toBe('^')
-        expect(token.left.kind).toBe('Identifier')
-        expect(token.right.kind).toBe('BinaryExpr')
-        const { kind, left, right, operator } = token.right as BinaryExpr
-        expect(kind).toBe('BinaryExpr')
-        expect(left.kind).toBe('Identifier')
-        expect(right.kind).toBe('Identifier')
-        expect(operator === '^').toBeTrue()
+        const expressions = ['n^m^k', 'n ^ m ^ k', 'あ　＾　い＾　う', 'あ＾い＾う']
+        for (let i = 0; i < expressions.length; i++) {
+            const program = parser.produceAST(expressions[i])
+            expect(program.body.length).toBe(1)
+            const token = program.body[0] as BinaryExpr
+            expect(token.operator).toBe('^')
+            expect(token.left.kind).toBe('Identifier')
+            expect(token.right.kind).toBe('BinaryExpr')
+            const { kind, left, right, operator } = token.right as BinaryExpr
+            expect(kind).toBe('BinaryExpr')
+            expect(left.kind).toBe('Identifier')
+            expect(right.kind).toBe('Identifier')
+            expect(operator === '^').toBeTrue()
+        }
     })
 
     it('parses parenthesized expressions', () => {
