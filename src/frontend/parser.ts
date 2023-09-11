@@ -15,7 +15,7 @@ export default class Parser {
         }
 
         while (this.tokens[this.i].type !== TokenType.EOF) {
-            program.body.push(this.parseStmt())
+            program.body.push(this.parse_stmt())
         }
 
         return program
@@ -39,17 +39,17 @@ export default class Parser {
         return prev
     }
 
-    private parseStmt(): Stmt {
+    private parse_stmt(): Stmt {
         switch (this.tokens[this.i].type) {
             case TokenType.Let:
-                return this.parseVarDeclaration()
+                return this.parse_var_declaration()
             default:
-                return this.parseExpr()
+                return this.parse_expr()
         }
     }
 
-    private parseVarDeclaration(): VarDeclaration {
-        // Consume the keyword
+    private parse_var_declaration(): VarDeclaration {
+        // Consume the let keyword
         this.consumeToken()
 
         const symbol = this.consumeTokenValidate(
@@ -63,19 +63,19 @@ export default class Parser {
         return {
             kind: 'VarDeclaration',
             symbol,
-            value: this.parseExpr()
+            value: this.parse_expr()
         }
     }
 
-    private parseExpr(): Expr {
-        return this.parseVarAssignment()
+    private parse_expr(): Expr {
+        return this.parse_var_assignment()
     }
 
-    private parseVarAssignment(): Expr {
-        const left = this.parseComparisonExpr()
+    private parse_var_assignment(): Expr {
+        const left = this.parse_comparison_expr()
         if (this.tokens[this.i].type === TokenType.Equals) {
             this.consumeToken()
-            const value = this.parseVarAssignment()
+            const value = this.parse_var_assignment()
             return {
                 kind: 'VarAssignment',
                 assignee: left,
@@ -85,13 +85,13 @@ export default class Parser {
         return left
     }
 
-    private parseComparisonExpr(): Expr {
-        let left = this.parseAdditiveExpr()
+    private parse_comparison_expr(): Expr {
+        let left = this.parse_additive_expr()
         while (['<', '>', '＜', '＞'].includes(this.tokens[this.i].value)) {
             let operator = this.consumeToken().value as BinaryOperator
             operator = (operator === '>' || operator === '＞') ? '>' : '<'
 
-            const right = this.parseAdditiveExpr()
+            const right = this.parse_additive_expr()
             left = {
                 kind: 'BinaryExpr',
                 left,
@@ -102,13 +102,13 @@ export default class Parser {
         return left
     }
 
-    private parseAdditiveExpr(): Expr {
-        let left = this.parseMultiplicativeExpr()
+    private parse_additive_expr(): Expr {
+        let left = this.parse_multiplication_expr()
         while (['+', '-', '＋'].includes(this.tokens[this.i].value)) {
             let operator = this.consumeToken().value as BinaryOperator
             operator = (operator === '-') ? '-' : '+'
 
-            const right = this.parseMultiplicativeExpr()
+            const right = this.parse_multiplication_expr()
             left = {
                 kind: 'BinaryExpr',
                 left,
@@ -119,8 +119,8 @@ export default class Parser {
         return left
     }
 
-    private parseMultiplicativeExpr(): Expr {
-        let left = this.parseExponentialExpr()
+    private parse_multiplication_expr(): Expr {
+        let left = this.parse_exponential_expr()
         while (['*', '/', '%', '＊', '／', '％'].includes(this.tokens[this.i].value)) {
             let operator = this.consumeToken().value as BinaryOperator
             if (operator === '*' || operator === '＊') {
@@ -133,7 +133,7 @@ export default class Parser {
                 operator = '%'
             }
 
-            const right = this.parseExponentialExpr()
+            const right = this.parse_exponential_expr()
             left = {
                 kind: 'BinaryExpr',
                 left,
@@ -144,11 +144,11 @@ export default class Parser {
         return left
     }
 
-    private parseExponentialExpr(): Expr {
-        let left = this.parsePrimaryExpr()
+    private parse_exponential_expr(): Expr {
+        let left = this.parse_primary_expr()
         while (['^', '＾'].includes(this.tokens[this.i].value)) {
             const operator = this.consumeToken().value
-            const right = this.parseExponentialExpr()
+            const right = this.parse_exponential_expr()
             left = {
                 kind: 'BinaryExpr',
                 left,
@@ -159,7 +159,7 @@ export default class Parser {
         return left
     }
 
-    private parsePrimaryExpr(): Expr {
+    private parse_primary_expr(): Expr {
         const token = this.consumeToken()
         switch (token.type) {
             case TokenType.Identifier:
@@ -183,7 +183,7 @@ export default class Parser {
                     value: [TokenVal.EN_TRUE, TokenVal.JP_TRUE].includes(token.value as TokenVal) ? true : false
                 } as BooleanLiteral
             case TokenType.OpenParen:
-                const expr =  this.parseExpr()
+                const expr =  this.parse_expr()
                 this.consumeTokenValidate(TokenType.CloseParen)
                 return expr
             default:
