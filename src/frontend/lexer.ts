@@ -7,6 +7,7 @@ export enum TokenVal {
 	HW_OPEN_BRACE = '{', 	FW_OPEN_BRACE = '｛',
 	HW_CLOSE_BRACE = '}', 	FW_CLOSE_BRACE = '｝',
 	HW_COLON = ':', 		FW_COLON = '：',
+	HW_COMMA = ',', 		FW_COMMA = '、',
 	EN_LET = 'let', 		JP_LET = '宣言',
 	EN_NULL = 'null', 		JP_NULL = '無',
 	EN_TRUE = 'true', 		JP_TRUE = '本当',
@@ -28,6 +29,7 @@ export enum TokenType {
 	OpenBrace = 'OPEN_BRACE',
 	CloseBrace = 'CLOSE_BRACE',
 	Colon = 'COLON',
+	Comma = 'COMMA',
 	Let = 'LET',
 	EOF = 'EOF'
 }
@@ -151,7 +153,11 @@ export function tokenize(source: string): Token[] {
 			i++
 			continue
 		}
-
+		if (src[i] === TokenVal.HW_COMMA || src[i] === TokenVal.FW_COMMA) {
+			tokens.push({ type: TokenType.Comma, value: src[i] })
+			i++
+			continue
+		}
 		// We need to lie to the TS compiler here just to check
 		if (binaryOperators.includes(src[i] as BinaryOperator)) {
 			tokens.push({ type: TokenType.BinaryOperator, value: src[i] })

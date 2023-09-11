@@ -76,6 +76,9 @@ describe('tokenize', () => {
     it('colon', () => {
         testSources([':', '：'], TokenType.Colon)
     })
+    it('comma', () => {
+        testSources([',', '、'], TokenType.Comma)
+    })
     it('number', () => {
         testSources(['1', '１', '10', '１０'], TokenType.Number)
     })
