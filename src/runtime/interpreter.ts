@@ -1,5 +1,5 @@
 import { RuntimeVal } from './types'
-import { BinaryExpr, Identifier, NumericLiteral, Program, Stmt, VarAssignment, VarDeclaration } from '../frontend/ast'
+import { BinaryExpr, BooleanLiteral, Identifier, NumericLiteral, Program, Stmt, VarAssignment, VarDeclaration } from '../frontend/ast'
 import Scope from './scope'
 import { evalBinaryExpr, evalIdentifier, evalAssignmentExpr } from './eval/expressions'
 import { evalProgram, evalVarDeclaration } from './eval/statements'
@@ -24,6 +24,11 @@ export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
                 type: 'number',
                 value: (ast as NumericLiteral).value
             } as RuntimeVal<number>
+        case "BooleanLiteral":
+            return {
+                type: 'boolean',
+                value: (ast as BooleanLiteral).value
+            } as RuntimeVal<boolean>
         case "NullLiteral":
             return {
                 value: null,
