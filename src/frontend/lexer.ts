@@ -2,8 +2,10 @@ export enum TokenVal {
 	HW_EQUALS = '=', FW_EQUALS = '＝',
 	HW_OPEN_PAREN = '(', FW_OPEN_PAREN = '（',
 	HW_CLOSE_PAREN = ')', FW_CLOSE_PAREN = '）',
-	HW_OPEN_BRACKET = '{', FW_OPEN_BRACKET = '｛',
-	HW_CLOSE_BRACKET = '}', FW_CLOSE_BRACKET = '｝',
+	HW_OPEN_BRACKET = '[', FW_OPEN_BRACKET = '【',
+	HW_CLOSE_BRACKET = ']', FW_CLOSE_BRACKET = '】',
+	HW_OPEN_BRACE = '{', FW_OPEN_BRACE = '｛',
+	HW_CLOSE_BRACE = '}', FW_CLOSE_BRACE = '｝',
 	EN_LET = 'let', JP_LET = '宣言',
 	EN_NULL = 'null', JP_NULL = '無',
 	EN_TRUE = 'true', JP_TRUE = '本当',
@@ -20,6 +22,10 @@ export enum TokenType {
 	OpenParen = 'OPEN_PAREN',
 	CloseParen = 'CLOSE_PAREN',
 	BinaryOperator = 'BINARY_OP',
+	OpenBracket = 'OPEN_BRACKET',
+	CloseBracket = 'CLOSE_BRACKET',
+	OpenBrace = 'OPEN_BRACE',
+	CloseBrace = 'CLOSE_BRACE',
 	Let = 'LET',
 	EOF = 'EOF'
 }
@@ -118,6 +124,27 @@ export function tokenize(source: string): Token[] {
 			i++
 			continue
 		}
+		if (src[i] === TokenVal.HW_OPEN_BRACKET || src[i] === TokenVal.FW_OPEN_BRACKET) {
+			tokens.push({ type: TokenType.OpenBracket, value: src[i] })
+			i++
+			continue
+		}
+		if (src[i] === TokenVal.HW_CLOSE_BRACKET || src[i] === TokenVal.FW_CLOSE_BRACKET) {
+			tokens.push({ type: TokenType.CloseBracket, value: src[i] })
+			i++
+			continue
+		}
+		if (src[i] === TokenVal.HW_OPEN_BRACE || src[i] === TokenVal.FW_OPEN_BRACE) {
+			tokens.push({ type: TokenType.OpenBrace, value: src[i] })
+			i++
+			continue
+		}
+		if (src[i] === TokenVal.HW_CLOSE_BRACE || src[i] === TokenVal.FW_CLOSE_BRACE) {
+			tokens.push({ type: TokenType.CloseBrace, value: src[i] })
+			i++
+			continue
+		}
+
 		// We need to lie to the TS compiler here just to check
 		if (binaryOperators.includes(src[i] as BinaryOperator)) {
 			tokens.push({ type: TokenType.BinaryOperator, value: src[i] })
