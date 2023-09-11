@@ -7,11 +7,13 @@ export type NodeType =
     | "VarAssignment"
 
     // Expressions
+    | "BinaryExpr"
+    | "Identifier"
     | "NumericLiteral"
     | "NullLiteral"
     | "BooleanLiteral"
-    | "Identifier"
-    | "BinaryExpr"
+    | "ObjectLiteral"
+    | "Property"
 
 export interface Stmt {
     kind: NodeType
@@ -25,6 +27,12 @@ export interface Program extends Stmt {
 export interface VarDeclaration extends Stmt {
     kind: "VarDeclaration"
     symbol: string
+    value: Expr
+}
+
+export interface VarAssignment extends Expr {
+    kind: "VarAssignment"
+    assignee: Expr
     value: Expr
 }
 
@@ -57,8 +65,13 @@ export interface BooleanLiteral extends Expr {
     value: boolean
 }
 
-export interface VarAssignment extends Expr {
-    kind: "VarAssignment"
-    assignee: Expr
-    value: Expr
+export interface ObjectLiteral extends Expr {
+    kind: "ObjectLiteral"
+    props: Map<string, Property>
+}
+
+export interface Property extends Expr {
+    kind: "Property"
+    key: string
+    value?: Expr
 }
