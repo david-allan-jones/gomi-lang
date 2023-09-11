@@ -36,4 +36,9 @@ describe('evalNumericBinaryExpr', () => {
         const result = evalNumericBinaryExpr({ type: 'number', value: 10 }, { type: 'number', value: 5 }, '>');
         expect(result).toEqual({ type: 'boolean', value: true });
     });
+
+    it('should perform less than comparison correctly', () => {
+        const result = evalNumericBinaryExpr({ type: 'number', value: 10 }, { type: 'number', value: 5 }, '<');
+        expect(result).toEqual({ type: 'boolean', value: false });
+    });
 });
