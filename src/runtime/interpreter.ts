@@ -74,9 +74,9 @@ export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
             } as RuntimeVal<number>
         case "NullLiteral":
             return {
-                value: 'null',
+                value: null,
                 type: 'null'
-            } as RuntimeVal<'null'>
+            } as RuntimeVal<null>
         default:
             console.error("This AST Node has not yet been setup for interpretation:", ast)
             process.exit(1)
