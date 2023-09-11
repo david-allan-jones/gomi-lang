@@ -45,16 +45,25 @@ export interface Token {
 	type: TokenType
 }
 
-export type BinaryOperator = '+' | '-' | '*' | '/' | '%' | '^' | '>' | '<'
+export type BinaryOperator = 
+	| '+' | '＋'
+	| '-' | 'ー'
+	| '*' | '＊'
+	| '/' | '／'
+	| '%' | '％'
+	| '^' | '＾'
+	| '>' | '＞'
+	| '<' | '＜'
+
 const binaryOperators: BinaryOperator[] = [
-	'+',
-	'-',
-	'*',
-	'/',
-	'%',
-	'^',
-	'>',
-	'<'
+	'+', '＋',
+	'-', 'ー',
+	'*', '＊',
+	'/', '／',
+	'%', '％',
+	'^', '＾',
+	'>', '＞',
+	'<', '＜',
 ]
 
 export function identifierBeginAllowed(source: string): boolean {

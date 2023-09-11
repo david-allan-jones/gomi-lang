@@ -19,24 +19,34 @@ describe('parser', () => {
     it('throws error on unrecognized tokens', () => {
         try {
             const program = parser.produceAST('%')
-            fail('Produced an AST with invalid tokens')
+            fail(`Produced an AST with invalid tokens ${JSON.stringify(program)}`)
         } catch (e) { }
     })
 
     it('parses number literal', () => {
-        const program = parser.produceAST('777')
-        expect(program.body.length).toBe(1)
-        const token = program.body[0] as NumericLiteral
-        expect(token.kind).toBe("NumericLiteral")
-        expect(token.value).toBe(777)
+        const halfWidth = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+        const fullWidth = ['１', '２', '３', '４', '５', '６', '７', '８', '９', '１０']
+        for (let i = 0; i < fullWidth.length; i++) {
+            let program = parser.produceAST(halfWidth[i])
+            let token = program.body[0] as NumericLiteral
+            expect(token.kind).toBe('NumericLiteral')
+            expect(token.value).toBe(i + 1)
+
+            program = parser.produceAST(fullWidth[i])
+            token = program.body[0] as NumericLiteral
+            expect(token.kind).toBe('NumericLiteral')
+            expect(token.value).toBe(i + 1)
+        }
     })
 
     it('parses identifier', () => {
-        const program = parser.produceAST('id')
-        expect(program.body.length).toBe(1)
-        const token = program.body[0] as Identifier
-        expect(token.kind).toBe("Identifier")
-        expect(token.symbol).toBe('id')
+        const identifiers = ['a', 'a0', 'a_b', 'あ', 'あ_１', 'あ０', 'あa', 'aあ']
+        for (let i = 0; i < identifiers.length; i++) {
+            const program = parser.produceAST(identifiers[i])
+            const token = program.body[0] as Identifier
+            expect(token.kind).toBe('Identifier')
+            expect(token.symbol).toBe(identifiers[i])
+        }
     })
 
     it('parses binary additive expression', () => {
@@ -148,26 +158,6 @@ describe('parser', () => {
             expect(token.kind).toBe('VarDeclaration')
             expect(token.symbol).toBe(symbols[i])
             expect(token.value.kind).toBe('BinaryExpr')
-        }
-    })
-
-    it('parses full-width identifier properly', () => {
-        const identifiers = ['あ', 'あ１', 'あ０', 'あa', 'aあ']
-        for (let i = 0; i < identifiers.length; i++) {
-            const program = parser.produceAST(identifiers[i])
-            const token = program.body[0] as Identifier
-            expect(token.kind).toBe('Identifier')
-            expect(token.symbol).toBe(identifiers[i])
-        }
-    })
-
-    it('parses full-width numbers properly', () => {
-        const numbers = ['１', '２', '３', '４', '５', '６', '７', '８', '９', '１０']
-        for (let i = 0; i < numbers.length; i++) {
-            const program = parser.produceAST(numbers[i])
-            const token = program.body[0] as NumericLiteral
-            expect(token.kind).toBe('NumericLiteral')
-            expect(token.value).toBe(i + 1)
         }
     })
 })

@@ -87,7 +87,7 @@ export default class Parser {
 
     private parseComparisonExpr(): Expr {
         let left = this.parseAdditiveExpr()
-        while (this.tokens[this.i].value === '<' || this.tokens[this.i].value === '>') {
+        while (['<', '>', '＜', '＞'].includes(this.tokens[this.i].value)) {
             const operator = this.consumeToken().value
             const right = this.parseAdditiveExpr()
             left = {
@@ -102,7 +102,7 @@ export default class Parser {
 
     private parseAdditiveExpr(): Expr {
         let left = this.parseMultiplicativeExpr()
-        while (this.tokens[this.i].value === '+' || this.tokens[this.i].value === '-') {
+        while (['+', '-', '＋', 'ー'].includes(this.tokens[this.i].value)) {
             const operator = this.consumeToken().value
             const right = this.parseMultiplicativeExpr()
             left = {
@@ -117,7 +117,7 @@ export default class Parser {
 
     private parseMultiplicativeExpr(): Expr {
         let left = this.parseExponentialExpr()
-        while (this.tokens[this.i].value === '*' || this.tokens[this.i].value === '/' || this.tokens[this.i].value === '%') {
+        while (['*', '/', '%', '＊', '／', '％'].includes(this.tokens[this.i].value)) {
             const operator = this.consumeToken().value
             const right = this.parseExponentialExpr()
             left = {
@@ -132,7 +132,7 @@ export default class Parser {
 
     private parseExponentialExpr(): Expr {
         let left = this.parsePrimaryExpr()
-        while (this.tokens[this.i].value === '^') {
+        while (['^', '＾'].includes(this.tokens[this.i].value)) {
             const operator = this.consumeToken().value
             const right = this.parseExponentialExpr()
             left = {
