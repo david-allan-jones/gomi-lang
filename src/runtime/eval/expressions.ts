@@ -4,12 +4,12 @@ import { evaluate } from "../interpreter"
 import Scope from "../scope"
 import { RuntimeVal } from "../types"
 
-export function evalIdentifier(identifier: Identifier, scope: Scope): RuntimeVal<unknown> {
+export function eval_identifier(identifier: Identifier, scope: Scope): RuntimeVal<unknown> {
     const val = scope.lookupVar(identifier.symbol)
     return val
 }
 
-export function evalNumericBinaryExpr(
+export function eval_numeric_binary_expr(
     left: RuntimeVal<number>,
     right: RuntimeVal<number>,
     op: BinaryOperator
@@ -22,10 +22,14 @@ export function evalNumericBinaryExpr(
         case '*':
             return { type: 'number', value: left.value * right.value }
         case '/':
-            // TODO: Decide how to handle divide 0
+            if (right.value === 0) {
+                throw 'You can not divide by zero'
+            }
             return { type: 'number', value: left.value / right.value }
         case '%':
-            // TODO: Decide how to handle mod 0
+            if (right.value === 0) {
+                throw 'You can not modulo 0'
+            }
             return { type: 'number', value: left.value % right.value }
         case '^':
             return { type: 'number', value: Math.pow(left.value, right.value) }
@@ -39,7 +43,7 @@ export function evalNumericBinaryExpr(
     }
 }
 
-export function evalBooleanBinaryExpr(
+export function eval_boolean_binary_expr(
     left: RuntimeVal<boolean>,
     right: RuntimeVal<boolean>,
     op: string
@@ -51,7 +55,7 @@ export function evalBooleanBinaryExpr(
     }
 }
 
-export function evalBinaryExpr(expr: BinaryExpr, scope: Scope): RuntimeVal<unknown> {
+export function eval_binary_expr(expr: BinaryExpr, scope: Scope): RuntimeVal<unknown> {
     const left = evaluate(expr.left, scope)
     const right = evaluate(expr.right, scope)
     if (left.type !== right.type) {
@@ -61,13 +65,13 @@ export function evalBinaryExpr(expr: BinaryExpr, scope: Scope): RuntimeVal<unkno
     // We know they are the same type
     switch (left.type) {
         case 'number':
-            return evalNumericBinaryExpr(
+            return eval_numeric_binary_expr(
                 left as RuntimeVal<number>,
                 right as RuntimeVal<number>,
                 expr.operator
             )
         case 'boolean':
-            return evalBooleanBinaryExpr(
+            return eval_boolean_binary_expr(
                 left as RuntimeVal<boolean>,
                 right as RuntimeVal<boolean>,
                 expr.operator
@@ -80,7 +84,7 @@ export function evalBinaryExpr(expr: BinaryExpr, scope: Scope): RuntimeVal<unkno
     }
 }
 
-export function evalAssignmentExpr(assignment: VarAssignment, scope: Scope): RuntimeVal<unknown> {
+export function eval_assignment_expr(assignment: VarAssignment, scope: Scope): RuntimeVal<unknown> {
     if (assignment.assignee.kind !== 'Identifier') {
         throw `Invalid LHS inside assingment expr ${JSON.stringify(assignment.assignee)}`
     }

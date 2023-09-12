@@ -93,7 +93,6 @@ export default class Parser {
             }
         }
 
-        console.log(this.at())
         if (this.not_eof()) {
             this.consumeTokenValidate(TokenType.Semicolon, 'Declaration error. Please end it with a semicolon.')
         }

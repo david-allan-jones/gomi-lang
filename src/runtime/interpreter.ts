@@ -1,24 +1,24 @@
 import { RuntimeVal } from './types'
 import { BinaryExpr, BooleanLiteral, Identifier, NumericLiteral, Program, Stmt, VarAssignment, VarDeclaration } from '../frontend/ast'
 import Scope from './scope'
-import { evalBinaryExpr, evalIdentifier, evalAssignmentExpr } from './eval/expressions'
-import { evalProgram, evalVarDeclaration } from './eval/statements'
+import { eval_binary_expr, eval_identifier, eval_assignment_expr } from './eval/expressions'
+import { eval_program, eval_var_declaration } from './eval/statements'
 
 export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
     switch (ast.kind) {
         // Statements
         case "Program":
-            return evalProgram(ast as Program, scope)
+            return eval_program(ast as Program, scope)
         case "VarDeclaration":
-            return evalVarDeclaration(ast as VarDeclaration, scope)
+            return eval_var_declaration(ast as VarDeclaration, scope)
         case "VarAssignment":
-            return evalAssignmentExpr(ast as VarAssignment, scope)
+            return eval_assignment_expr(ast as VarAssignment, scope)
 
         // Expressions
         case "Identifier":
-            return evalIdentifier(ast as Identifier, scope)
+            return eval_identifier(ast as Identifier, scope)
         case "BinaryExpr":
-            return evalBinaryExpr(ast as BinaryExpr, scope)
+            return eval_binary_expr(ast as BinaryExpr, scope)
         case "NumericLiteral":
             return {
                 type: 'number',
