@@ -14,15 +14,19 @@ export default class Parser {
             body: []
         }
 
-        while (this.tokens[this.i].type !== TokenType.EOF) {
+        while (this.at().type !== TokenType.EOF) {
             program.body.push(this.parse_stmt())
         }
 
         return program
     }
+
+    private at(): Token {
+        return this.tokens[this.i]
+    }
     
     private consumeToken(): Token {
-        const token = this.tokens[this.i]
+        const token = this.at()
         this.i = this.i + 1
         return token
     }
@@ -40,7 +44,7 @@ export default class Parser {
     }
 
     private parse_stmt(): Stmt {
-        switch (this.tokens[this.i].type) {
+        switch (this.at().type) {
             case TokenType.Let:
                 return this.parse_var_declaration()
             default:
@@ -73,7 +77,7 @@ export default class Parser {
 
     private parse_var_assignment(): Expr {
         const left = this.parse_comparison_expr()
-        if (this.tokens[this.i].type === TokenType.Equals) {
+        if (this.at().type === TokenType.Equals) {
             this.consumeToken()
             const value = this.parse_var_assignment()
             return {
@@ -87,7 +91,7 @@ export default class Parser {
 
     private parse_comparison_expr(): Expr {
         let left = this.parse_additive_expr()
-        while (['<', '>', '＜', '＞'].includes(this.tokens[this.i].value)) {
+        while (['<', '>', '＜', '＞'].includes(this.at().value)) {
             let operator = this.consumeToken().value as BinaryOperator
             operator = (operator === '>' || operator === '＞') ? '>' : '<'
 
@@ -104,7 +108,7 @@ export default class Parser {
 
     private parse_additive_expr(): Expr {
         let left = this.parse_multiplication_expr()
-        while (['+', '-', '＋'].includes(this.tokens[this.i].value)) {
+        while (['+', '-', '＋'].includes(this.at().value)) {
             let operator = this.consumeToken().value as BinaryOperator
             operator = (operator === '-') ? '-' : '+'
 
@@ -121,7 +125,7 @@ export default class Parser {
 
     private parse_multiplication_expr(): Expr {
         let left = this.parse_exponential_expr()
-        while (['*', '/', '%', '＊', '／', '％'].includes(this.tokens[this.i].value)) {
+        while (['*', '/', '%', '＊', '／', '％'].includes(this.at().value)) {
             let operator = this.consumeToken().value as BinaryOperator
             if (operator === '*' || operator === '＊') {
                 operator = '*'
@@ -146,7 +150,7 @@ export default class Parser {
 
     private parse_exponential_expr(): Expr {
         let left = this.parse_primary_expr()
-        while (['^', '＾'].includes(this.tokens[this.i].value)) {
+        while (['^', '＾'].includes(this.at().value)) {
             const operator = this.consumeToken().value
             const right = this.parse_exponential_expr()
             left = {
