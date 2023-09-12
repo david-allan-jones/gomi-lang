@@ -1,5 +1,4 @@
-import { BinaryExpr, Identifier, VarAssignment } from "../../frontend/ast"
-import { BinaryOperator } from "../../frontend/lexer"
+import { BinaryExpr, Identifier, NormalizedBinaryOperator, VarAssignment } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope"
 import { RuntimeVal } from "../types"
@@ -12,7 +11,7 @@ export function eval_identifier(identifier: Identifier, scope: Scope): RuntimeVa
 export function eval_numeric_binary_expr(
     left: RuntimeVal<number>,
     right: RuntimeVal<number>,
-    op: BinaryOperator
+    op: NormalizedBinaryOperator
 ): RuntimeVal<number | boolean> {
     switch (op) {
         case '+':
@@ -46,9 +45,13 @@ export function eval_numeric_binary_expr(
 export function eval_boolean_binary_expr(
     left: RuntimeVal<boolean>,
     right: RuntimeVal<boolean>,
-    op: string
+    op: NormalizedBinaryOperator
 ): RuntimeVal<boolean> {
-    switch (op) {
+    switch (op) { 
+        case '||':
+            return { type: 'boolean', value: left.value || right.value }
+        case '&&':
+            return { type: 'boolean', value: left.value && right.value }
         default:
             console.error(`Runtime Error: An unexpected boolean operator was received by the interpreter: '${op}'`)
             process.exit(1)

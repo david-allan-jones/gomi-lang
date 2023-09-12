@@ -1,5 +1,3 @@
-import { BinaryOperator } from "./lexer"
-
 export type NodeType =
     // Statements
     | "Program"
@@ -44,7 +42,7 @@ export interface BinaryExpr extends Expr {
     kind: "BinaryExpr"
     left: Expr
     right: Expr
-    operator: BinaryOperator
+    operator: NormalizedBinaryOperator
 }
 
 export interface Identifier extends Expr {
@@ -77,3 +75,17 @@ export interface Property extends Expr {
     key: string
     value?: Expr
 }
+
+
+// Helpers
+export type NormalizedBinaryOperator = 
+    | '||'
+    | '&&'
+    | '<'
+    | '>'
+    | '+'
+    | '-'
+    | '*'
+    | '/'
+    | '%'
+    | '^'

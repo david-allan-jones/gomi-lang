@@ -165,7 +165,7 @@ export default class Parser {
     private parse_comparison_expr(): Expr {
         let left = this.parse_additive_expr()
         while (['<', '>', '＜', '＞'].includes(this.at().value)) {
-            let operator = this.consumeToken().value as BinaryOperator
+            let operator = this.consumeToken().value
             operator = (operator === '>' || operator === '＞') ? '>' : '<'
 
             const right = this.parse_additive_expr()
@@ -182,7 +182,7 @@ export default class Parser {
     private parse_additive_expr(): Expr {
         let left = this.parse_multiplication_expr()
         while (['+', '-', '＋'].includes(this.at().value)) {
-            let operator = this.consumeToken().value as BinaryOperator
+            let operator = this.consumeToken().value
             operator = (operator === '-') ? '-' : '+'
 
             const right = this.parse_multiplication_expr()
@@ -199,7 +199,7 @@ export default class Parser {
     private parse_multiplication_expr(): Expr {
         let left = this.parse_exponential_expr()
         while (['*', '/', '%', '＊', '／', '％'].includes(this.at().value)) {
-            let operator = this.consumeToken().value as BinaryOperator
+            let operator = this.consumeToken().value
             if (operator === '*' || operator === '＊') {
                 operator = '*'
             }
