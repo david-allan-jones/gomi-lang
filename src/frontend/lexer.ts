@@ -9,6 +9,7 @@ export enum TokenVal {
 	HW_COLON = ':', 		FW_COLON = '：',
 	HW_SEMICOLON = ';', 	FW_SEMICOLON = '；',
 	HW_COMMA = ',', 		FW_COMMA = '、',
+	HW_QUESTION = '?',		FW_QUESTION = '？',
 	EN_LET = 'let', 		JP_LET = '宣言',
 	EN_NULL = 'nil', 		JP_NULL = '無',
 	EN_TRUE = 'true', 		JP_TRUE = '本当',
@@ -32,6 +33,7 @@ export enum TokenType {
 	Colon = 'COLON',
 	Semicolon = 'SEMICOLON',
 	Comma = 'COMMA',
+	Question = 'QUESTION',
 	Let = 'LET',
 	EOF = 'EOF'
 }
@@ -167,6 +169,11 @@ export function tokenize(source: string): Token[] {
 		}
 		if (src[i] === TokenVal.HW_COMMA || src[i] === TokenVal.FW_COMMA) {
 			tokens.push({ type: TokenType.Comma, value: src[i] })
+			i++
+			continue
+		}
+		if (src[i] === TokenVal.HW_QUESTION || src[i] === TokenVal.FW_QUESTION) {
+			tokens.push({ type: TokenType.Question, value: src[i] })
 			i++
 			continue
 		}

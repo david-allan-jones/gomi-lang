@@ -6,6 +6,7 @@ export type NodeType =
 
     // Expressions
     | "BinaryExpr"
+    | "TernaryExpr"
     | "Identifier"
     | "NumericLiteral"
     | "NullLiteral"
@@ -43,6 +44,13 @@ export interface BinaryExpr extends Expr {
     left: Expr
     right: Expr
     operator: NormalizedBinaryOperator
+}
+
+export interface TernaryExpr extends Expr {
+    kind: "TernaryExpr"
+    left: Expr
+    mid: Expr
+    right: Expr
 }
 
 export interface Identifier extends Expr {

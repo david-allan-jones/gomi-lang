@@ -111,6 +111,9 @@ describe('tokenize', () => {
     it('comma', () => {
         testSources([',', '、'], TokenType.Comma)
     })
+    it('question', () => {
+        testSources(['?', '？'], TokenType.Question)
+    })
     it('number', () => {
         testSources(['1', '１', '10', '１０'], TokenType.Number)
     })

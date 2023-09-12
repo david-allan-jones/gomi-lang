@@ -1,6 +1,6 @@
 import { normalizeInt } from '../utils/japanese'
-import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral, BooleanLiteral, VarDeclaration, VarAssignment } from './ast'
-import { tokenize, Token, TokenType, TokenVal, identifierAllowed, BinaryOperator } from './lexer'
+import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr } from './ast'
+import { tokenize, Token, TokenType, TokenVal } from './lexer'
 
 export default class Parser {
     private tokens: Token[] = []
@@ -35,12 +35,12 @@ export default class Parser {
         return token
     }
 
-    private consumeTokenValidate(type: TokenType, context?: string): Token {
+    private consumeTokenValidate(type: TokenType, hint?: string): Token {
         const prev = this.consumeToken()
         if (!prev || prev.type !== type) {
-            console.error(`Parser Error. Expected: ${type}. Received: ${prev.type}`)
-            if (context !== undefined) {
-                console.error(context)
+            console.error(`ゴミ Parser Error\nExpected: '${prev.value}'\nReceived: '${prev.value}'`)
+            if (hint !== undefined) {
+                console.error(`Hint: ${hint}`)
             }
             process.exit(1)
         }
@@ -119,7 +119,7 @@ export default class Parser {
     }
 
     private parse_assign_expr(): Expr {
-        const left = this.parse_logical_or_expr()
+        const left = this.parse_ternary_expr()
         if (this.at().type === TokenType.Equals) {
             this.consumeToken()
             const value = this.parse_assign_expr()
@@ -128,6 +128,23 @@ export default class Parser {
                 assignee: left,
                 value,
             } as VarAssignment
+        }
+        return left
+    }
+
+    private parse_ternary_expr(): Expr {
+        let left = this.parse_logical_or_expr()
+        if (this.atType(TokenType.Question)) {
+            this.consumeToken()
+            const mid = this.parse_ternary_expr()
+            this.consumeTokenValidate(TokenType.Colon, 'Invalid character detected in ternary expression')
+            const right = this.parse_ternary_expr()
+            return {
+                kind: 'TernaryExpr',
+                left,
+                mid,
+                right
+            } as TernaryExpr
         }
         return left
     }

@@ -1,4 +1,4 @@
-import { BinaryExpr, Identifier, NormalizedBinaryOperator, VarAssignment } from "../../frontend/ast"
+import { BinaryExpr, Identifier, NormalizedBinaryOperator, TernaryExpr, VarAssignment } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope"
 import { RuntimeVal } from "../types"
@@ -85,6 +85,16 @@ export function eval_binary_expr(expr: BinaryExpr, scope: Scope): RuntimeVal<unk
                 value: null
             } as RuntimeVal<null>
     }
+}
+
+export function eval_ternary_expr(ternary: TernaryExpr, scope: Scope): RuntimeVal<unknown> {
+    const left = evaluate(ternary.left, scope)
+    if (left.type !== 'boolean') {
+        throw 'First expression in a ternary must evaluate to a boolean value.'
+    }
+    return left.value
+        ? evaluate(ternary.mid, scope)
+        : evaluate(ternary.right, scope)
 }
 
 export function eval_assignment_expr(assignment: VarAssignment, scope: Scope): RuntimeVal<unknown> {

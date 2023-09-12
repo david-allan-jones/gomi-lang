@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import Parser from "./parser";
 import { fail } from "assert";
-import { BinaryExpr, BooleanLiteral, Identifier, NullLiteral, NumericLiteral, VarAssignment, VarDeclaration } from "./ast";
+import { BinaryExpr, BooleanLiteral, Identifier, NullLiteral, NumericLiteral, TernaryExpr, VarAssignment, VarDeclaration } from "./ast";
 
 describe('parser', () => {
     let parser: Parser
@@ -258,8 +258,8 @@ describe('parser', () => {
     it('boolean operator precedence is respected', () => {
         // order from least to most precedence to make a long right tree
         const ops = ['||', '&&', '<', '+', '*', '^']
-        let stmt = `operand ${ops.join(' operand ')} operand`
-        let program = parser.produceAST(stmt)
+        const stmt = `operand ${ops.join(' operand ')} operand`
+        const program = parser.produceAST(stmt)
         expect(program.body.length).toBe(1)
         let node = program.body[0] as BinaryExpr
         for (let i = 0; i < ops.length; i++) {
@@ -270,5 +270,60 @@ describe('parser', () => {
             expect(node.operator).toBe(ops[i])
             node = node.right as BinaryExpr
         }
+    })
+
+    it('ternary expression', () => {
+        const stmt = 'a ? b : c'
+        const program = parser.produceAST(stmt)
+        expect(program.body.length).toBe(1)
+        const node = program.body[0] as TernaryExpr
+        expect(node.kind).toBe('TernaryExpr')
+        expect(node.left.kind).toBe('Identifier')
+        expect(node.mid.kind).toBe('Identifier')
+        expect(node.right.kind).toBe('Identifier')
+    })
+
+    it('ternary expression has less precedence than comparison', () => {
+    const stmt = 'a<b ? a<b : a<b'
+        const program = parser.produceAST(stmt)
+        expect(program.body.length).toBe(1)
+        const node = program.body[0] as TernaryExpr
+        expect(node.kind).toBe('TernaryExpr')
+        expect(node.left.kind).toBe('BinaryExpr')
+        expect(node.mid.kind).toBe('BinaryExpr')
+        expect(node.right.kind).toBe('BinaryExpr')
+    })
+
+    it('ternary expression is left associative', () => {
+        const stmt = 'a ? b : c ? d : e'
+        const program = parser.produceAST(stmt)
+        expect(program.body.length).toBe(1)
+        const node = program.body[0] as TernaryExpr
+        expect(node.kind).toBe('TernaryExpr')
+        expect(node.left.kind).toBe('Identifier')
+        expect(node.mid.kind).toBe('Identifier')
+        expect(node.right.kind).toBe('TernaryExpr')
+    })
+
+    it('ternary expression in mid of ternary is evaluated correctly', () => {
+        const stmt = 'a ? b ? c : d : e'
+        const program = parser.produceAST(stmt)
+        expect(program.body.length).toBe(1)
+        const node = program.body[0] as TernaryExpr
+        expect(node.kind).toBe('TernaryExpr')
+        expect(node.left.kind).toBe('Identifier')
+        expect(node.mid.kind).toBe('TernaryExpr')
+        expect(node.right.kind).toBe('Identifier')
+    })
+
+    it('double nested ternary expressions', () => {
+        const stmt = 'a ? b ? c : d : e ? f : g'
+        const program = parser.produceAST(stmt)
+        expect(program.body.length).toBe(1)
+        const node = program.body[0] as TernaryExpr
+        expect(node.kind).toBe('TernaryExpr')
+        expect(node.left.kind).toBe('Identifier')
+        expect(node.mid.kind).toBe('TernaryExpr')
+        expect(node.right.kind).toBe('TernaryExpr')
     })
 })
