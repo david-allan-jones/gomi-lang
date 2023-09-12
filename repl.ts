@@ -17,6 +17,6 @@ function repl() {
 
         const program = parser.produceAST(input)
         const result = evaluate(program, scope)
-        console.log(result)
+        console.log(result.value)
     }
 }

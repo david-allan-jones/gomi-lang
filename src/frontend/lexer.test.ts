@@ -19,7 +19,6 @@ describe('identifierBeginAllowed', () => {
         const hiraganaStart = parseInt('0x3041', 16)
         const hiraganaEnd = parseInt('0x3096', 16)
         for (let i = hiraganaStart; i <= hiraganaEnd; i++) {
-            console.log(i)
             expect(identifierBeginAllowed(String.fromCharCode(i))).toBe(true)
         }
     })

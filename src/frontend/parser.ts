@@ -115,19 +115,49 @@ export default class Parser {
     }
 
     private parse_expr(): Expr {
-        return this.parse_var_assignment()
+        return this.parse_assign_expr()
     }
 
-    private parse_var_assignment(): Expr {
-        const left = this.parse_comparison_expr()
+    private parse_assign_expr(): Expr {
+        const left = this.parse_logical_or_expr()
         if (this.at().type === TokenType.Equals) {
             this.consumeToken()
-            const value = this.parse_var_assignment()
+            const value = this.parse_assign_expr()
             return {
                 kind: 'VarAssignment',
                 assignee: left,
                 value,
             } as VarAssignment
+        }
+        return left
+    }
+
+    private parse_logical_or_expr(): Expr {
+        let left = this.parse_logical_and_expr()
+        while (['||', '｜｜'].includes(this.at().value)) {
+            this.consumeToken().value
+            const right = this.parse_logical_and_expr()
+            left = {
+                kind: 'BinaryExpr',
+                left,
+                right,
+                operator: '||'
+            } as BinaryExpr
+        }
+        return left
+    }
+
+    private parse_logical_and_expr(): Expr {
+        let left = this.parse_comparison_expr()
+        while (['&&', '＆＆'].includes(this.at().value)) {
+            this.consumeToken().value
+            const right = this.parse_comparison_expr()
+            left = {
+                kind: 'BinaryExpr',
+                left,
+                right,
+                operator: '&&'
+            } as BinaryExpr
         }
         return left
     }

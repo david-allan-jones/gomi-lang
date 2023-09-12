@@ -180,7 +180,7 @@ describe('parser', () => {
         expect(program.body.length).toBe(2)
     })
 
-    it('parses variable assignemnt with literals', () => {
+    it('parses variable assignment with literals', () => {
         const stmts = ['a = 1', 'あ　＝　１']
         const symbols = ['a', 'あ']
         for (let i = 0; i < stmts.length; i++) {
@@ -191,6 +191,84 @@ describe('parser', () => {
             const assignee = node.assignee as Identifier
             expect(assignee.symbol).toBe(symbols[i])
             expect(node.value.kind).toBe('NumericLiteral')
+        }
+    })
+
+    it('assignment expression is right associative', () => {
+        const stmt = 'a = b = c'
+        const program = parser.produceAST(stmt)
+        expect(program.body.length).toBe(1)
+        const node = program.body[0] as VarAssignment
+        expect(node.kind).toBe('VarAssignment')
+        expect(node.value.kind).toBe('VarAssignment')
+    })
+
+    it('parses logical or operator expressions', () => {
+        const stmts = ['a||b', 'あ｜｜い']
+        for (let i = 0; i < stmts.length; i++) {
+            const program = parser.produceAST(stmts[i])
+            expect(program.body.length).toBe(1)
+            const node = program.body[0] as BinaryExpr
+            expect(node.kind).toBe('BinaryExpr')
+            expect(node.left.kind).toBe('Identifier')
+            expect(node.right.kind).toBe('Identifier')
+        } 
+    })
+
+    it('parses logical and operator expressions', () => {
+        const stmts = ['a&&b', 'あ＆＆い']
+        for (let i = 0; i < stmts.length; i++) {
+            const program = parser.produceAST(stmts[i])
+            expect(program.body.length).toBe(1)
+            const node = program.body[0] as BinaryExpr
+            expect(node.kind).toBe('BinaryExpr')
+            expect(node.left.kind).toBe('Identifier')
+            expect(node.right.kind).toBe('Identifier')
+        } 
+    })
+
+    it('left associative operators', () => {
+        const ops = ['||', '&&', '<', '+', '-', '*', '/', '%']
+        for (let i = 0; i < ops.length; i++) {
+            const stmt = `a ${ops[i]} a ${ops[i]} a`
+            const program = parser.produceAST(stmt)
+            expect(program.body.length).toBe(1)
+            const node = program.body[0] as BinaryExpr
+            expect(node.kind).toBe('BinaryExpr')
+            if (node.left.kind !== 'BinaryExpr') {
+                fail(`Failed left associative check on: ${ops[i]}`)
+            }
+        } 
+    })
+
+    it('right associative operators', () => {
+        const ops = ['^']
+        for (let i = 0; i < ops.length; i++) {
+            const stmt = `a ${ops[i]} a ${ops[i]} a`
+            const program = parser.produceAST(stmt)
+            expect(program.body.length).toBe(1)
+            const node = program.body[0] as BinaryExpr
+            expect(node.kind).toBe('BinaryExpr')
+            if (node.right.kind !== 'BinaryExpr') {
+                fail(`Failed left associative check on: ${ops[i]}`)
+            }
+        } 
+    })
+
+    it('boolean operator precedence is respected', () => {
+        // order from least to most precedence to make a long right tree
+        const ops = ['||', '&&', '<', '+', '*', '^']
+        let stmt = `operand ${ops.join(' operand ')} operand`
+        let program = parser.produceAST(stmt)
+        expect(program.body.length).toBe(1)
+        let node = program.body[0] as BinaryExpr
+        for (let i = 0; i < ops.length; i++) {
+            expect(node.kind).toBe('BinaryExpr')
+            if (node.left.kind !== 'Identifier') {
+                fail(`Precedence check failed at operand: ${ops[i]}`)
+            }
+            expect(node.operator).toBe(ops[i])
+            node = node.right as BinaryExpr
         }
     })
 })
