@@ -119,7 +119,7 @@ describe('parser', () => {
     })
 
     it('parses null literals', () => {
-        const literals = ['null', '無']
+        const literals = ['nil', '無']
         for (let i = 0; i < literals.length; i++) {
             const { body } = parser.produceAST(literals[i])
             expect(body.length).toBe(1)

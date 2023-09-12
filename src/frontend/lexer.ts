@@ -10,7 +10,7 @@ export enum TokenVal {
 	HW_SEMICOLON = ';', 	FW_SEMICOLON = '；',
 	HW_COMMA = ',', 		FW_COMMA = '、',
 	EN_LET = 'let', 		JP_LET = '宣言',
-	EN_NULL = 'null', 		JP_NULL = '無',
+	EN_NULL = 'nil', 		JP_NULL = '無',
 	EN_TRUE = 'true', 		JP_TRUE = '本当',
 	EN_FALSE = 'false', 	JP_FALSE = '嘘',
 	EOF = 'EOF'

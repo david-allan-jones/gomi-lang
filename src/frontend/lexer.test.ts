@@ -115,7 +115,7 @@ describe('tokenize', () => {
         testSources(['1', '１', '10', '１０'], TokenType.Number)
     })
     it('null', () => {
-        testSources(['null', '無'], TokenType.Null)
+        testSources(['nil', '無'], TokenType.Null)
     })
     it('true', () => {
         testSources(['true', '本当'], TokenType.Boolean)
