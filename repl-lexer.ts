@@ -10,7 +10,11 @@ function repl() {
             process.exit(0)
         }
 
-        const result = tokenize(input)
-        console.log(result)
+        try {
+            const tokens = tokenize(input)
+            console.log(tokens)
+        } catch(e) {
+            console.error(e)
+        }
     }
 }

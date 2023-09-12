@@ -15,8 +15,12 @@ function repl() {
             process.exit(0)
         }
 
-        const program = parser.produceAST(input)
-        const result = evaluate(program, scope)
-        console.log(result.value)
+        try {
+            const program = parser.produceAST(input)
+            const result = evaluate(program, scope)
+            console.log(result.value)
+        } catch(e) {
+            console.error(e)
+        }
     }
 }

@@ -11,7 +11,11 @@ function repl() {
             process.exit(0)
         }
 
-        const program = parser.produceAST(input)
-        console.log(program)
+        try {
+            const program = parser.produceAST(input)
+            console.log(program)
+        } catch(e) {
+            console.error(e)
+        }
     }
 }
