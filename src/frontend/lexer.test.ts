@@ -43,10 +43,18 @@ describe('isInteger', () => {
 
 describe('tokenize', () => {
     const testSources = (sources: string[], type: TokenType): void => {
+        const errors = []
         for (let i = 0; i < sources.length; i++) {
             const tokens = tokenize(sources[i])
-            expect(tokens[0].value).toBe(sources[i])
-            expect(tokens[0].type).toBe(type)
+            if (tokens[0].value !== sources[i]) {
+                errors.push({ received: tokens[0].value, expected: sources[i]})
+            }
+            if (tokens[0].type !== type) {
+                errors.push({ received: tokens[0].type, expected: type })
+            }
+        }
+        if (errors.length) {
+            fail(`Failures: ${JSON.stringify(errors)}`)
         }
     }
 
