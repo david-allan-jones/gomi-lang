@@ -9,15 +9,17 @@ export default class Parser {
     public produceAST(source: string): Program {
         this.tokens = tokenize(source)
         this.i = 0
+        return this.parse_program()
+    }
+
+    private parse_program(): Program {
         const program: Program = {
             kind: "Program",
             body: []
         }
-
-        while (this.at().type !== TokenType.EOF) {
+        while (this.not_eof()) {
             program.body.push(this.parse_stmt())
         }
-
         return program
     }
 
