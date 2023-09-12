@@ -26,8 +26,10 @@ export interface Program extends Stmt {
 
 export interface VarDeclaration extends Stmt {
     kind: "VarDeclaration"
-    symbol: string
-    value: Expr
+    declarations: {
+        identifier: string,
+        value: Expr
+    }[]
 }
 
 export interface VarAssignment extends Expr {

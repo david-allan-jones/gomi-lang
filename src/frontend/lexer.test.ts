@@ -84,6 +84,9 @@ describe('tokenize', () => {
     it('colon', () => {
         testSources([':', '：'], TokenType.Colon)
     })
+    it('semicolon', () => {
+        testSources([';', '；'], TokenType.Semicolon)
+    })
     it('comma', () => {
         testSources([',', '、'], TokenType.Comma)
     })

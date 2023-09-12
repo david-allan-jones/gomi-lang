@@ -7,6 +7,7 @@ export enum TokenVal {
 	HW_OPEN_BRACE = '{', 	FW_OPEN_BRACE = '｛',
 	HW_CLOSE_BRACE = '}', 	FW_CLOSE_BRACE = '｝',
 	HW_COLON = ':', 		FW_COLON = '：',
+	HW_SEMICOLON = ';', 	FW_SEMICOLON = '；',
 	HW_COMMA = ',', 		FW_COMMA = '、',
 	EN_LET = 'let', 		JP_LET = '宣言',
 	EN_NULL = 'null', 		JP_NULL = '無',
@@ -29,6 +30,7 @@ export enum TokenType {
 	OpenBrace = 'OPEN_BRACE',
 	CloseBrace = 'CLOSE_BRACE',
 	Colon = 'COLON',
+	Semicolon = 'SEMICOLON',
 	Comma = 'COMMA',
 	Let = 'LET',
 	EOF = 'EOF'
@@ -150,6 +152,11 @@ export function tokenize(source: string): Token[] {
 		}
 		if (src[i] === TokenVal.HW_COLON || src[i] === TokenVal.FW_COLON) {
 			tokens.push({ type: TokenType.Colon, value: src[i] })
+			i++
+			continue
+		}
+		if (src[i] === TokenVal.HW_SEMICOLON || src[i] === TokenVal.FW_SEMICOLON) {
+			tokens.push({ type: TokenType.Semicolon, value: src[i] })
 			i++
 			continue
 		}

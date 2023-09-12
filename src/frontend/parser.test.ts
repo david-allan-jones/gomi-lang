@@ -149,9 +149,35 @@ describe('parser', () => {
             expect(program.body.length).toBe(1)
             const node = program.body[0] as VarDeclaration
             expect(node.kind).toBe('VarDeclaration')
-            expect(node.symbol).toBe(symbols[i])
-            expect(node.value.kind).toBe('NumericLiteral')
+            expect(node.declarations[0].identifier).toBe(symbols[i])
+            expect(node.declarations[0].value.kind).toBe('NumericLiteral')
         }
+    })
+
+    it('parses variable declaration with multiple assignments', () => {
+        const stmt = 'let a, b = 1, 2'
+        const program = parser.produceAST(stmt)
+        expect(program.body.length).toBe(1)
+
+        const node = program.body[0] as VarDeclaration
+        expect(node.kind).toBe('VarDeclaration')
+        const [a, b] = node.declarations
+
+        expect(a.identifier).toBe('a')
+        const aExpr = node.declarations[0].value as NumericLiteral
+        expect(aExpr.kind).toBe('NumericLiteral')
+        expect(aExpr.value).toBe(1)
+
+        expect(b.identifier).toBe('b')
+        const bExpr = b.value as NumericLiteral
+        expect(bExpr.kind).toBe('NumericLiteral')
+        expect(bExpr.value).toBe(2)
+    })
+
+    it('can handle multiple assignments together', () => {
+        const stmt = 'let a,b=1,2; let c=3'
+        const program = parser.produceAST(stmt)
+        expect(program.body.length).toBe(2)
     })
 
     it('parses variable assignemnt with literals', () => {

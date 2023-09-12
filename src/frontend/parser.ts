@@ -24,6 +24,10 @@ export default class Parser {
     private at(): Token {
         return this.tokens[this.i]
     }
+
+    private atType(type: TokenType): boolean {
+        return this.at().type === type
+    }
     
     private consumeToken(): Token {
         const token = this.at()
@@ -43,6 +47,10 @@ export default class Parser {
         return prev
     }
 
+    private not_eof(): boolean {
+        return !this.atType(TokenType.EOF)
+    }
+
     private parse_stmt(): Stmt {
         switch (this.at().type) {
             case TokenType.Let:
@@ -56,18 +64,55 @@ export default class Parser {
         // Consume the let keyword
         this.consumeToken()
 
-        const symbol = this.consumeTokenValidate(
-            TokenType.Identifier,
-            'Expected identifier following declaration keyword'
-        ).value
+        const identifiers = []
+        const values = []
+
+        // Consume identifer by identifier
+        while (this.not_eof() && !this.atType(TokenType.Equals)) {
+            const identifier = this.consumeTokenValidate(
+                TokenType.Identifier,
+                'Identifiers must be separated by comma in assignment'
+            ).value
+            identifiers.push(identifier)
+            if (this.atType(TokenType.Comma)) {
+                this.consumeToken()
+            }
+        }
+
         this.consumeTokenValidate(
             TokenType.Equals,
             'Expected equals sign following identifier in variable declaration'
         )
+
+        // Consume expression by expression
+        while (this.not_eof() && !this.atType(TokenType.Semicolon)) {
+            console.log(this.at())
+            values.push(this.parse_expr())
+            if (this.atType(TokenType.Comma)) {
+                this.consumeToken()
+            }
+        }
+
+        console.log(this.at())
+        if (this.not_eof()) {
+            this.consumeTokenValidate(TokenType.Semicolon, 'Declaration error. Please end it with a semicolon.')
+        }
+
+        if (identifiers.length !== values.length) {
+            throw `Declaration error. Number of identifiers and expressions did not match.`
+        }
+
+        const declarations: { identifier: string, value: Expr }[] = []
+        for (let i = 0; i < identifiers.length; i++) {
+            declarations.push({
+                identifier: identifiers[i],
+                value: values[i]
+            })
+        }
+
         return {
             kind: 'VarDeclaration',
-            symbol,
-            value: this.parse_expr()
+            declarations,
         }
     }
 
@@ -151,7 +196,7 @@ export default class Parser {
     private parse_exponential_expr(): Expr {
         let left = this.parse_primary_expr()
         while (['^', '＾'].includes(this.at().value)) {
-            const operator = this.consumeToken().value
+            this.consumeToken()
             const right = this.parse_exponential_expr()
             left = {
                 kind: 'BinaryExpr',
