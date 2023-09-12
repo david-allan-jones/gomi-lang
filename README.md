@@ -36,6 +36,8 @@ Coming soon!
 
 I would like to dedicate this section to everyone who has been a huge help in furthering my own understanding of language design.
 
+* Changwook Kim
+* Qi Cheng
 * tylerlaceby (https://www.youtube.com/@tylerlaceby)
 
 ## Contact
