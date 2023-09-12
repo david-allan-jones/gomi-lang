@@ -111,8 +111,11 @@ describe('tokenize', () => {
     it('equals', () => {
         testSources(['=', '＝'], TokenType.Equals)
     })
-    it('binary operator', () => {
+    it('single character binary operator', () => {
         testSources(['+', '-', '*', '/', '%', '^', '>', '<', '＋', '＊', '／', '％', '＾', '＞', '＜'], TokenType.BinaryOperator)
+    })
+    it('multi character binary operators', () => {
+        testSources(['||', '&&', '｜｜', '＆＆'], TokenType.BinaryOperator)
     })
     it('skips whitespace, newlines and tabs', () => {
         const src = `

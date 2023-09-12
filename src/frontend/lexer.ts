@@ -53,14 +53,16 @@ export interface Token {
 }
 
 export type BinaryOperator = 
-	| '+' | '＋'
+	| '+'  | '＋'
 	| '-'
-	| '*' | '＊'
-	| '/' | '／'
-	| '%' | '％'
-	| '^' | '＾'
-	| '>' | '＞'
-	| '<' | '＜'
+	| '*'  | '＊'
+	| '/'  | '／'
+	| '%'  | '％'
+	| '^'  | '＾'
+	| '>'  | '＞'
+	| '<'  | '＜'
+	| '||' | '｜｜'
+	| '&&' | '＆＆'
 
 const binaryOperators: BinaryOperator[] = [
 	'+', '＋',
@@ -114,7 +116,10 @@ export function tokenize(source: string): Token[] {
 			continue
 		}
 
+		// =========================
 		// Single character tokens
+		// =========================
+		
 		if (src[i] === TokenVal.HW_EQUALS || src[i] === TokenVal.FW_EQUALS) {
 			tokens.push({ type: TokenType.Equals, value: src[i] })
 			i++
@@ -172,7 +177,20 @@ export function tokenize(source: string): Token[] {
 			continue
 		}
 
+		// =========================
 		// Multiple character tokens
+		// =========================
+
+		// Binary operators
+		if (['|', '&', '｜', '＆'].includes(src[i])) {
+			i++
+			if (src[i] === src[i-1]) {
+				tokens.push({ type: TokenType.BinaryOperator, value: src[i].repeat(2)})
+				i++
+				continue
+			}
+		}
+
 		if (isInt(src[i])) {
 			let value = `${src[i++]}`
 			while (i < src.length && isInt(src[i])) {

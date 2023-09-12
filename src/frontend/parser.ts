@@ -86,7 +86,6 @@ export default class Parser {
 
         // Consume expression by expression
         while (this.not_eof() && !this.atType(TokenType.Semicolon)) {
-            console.log(this.at())
             values.push(this.parse_expr())
             if (this.atType(TokenType.Comma)) {
                 this.consumeToken()
