@@ -76,7 +76,7 @@ const binaryOperators: BinaryOperator[] = [
 ]
 
 export function identifierBeginAllowed(source: string): boolean {
-	const regex = /[\p{L}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}]/u
+	const regex = /[a-zA-Z\u3041-\u3096\u30a1-\u30f6\u4e00-\u9faf]/u
 	return regex.test(source)
 }
 

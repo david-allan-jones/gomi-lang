@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test"
-import { Token, TokenType, TokenVal, identifierBeginAllowed, isInt, tokenize, unrecognizedError } from "./lexer"
+import { TokenType, TokenVal, identifierBeginAllowed, isInt, tokenize, unrecognizedError } from "./lexer"
 import { fail } from "assert"
 
-describe('isAlpha', () => {
+describe('identifierBeginAllowed', () => {
     it('return false on empty string', () => {
         expect(identifierBeginAllowed('')).toBe(false)
     })
@@ -14,6 +14,28 @@ describe('isAlpha', () => {
     })
     it('returns true on upper case alpha strings', () => {
         expect(identifierBeginAllowed('ABCDEFGHIJKLMNOPQRSTUVWXYZ')).toBe(true)
+    })
+    it('returns true on hiragana strings', () => {
+        const hiraganaStart = parseInt('0x3041', 16)
+        const hiraganaEnd = parseInt('0x3096', 16)
+        for (let i = hiraganaStart; i <= hiraganaEnd; i++) {
+            console.log(i)
+            expect(identifierBeginAllowed(String.fromCharCode(i))).toBe(true)
+        }
+    })
+    it('returns true on katakana strings', () => {
+        const katakanaStart = parseInt('0x30a1', 16)
+        const katakanaEnd = parseInt('0x30f6', 16)
+        for (let i = katakanaStart; i <= katakanaEnd; i++) {
+            expect(identifierBeginAllowed(String.fromCharCode(i))).toBe(true)
+        }
+    })
+    it('returns true on cjk unified', () => {
+        const cjkStart = parseInt('0x4e00', 16)
+        const cjkEnd = parseInt('0x9faf', 16)
+        for (let i = cjkStart; i <= cjkEnd; i++) {
+            expect(identifierBeginAllowed(String.fromCharCode(i))).toBe(true)
+        }
     })
 })
 
