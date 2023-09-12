@@ -315,7 +315,7 @@ export default class Parser {
                 this.consumeTokenValidate(TokenType.CloseParen)
                 return expr
             default:
-                throw `Unexpected token found during parsing: ${JSON.stringify(token)}`
+                throw `Unexpected token found during parsing: '${token.value}' ${this.tokens}`
         }
     }
 }

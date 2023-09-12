@@ -1,25 +1,27 @@
 let i, j, k = 0, 1, 2;
-let n = i + j + k
+let n = i + j + k;
 n = n + 1
 
-let yes = true
-let no = false
-let agree = yes && no
+let yes = true;
+let no = false;
+let agree = yes && no;
 
 agree = !agree
 n = -n
 
-let z = nil
+let z = nil;
 
 宣言　あ、い、う＝０，１，２；
-宣言　え＝あ＋い＋う
+宣言　え＝あ＋い＋う；
 え＝え＋１
 
-宣言　はい＝本当
-宣言　いいえ＝嘘
-宣言　賛成＝はい＆＆いえ
+宣言　はい＝本当；
+宣言　いいえ＝嘘；
+宣言　賛成＝はい＆＆いいえ；
 
 賛成＝！賛成
 え＝-え
 
-宣言＝無
+宣言 ない＝無；
+
+え
