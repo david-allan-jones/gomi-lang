@@ -106,9 +106,8 @@ export function unrecognizedError(line: number, c: string) {
 	return `Unrecognized character found on line ${line}: '${c}'`
 }
 
-export function tokenize(source: string): Token[] {
+export function tokenize(src: string): Token[] {
 	const tokens = new Array<Token>()
-	const src = source.split("")
 
 	// Build tokens until end of source
 	let i = 0
