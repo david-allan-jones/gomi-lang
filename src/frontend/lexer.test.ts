@@ -114,6 +114,9 @@ describe('tokenize', () => {
     it('question', () => {
         testSources(['?', '？'], TokenType.Question)
     })
+    it('bang', () => {
+        testSources(['!', '！'], TokenType.Bang)
+    })
     it('number', () => {
         testSources(['1', '１', '10', '１０'], TokenType.Number)
     })

@@ -1,5 +1,5 @@
 import { normalizeInt } from '../utils/japanese'
-import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr } from './ast'
+import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr } from './ast'
 import { tokenize, Token, TokenType, TokenVal } from './lexer'
 
 export default class Parser {
@@ -239,7 +239,7 @@ export default class Parser {
     }
 
     private parse_exponential_expr(): Expr {
-        let left = this.parse_primary_expr()
+        let left = this.parse_unary_expr()
         while (['^', '＾'].includes(this.at().value)) {
             this.consumeToken()
             const right = this.parse_exponential_expr()
@@ -251,6 +251,18 @@ export default class Parser {
             } as BinaryExpr
         }
         return left
+    }
+
+    private parse_unary_expr(): Expr {
+        if (this.atType(TokenType.Bang)) {
+            this.consumeToken()
+            return {
+                kind: 'UnaryExpr',
+                operator: '!',
+                operand: this.parse_unary_expr()
+            } as UnaryExpr
+        }
+        return this.parse_primary_expr()
     }
 
     private parse_primary_expr(): Expr {

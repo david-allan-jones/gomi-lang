@@ -1,7 +1,7 @@
 import { RuntimeVal } from './types'
-import { BinaryExpr, BooleanLiteral, Identifier, NumericLiteral, Program, Stmt, TernaryExpr, VarAssignment, VarDeclaration } from '../frontend/ast'
+import { BinaryExpr, BooleanLiteral, Identifier, NumericLiteral, Program, Stmt, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from '../frontend/ast'
 import Scope from './scope'
-import { eval_binary_expr, eval_ternary_expr, eval_identifier, eval_assignment_expr } from './eval/expressions'
+import { eval_binary_expr, eval_ternary_expr, eval_identifier, eval_assignment_expr, eval_unary_expr } from './eval/expressions'
 import { eval_program, eval_var_declaration } from './eval/statements'
 
 export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
@@ -17,6 +17,8 @@ export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
         // Expressions
         case "Identifier":
             return eval_identifier(ast as Identifier, scope)
+        case "UnaryExpr":
+            return eval_unary_expr(ast as UnaryExpr, scope)
         case "BinaryExpr":
             return eval_binary_expr(ast as BinaryExpr, scope)
         case "TernaryExpr":

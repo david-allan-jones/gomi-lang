@@ -5,6 +5,7 @@ export type NodeType =
     | "VarAssignment"
 
     // Expressions
+    | "UnaryExpr"
     | "BinaryExpr"
     | "TernaryExpr"
     | "Identifier"
@@ -39,6 +40,12 @@ export interface VarAssignment extends Expr {
 
 export interface Expr extends Stmt {}
 
+export interface UnaryExpr extends Expr {
+    kind: "UnaryExpr"
+    operator: NormalizedUnaryOperator
+    operand: PrimaryExpr
+}
+
 export interface BinaryExpr extends Expr {
     kind: "BinaryExpr"
     left: Expr
@@ -53,27 +60,29 @@ export interface TernaryExpr extends Expr {
     right: Expr
 }
 
-export interface Identifier extends Expr {
+export interface PrimaryExpr extends Expr {}
+
+export interface Identifier extends PrimaryExpr {
     kind: "Identifier"
     symbol: string
 }
 
-export interface NumericLiteral extends Expr {
+export interface NumericLiteral extends PrimaryExpr {
     kind: "NumericLiteral"
     value: number
 }
 
-export interface NullLiteral extends Expr {
+export interface NullLiteral extends PrimaryExpr {
     kind: "NullLiteral"
     value: null
 }
 
-export interface BooleanLiteral extends Expr {
+export interface BooleanLiteral extends PrimaryExpr {
     kind: "BooleanLiteral"
     value: boolean
 }
 
-export interface ObjectLiteral extends Expr {
+export interface ObjectLiteral extends PrimaryExpr {
     kind: "ObjectLiteral"
     props: Map<string, Property>
 }
@@ -97,3 +106,6 @@ export type NormalizedBinaryOperator =
     | '/'
     | '%'
     | '^'
+
+export type NormalizedUnaryOperator =
+    | '!'

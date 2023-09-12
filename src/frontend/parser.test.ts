@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import Parser from "./parser";
 import { fail } from "assert";
-import { BinaryExpr, BooleanLiteral, Identifier, NullLiteral, NumericLiteral, TernaryExpr, VarAssignment, VarDeclaration } from "./ast";
+import { BinaryExpr, BooleanLiteral, Identifier, NullLiteral, NumericLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
 
 describe('parser', () => {
     let parser: Parser
@@ -106,6 +106,33 @@ describe('parser', () => {
             expect(left.kind).toBe('Identifier')
             expect(right.kind).toBe('Identifier')
             expect(operator === '^').toBeTrue()
+        }
+    })
+
+    it('bang operators', () => {
+        const stmt = '!a'
+        const program = parser.produceAST(stmt)
+        expect(program.body.length).toBe(1)
+        const node = program.body[0] as UnaryExpr
+        expect(node.kind).toBe('UnaryExpr')
+        expect(node.operator).toBe('!')
+        expect(node.operand.kind).toBe('Identifier')
+    })
+
+    it('double bang opeator', () => {
+        const stmt = '!!a'
+        const program = parser.produceAST(stmt)
+        const node = program.body[0] as UnaryExpr
+        expect(node.operand.kind).toBe('UnaryExpr')
+    })
+
+    it('unary precedence', () => {
+        const ops = ['!']
+        for (let i = 0; i < ops.length; i++) {
+            const stmt = `${ops[i]}a ^ b`
+            const program = parser.produceAST(stmt)
+            const node = program.body[0] as BinaryExpr
+            expect(node.left.kind).toBe('UnaryExpr')
         }
     })
 

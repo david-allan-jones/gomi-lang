@@ -1,4 +1,4 @@
-import { BinaryExpr, Identifier, NormalizedBinaryOperator, TernaryExpr, VarAssignment } from "../../frontend/ast"
+import { BinaryExpr, Identifier, NormalizedBinaryOperator, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope"
 import { RuntimeVal } from "../types"
@@ -6,6 +6,20 @@ import { RuntimeVal } from "../types"
 export function eval_identifier(identifier: Identifier, scope: Scope): RuntimeVal<unknown> {
     const val = scope.lookupVar(identifier.symbol)
     return val
+}
+
+export function eval_unary_expr(unary: UnaryExpr, scope: Scope): RuntimeVal<unknown> {
+    switch (unary.operator) {
+        case '!':
+            const value = evaluate(unary.operand, scope)
+            if (value.type !== 'boolean') {
+                throw `A bang operator can only be applied to boolean types. Received: '${value.type}'`
+            }
+            return { type: 'boolean', value: !value }
+        default:
+            console.error(`Runtime Error: An unexpected unary operator was received by the interpreter: '${unary.operator}'`)
+            process.exit(1)
+    }
 }
 
 export function eval_numeric_binary_expr(
