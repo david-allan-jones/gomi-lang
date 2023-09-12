@@ -100,10 +100,129 @@ function skippable(source: string): boolean {
 		|| source === '\t'
 		|| source === '　'
 		|| source === '\r'
+		|| source === '\n'
 }
 
 export function unrecognizedError(line: number, c: string) {
 	return `Unrecognized character found on line ${line}: '${c}'`
+}
+
+export default class Tokenizer {
+	private src: string = ''
+	private i: number = 0
+	private lineCount: number = 1
+
+	constructor(src: string) {
+		this.src = src
+		this.i = 0
+		this.lineCount = 1
+	}
+
+	get_position() {
+		return this.i + 1
+	}
+
+	get_line() {
+		return this.lineCount
+	}
+
+	at(): string {
+		return this.src[this.i]
+	}
+	
+	not_eof(): boolean {
+		return this.i < this.src.length
+	}
+
+	read_token(): Token {
+		if (this.i === this.src.length) {
+			return { type: TokenType.EOF, value: TokenVal.EOF }
+		}
+
+		while (skippable(this.at())) {
+			if (this.at() === '\n') {
+				this.lineCount++
+			}
+			this.i++
+		}
+
+		// =========================
+		// Single character tokens
+		// =========================
+		
+		if (this.at() === TokenVal.HW_EQUALS || this.at() === TokenVal.FW_EQUALS) {
+			return { type: TokenType.Equals, value: this.src[this.i++] }
+		}
+		if (this.at() === TokenVal.HW_OPEN_PAREN || this.at() === TokenVal.FW_OPEN_PAREN) {
+			return { type: TokenType.OpenParen, value: this.src[this.i++] }
+		}
+		if (this.at() === TokenVal.HW_CLOSE_PAREN || this.at() === TokenVal.FW_CLOSE_PAREN) {
+			return { type: TokenType.CloseParen, value: this.src[this.i++] }
+		}
+		if (this.at() === TokenVal.HW_OPEN_BRACKET || this.at() === TokenVal.FW_OPEN_BRACKET) {
+			return { type: TokenType.OpenBracket, value: this.src[this.i++] }
+		}	
+		if (this.at() === TokenVal.HW_CLOSE_BRACKET || this.at() === TokenVal.FW_CLOSE_BRACKET) {
+			return { type: TokenType.CloseBracket, value: this.src[this.i++] }
+		}		
+		if (this.at() === TokenVal.HW_OPEN_BRACE || this.at() === TokenVal.FW_OPEN_BRACE) {
+			return { type: TokenType.OpenBrace, value: this.src[this.i++] }
+		}			
+		if (this.at() === TokenVal.HW_CLOSE_BRACE || this.at() === TokenVal.FW_CLOSE_BRACE) {
+			return { type: TokenType.CloseBrace, value: this.src[this.i++] }
+		}			
+		if (this.at() === TokenVal.HW_COLON || this.at() === TokenVal.FW_COLON) {
+			return { type: TokenType.Colon, value: this.src[this.i++] }
+		}			
+		if (this.at() === TokenVal.HW_SEMICOLON || this.at() === TokenVal.FW_SEMICOLON) {
+			return { type: TokenType.Semicolon, value: this.src[this.i++] }
+		}			
+		if (this.at() === TokenVal.HW_COMMA || this.at() === TokenVal.FW_COMMA_1 || this.at() === TokenVal.FW_COMMA_2) {
+			return { type: TokenType.Comma, value: this.src[this.i++] }
+		}			
+		if (this.at() === TokenVal.HW_QUESTION || this.at() === TokenVal.FW_QUESTION) {
+			return { type: TokenType.Question, value: this.src[this.i++] }
+		}			
+		if (this.at() === TokenVal.HW_BANG || this.at() === TokenVal.FW_BANG) {
+			return { type: TokenType.Bang, value: this.src[this.i++] }
+		}			
+		// We need to lie to the TS compiler here just to check
+		if (binaryOperators.includes(this.at() as BinaryOperator)) {
+			return { type: TokenType.BinaryOperator, value: this.src[this.i++] }
+		}	
+
+		// =========================
+		// Multiple character tokens
+		// =========================
+
+		// Binary operators
+		if (['|', '&', '｜', '＆'].includes(this.at())) {
+			this.i++
+			if (this.at() === this.src[this.i - 1]) {
+				const token = { type: TokenType.BinaryOperator , value: this.src[this.i].repeat(2)}
+				this.i++
+				return token
+			}
+		}
+		if (isInt(this.at())) {
+			let value = `${this.src[this.i++]}`
+			while (this.i < this.src.length && isInt(this.at())) {
+				value += this.src[this.i++]
+			}
+			return { type: TokenType.Number, value: value }
+		}
+		if (identifierBeginAllowed(this.at())) {
+			let value = `${this.src[this.i++]}`
+			while (this.i < this.src.length && identifierAllowed(this.at())) {
+				value += this.src[this.i++]
+			}
+			const reserved = RESERVED[value]
+			return (reserved !== undefined)
+				? { type: RESERVED[value], value }
+				: { type: TokenType.Identifier, value }
+		}
+		throw unrecognizedError(this.lineCount, this.at())
+	}
 }
 
 export function tokenize(src: string): Token[] {

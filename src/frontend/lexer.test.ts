@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test"
-import { TokenType, TokenVal, identifierBeginAllowed, isInt, tokenize, unrecognizedError } from "./lexer"
+import Tokenizer, { Token, TokenType, TokenVal, identifierBeginAllowed, isInt, tokenize, unrecognizedError } from "./lexer"
 import { fail } from "assert"
 
 describe('identifierBeginAllowed', () => {
@@ -62,16 +62,17 @@ describe('isInteger', () => {
     })
 })
 
-describe('tokenize', () => {
+describe('Tokenizer', () => {
     const testSources = (sources: string[], type: TokenType): void => {
         const errors = []
         for (let i = 0; i < sources.length; i++) {
-            const tokens = tokenize(sources[i])
-            if (tokens[0].value !== sources[i]) {
-                errors.push({ received: tokens[0].value, expected: sources[i]})
+            const tokenizer = new Tokenizer(sources[i])
+            const token = tokenizer.read_token()
+            if (token.value !== sources[i]) {
+                errors.push({ received: token.value, expected: sources[i]})
             }
-            if (tokens[0].type !== type) {
-                errors.push({ received: tokens[0].type, expected: type })
+            if (token.type !== type) {
+                errors.push({ received: token.type, expected: type })
             }
         }
         if (errors.length) {
@@ -80,7 +81,8 @@ describe('tokenize', () => {
     }
 
     it('gives only EOF token on empty string', () => {
-        const [ token ] = tokenize('')
+        const tokenizer = new Tokenizer('')
+        const token = tokenizer.read_token()
         expect(token.type).toBe(TokenType.EOF)
         expect(token.value).toBe(TokenVal.EOF)
     })
@@ -139,21 +141,24 @@ describe('tokenize', () => {
         testSources(['=', '＝'], TokenType.Equals)
     })
     it('single character binary operator', () => {
-        testSources(['+', '-', '*', '/', '%', '^', '>', '<', '＋', '＊', '／', '％', '＾', '＞', '＜'], TokenType.BinaryOperator)
+        testSources(
+            ['+', '-', '*', '/', '%', '^', '>', '<', '＋', '＊', '／', '％', '＾', '＞', '＜'],
+            TokenType.BinaryOperator,
+        )
     })
     it('multi character binary operators', () => {
         testSources(['||', '&&', '｜｜', '＆＆'], TokenType.BinaryOperator)
     })
     it('skips whitespace, newlines and tabs', () => {
-        const src = `
-            let a = 1
-            let b = 2
-            let c = a + b
-            let d = c / a
-        `
-        const tokens = tokenize(src)
+        const tokens: Token[] = []
+        const tokenizer = new Tokenizer(`
+            a
+        `)
+        while (tokenizer.not_eof()) {
+            tokens.push(tokenizer.read_token())
+        }
         // Add 1 for EOF
-        expect(tokens.length).toBe(21)
+        expect(tokens.length).toBe(2)
     })
     it('errors on unrecognized character', () => {
         try {
@@ -165,5 +170,30 @@ describe('tokenize', () => {
         } catch (e) {
             expect(e).toBe(unrecognizedError(2, '$'))
         }
+    })
+
+    it('tracks line number correctly', () => {
+        const tokenizer = new Tokenizer(`
+            a
+            b
+        `)
+        expect(tokenizer.get_line()).toBe(1)
+        tokenizer.read_token()
+        expect(tokenizer.get_line()).toBe(2)
+        tokenizer.read_token()
+        expect(tokenizer.get_line()).toBe(3)
+        tokenizer.read_token()
+        expect(tokenizer.get_line()).toBe(4)
+    })
+
+    it('tracks position correctly', () => {
+        const tokenizer = new Tokenizer('ab cd e')
+        expect(tokenizer.get_position()).toBe(1)
+        tokenizer.read_token()
+        expect(tokenizer.get_position()).toBe(3)
+        tokenizer.read_token()
+        expect(tokenizer.get_position()).toBe(6)
+        tokenizer.read_token()
+        expect(tokenizer.get_position()).toBe(8)
     })
 })

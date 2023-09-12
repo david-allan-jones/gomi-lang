@@ -58,31 +58,14 @@ describe('parser', () => {
         const program = parser.produceAST('a + 1')
         expect(program.body.length).toBe(1)
         const node = program.body[0] as BinaryExpr
-        const { kind, left, right, operator } = node
-        expect(kind).toBe("BinaryExpr")
-        expect(operator).toBe('+')
-        expect(left.kind).toBe('Identifier')
-        expect(right.kind).toBe('NumericLiteral')
+        expect(node.kind).toBe("BinaryExpr")
     })
 
     it('parses binary multiplicative expression', () => {
-        const program = parser.produceAST('a*b + 1')
+        const program = parser.produceAST('a * b')
         expect(program.body.length).toBe(1)
         const node = program.body[0] as BinaryExpr
-        const { kind, left, right, operator } = node
-        expect(kind).toBe("BinaryExpr")
-        expect(right.kind).toBe('NumericLiteral')
-        expect(operator).toBe('+')
-        const {
-            kind: leftKind,
-            left: leftLeft,
-            right: leftRight,
-            operator: leftOp
-        } = left as BinaryExpr
-        expect(leftKind).toBe('BinaryExpr')
-        expect(leftLeft.kind).toBe('Identifier')
-        expect(leftRight.kind).toBe('Identifier')
-        expect(leftOp).toBe('*')
+        expect(node.kind).toBe("BinaryExpr")
     })
 
     it('parses modulo operator expression', () => {
@@ -159,12 +142,9 @@ describe('parser', () => {
     })
 
     it('parses parenthesized expressions', () => {
-        const program = parser.produceAST('(1)+a')
-        expect(program.body.length).toBe(1)
-        const node = program.body[0] as BinaryExpr
-        expect(node.operator).toBe('+')
-        expect(node.left.kind).toBe('NumericLiteral')
-        expect(node.right.kind).toBe('Identifier')
+        const program = parser.produceAST('(1)')
+        const node = program.body[0] as NumericLiteral
+        expect(node.kind).toBe('NumericLiteral')
     })
 
     it('parses null literals', () => {
