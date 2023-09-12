@@ -8,7 +8,7 @@ export enum TokenVal {
 	HW_CLOSE_BRACE = '}', 	FW_CLOSE_BRACE = '｝',
 	HW_COLON = ':', 		FW_COLON = '：',
 	HW_SEMICOLON = ';', 	FW_SEMICOLON = '；',
-	HW_COMMA = ',', 		FW_COMMA = '、',
+	HW_COMMA = ',', 		FW_COMMA_1 = '，',			FW_COMMA_2 = '、',
 	HW_QUESTION = '?',		FW_QUESTION = '？',
 	HW_BANG = '!',			FW_BANG = '！',
 	EN_LET = 'let', 		JP_LET = '宣言',
@@ -168,7 +168,7 @@ export function tokenize(src: string): Token[] {
 			i++
 			continue
 		}
-		if (src[i] === TokenVal.HW_COMMA || src[i] === TokenVal.FW_COMMA) {
+		if (src[i] === TokenVal.HW_COMMA || src[i] === TokenVal.FW_COMMA_1 || src[i] === TokenVal.FW_COMMA_2) {
 			tokens.push({ type: TokenType.Comma, value: src[i] })
 			i++
 			continue

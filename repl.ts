@@ -18,7 +18,9 @@ function repl() {
         try {
             const program = parser.produceAST(input)
             const result = evaluate(program, scope)
-            console.log(result.value)
+            if (result.type !== 'void') {
+                console.log(result.value)
+            }
         } catch(e) {
             console.error(e)
         }

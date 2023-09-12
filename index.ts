@@ -1,4 +1,4 @@
-import { tokenize } from "./src/lexer"
+import { tokenize } from "./src/frontend/lexer"
 
 const filePath = process.argv[2]
 

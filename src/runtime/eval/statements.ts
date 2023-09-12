@@ -19,5 +19,5 @@ export function eval_var_declaration(varDeclarations: VarDeclarations, scope: Sc
             evaluate(declarations[i].value, scope)
         )
     }
-    return { type: 'null', value: null }
+    return { type: 'void', value: null }
 }

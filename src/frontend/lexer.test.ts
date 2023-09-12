@@ -109,7 +109,7 @@ describe('tokenize', () => {
         testSources([';', '；'], TokenType.Semicolon)
     })
     it('comma', () => {
-        testSources([',', '、'], TokenType.Comma)
+        testSources([',', '，', '、'], TokenType.Comma)
     })
     it('question', () => {
         testSources(['?', '？'], TokenType.Question)
