@@ -1,4 +1,4 @@
-import { BinaryExpr, Identifier, NormalizedBinaryOperator, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment } from "../../frontend/ast"
+import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope"
 import { RuntimeVal } from "../types"
@@ -9,16 +9,44 @@ export function eval_identifier(identifier: Identifier, scope: Scope): RuntimeVa
 }
 
 export function eval_unary_expr(unary: UnaryExpr, scope: Scope): RuntimeVal<unknown> {
-    switch (unary.operator) {
-        case '!':
-            const value = evaluate(unary.operand, scope)
-            if (value.type !== 'boolean') {
-                throw `A bang operator can only be applied to boolean types. Received: '${value.type}'`
-            }
-            return { type: 'boolean', value: !value }
+    const value = evaluate(unary.operand, scope)
+    switch (value.type) {
+        case 'boolean':
+            return eval_boolean_unary_expr(
+                value as RuntimeVal<boolean>,
+                unary.operator
+            )
+        case 'number':
+            return eval_numeric_unary_expr(
+                value as RuntimeVal<number>,
+                unary.operator
+            )
         default:
-            console.error(`Runtime Error: An unexpected unary operator was received by the interpreter: '${unary.operator}'`)
-            process.exit(1)
+            throw `An unexpected type was provided in a unary expression. The type '${value.type}' is not supported.`
+    }
+}
+
+export function eval_boolean_unary_expr(
+    value: RuntimeVal<boolean>,
+    op: NormalizedUnaryOperator
+): RuntimeVal<boolean> {
+    switch (op) {
+        case '!':
+            return { type: 'boolean', value: !value.value }
+        default:
+            throw `Runtime Error: An unexpected boolean unary operator was received by the interpreter: '${op}'`
+    }
+}
+
+export function eval_numeric_unary_expr(
+    value: RuntimeVal<number>,
+    op: NormalizedUnaryOperator
+): RuntimeVal<number> {
+    switch (op) {
+        case '-':
+            return { type: 'number', value: -1 * value.value }
+        default:
+            throw `Runtime Error: An unexpected numeric unary operator was received by the interpreter: '${op}'`
     }
 }
 
@@ -51,8 +79,7 @@ export function eval_numeric_binary_expr(
         case '<':
             return { type: 'boolean', value: left.value < right.value }
         default:
-            console.error(`Runtime Error: An unexpected numeric operator was received by the interpreter: '${op}'`)
-            process.exit(1)
+            throw `Runtime Error: An unexpected numeric operator was received by the interpreter: '${op}'`
     }
 }
 
@@ -67,8 +94,7 @@ export function eval_boolean_binary_expr(
         case '&&':
             return { type: 'boolean', value: left.value && right.value }
         default:
-            console.error(`Runtime Error: An unexpected boolean operator was received by the interpreter: '${op}'`)
-            process.exit(1)
+            throw `Runtime Error: An unexpected boolean operator was received by the interpreter: '${op}'`
     }
 }
 

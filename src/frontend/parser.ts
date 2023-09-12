@@ -255,14 +255,34 @@ export default class Parser {
 
     private parse_unary_expr(): Expr {
         if (this.atType(TokenType.Bang)) {
-            this.consumeToken()
-            return {
-                kind: 'UnaryExpr',
-                operator: '!',
-                operand: this.parse_unary_expr()
-            } as UnaryExpr
+            return this.parse_bang_expr()
+        }
+        if (this.at().value === '-') {
+            return this.parse_negative_expr()
         }
         return this.parse_primary_expr()
+    }
+
+    private parse_bang_expr(): Expr {
+        // Consume the bang
+        this.consumeToken()
+        const operand = this.parse_primary_expr()
+        return {
+            kind: 'UnaryExpr',
+            operator: '!',
+            operand
+        } as UnaryExpr
+    }
+
+    private parse_negative_expr(): Expr {
+        // Consume the negative sign
+        this.consumeToken()
+        const operand = this.parse_primary_expr()
+        return {
+            kind: 'UnaryExpr',
+            operator: '-',
+            operand
+        } as UnaryExpr
     }
 
     private parse_primary_expr(): Expr {

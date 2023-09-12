@@ -17,10 +17,15 @@ describe('parser', () => {
     })
 
     it('throws error on unrecognized tokens', () => {
-        try {
-            const program = parser.produceAST('%')
-            fail(`Produced an AST with invalid tokens ${JSON.stringify(program)}`)
-        } catch (e) { }
+        const thrown = 'thrown'
+        const t = () => {
+            try {
+                parser.produceAST('#')
+            } catch(e) {
+                throw thrown
+            }
+        }
+        expect(t).toThrow(thrown)
     })
 
     it('parses number literal', () => {
@@ -119,21 +124,38 @@ describe('parser', () => {
         expect(node.operand.kind).toBe('Identifier')
     })
 
-    it('double bang opeator', () => {
-        const stmt = '!!a'
-        const program = parser.produceAST(stmt)
-        const node = program.body[0] as UnaryExpr
-        expect(node.operand.kind).toBe('UnaryExpr')
+    it('double bang opeator not allowed', () => {
+        const thrown = 'throw'
+        const t = () => {
+            try {
+                parser.produceAST('!!a')
+            } catch(e) {
+                throw thrown
+            }
+        }
+        expect(t).toThrow(thrown)
     })
 
     it('unary precedence', () => {
-        const ops = ['!']
+        const ops = ['!', '-']
         for (let i = 0; i < ops.length; i++) {
             const stmt = `${ops[i]}a ^ b`
             const program = parser.produceAST(stmt)
             const node = program.body[0] as BinaryExpr
             expect(node.left.kind).toBe('UnaryExpr')
         }
+    })
+
+    it('double negative unary not allowed', () => {
+        const thrown = 'throw'
+        const t = () => {
+            try {
+                parser.produceAST('--a')
+            } catch(e) {
+                throw thrown
+            }
+        }
+        expect(t).toThrow(thrown)
     })
 
     it('parses parenthesized expressions', () => {
