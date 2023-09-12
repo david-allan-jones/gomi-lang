@@ -1,10 +1,7 @@
-import { tokenize } from "./src/frontend/lexer"
+import { evalFile } from "./test/fileRead"
 
 const filePath = process.argv[2]
-
-const file = Bun.file(filePath)
-const src = await file.text()
-
-const tokens = tokenize(src)
-
-console.log(JSON.stringify(tokens))
+const val = await evalFile(filePath)
+if (val.type !== 'void') {
+    console.log(val.value)
+}
