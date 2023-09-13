@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it } from "bun:test";
-import Parser from "./parser";
+import GomiParser from "./parser";
 import { fail } from "assert";
 import { BinaryExpr, BooleanLiteral, Identifier, NullLiteral, NumericLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
 
 describe('parser', () => {
-    let parser: Parser
+    let parser: GomiParser
 
     beforeEach(() => {
-        parser = new Parser()
+        parser = new GomiParser()
     })
 
     it('works on empty program', () => {

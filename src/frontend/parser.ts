@@ -2,7 +2,7 @@ import { normalizeInt } from '../utils/japanese'
 import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr } from './ast'
 import { tokenize, Token, TokenType, TokenVal } from './tokenizer'
 
-export default class Parser {
+export default class GomiParser {
     private tokens: Token[] = []
     private i: number = 0
 

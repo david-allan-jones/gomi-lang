@@ -1,9 +1,9 @@
-import Parser from "./src/frontend/parser";
+import GomiParser from "./src/frontend/parser";
 
 repl()
 
 function repl() {
-    const parser = new Parser()
+    const parser = new GomiParser()
     console.log("ゴミ箱へようこそ")
     while (true) {
         const input = prompt("> ")

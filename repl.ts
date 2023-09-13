@@ -1,11 +1,11 @@
-import Parser from "./src/frontend/parser";
+import GomiParser from "./src/frontend/parser";
 import { evaluate } from "./src/runtime/interpreter";
 import Scope from "./src/runtime/scope";
 
 repl()
 
 function repl() {
-    const parser = new Parser()
+    const parser = new GomiParser()
     const scope = new Scope()
 
     console.log("ゴミ箱へようこそ")

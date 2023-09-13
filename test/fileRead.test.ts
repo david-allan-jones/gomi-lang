@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { _resolveFilename } from "module";
-import Parser from "../src/frontend/parser";
+import GomiParser from "../src/frontend/parser";
 import { evaluate } from "../src/runtime/interpreter";
 import Scope from "../src/runtime/scope";
 import { evalFile } from "./fileRead";
