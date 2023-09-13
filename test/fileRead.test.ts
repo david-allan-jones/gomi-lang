@@ -1,8 +1,5 @@
 import { describe, expect, it } from "bun:test";
 import { _resolveFilename } from "module";
-import GomiParser from "../src/frontend/parser";
-import { evaluate } from "../src/runtime/interpreter";
-import Scope from "../src/runtime/scope";
 import { evalFile } from "./fileRead";
 import { unrecognizedError } from "../src/frontend/tokenizer";
 
@@ -18,11 +15,11 @@ describe('File reader', () => {
             const val = await evalFile(filePath)
             expect(val.value).toBe(-4n)
         })
-        // it('long-expression.gomi', async () => {
-        //     const filePath = getFileName('long-expression.gomi')
-        //     const val = await evalFile(filePath)
-        //     expect(val.value).toBe(10n)
-        // })
+        it('long-expression.gomi', async () => {
+            const filePath = getFileName('long-expression.gomi')
+            const val = await evalFile(filePath)
+            expect(val.value).toBe(10000n)
+        })
     })
     describe('correct file parsing', () => {
         it('invalid-character.gomi', async () => {
