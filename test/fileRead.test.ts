@@ -4,15 +4,33 @@ import GomiParser from "../src/frontend/parser";
 import { evaluate } from "../src/runtime/interpreter";
 import Scope from "../src/runtime/scope";
 import { evalFile } from "./fileRead";
+import { unrecognizedError } from "../src/frontend/tokenizer";
+
+// TODO: Get this working so it doesn't require being at root
+function getFileName(path: string) {
+    return `test/${path}`
+}
 
 describe('File reader', () => {
-    const targets = ['test/good.gomi']
-    for (let i = 0; i < targets.length; i++) {
-        const fileName = targets[i]
-
-        it(`can interpret '${fileName}'`, async () => {
-            const val = await evalFile(fileName)
+    describe('correct file parsing', () => {
+        it('simple.gomi', async () => {
+            const filePath = getFileName('simple.gomi')
+            const val = await evalFile(filePath)
             expect(val.value).toBe(-4n)
         })
-    }
+        // it('long-expression.gomi', async () => {
+        //     const filePath = getFileName('long-expression.gomi')
+        //     const val = await evalFile(filePath)
+        //     expect(val.value).toBe(10n)
+        // })
+    })
+    describe('correct file parsing', () => {
+        it('invalid-character.gomi', async () => {
+            const filePath = getFileName('invalid-character.gomi')
+            const t = async () => {
+                const val = await evalFile(filePath)
+            }
+            expect(t).toThrow(unrecognizedError(1, '@'))
+        })
+    })
 })

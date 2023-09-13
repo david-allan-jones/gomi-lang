@@ -60,6 +60,16 @@ describe('parser', () => {
         const node = program.body[0] as BinaryExpr
         expect(node.kind).toBe("BinaryExpr")
     })
+    it('addition is left associative', () => {
+        const program = parser.produceAST('a + b + c')
+        expect(program.body.length).toBe(1)
+        const node = program.body[0] as BinaryExpr
+        expect(node.kind).toBe("BinaryExpr")
+        const right = node.right as Identifier
+        expect(right.kind).toBe('Identifier')
+        expect(right.symbol).toBe('c')
+        expect(node.left.kind).toBe("BinaryExpr")
+    })
 
     it('parses binary multiplicative expression', () => {
         const program = parser.produceAST('a * b')
