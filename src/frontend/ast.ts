@@ -69,7 +69,7 @@ export interface Identifier extends PrimaryExpr {
 
 export interface NumericLiteral extends PrimaryExpr {
     kind: "NumericLiteral"
-    value: number
+    value: bigint
 }
 
 export interface NullLiteral extends PrimaryExpr {

@@ -35,12 +35,12 @@ describe('parser', () => {
             let program = parser.produceAST(halfWidth[i])
             let node = program.body[0] as NumericLiteral
             expect(node.kind).toBe('NumericLiteral')
-            expect(node.value).toBe(i + 1)
+            expect(node.value).toBe(BigInt(i + 1))
 
             program = parser.produceAST(fullWidth[i])
             node = program.body[0] as NumericLiteral
             expect(node.kind).toBe('NumericLiteral')
-            expect(node.value).toBe(i + 1)
+            expect(node.value).toBe(BigInt(i + 1))
         }
     })
 
@@ -195,12 +195,12 @@ describe('parser', () => {
         expect(a.identifier).toBe('a')
         const aExpr = node.declarations[0].value as NumericLiteral
         expect(aExpr.kind).toBe('NumericLiteral')
-        expect(aExpr.value).toBe(1)
+        expect(aExpr.value).toBe(1n)
 
         expect(b.identifier).toBe('b')
         const bExpr = b.value as NumericLiteral
         expect(bExpr.kind).toBe('NumericLiteral')
-        expect(bExpr.value).toBe(2)
+        expect(bExpr.value).toBe(2n)
     })
 
     it('can handle multiple assignments together', () => {

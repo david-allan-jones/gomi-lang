@@ -1,4 +1,4 @@
-import { RuntimeVal } from './types'
+import { IntVal, RuntimeVal } from './types'
 import { BinaryExpr, BooleanLiteral, Identifier, NumericLiteral, Program, Stmt, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from '../frontend/ast'
 import Scope from './scope'
 import { eval_binary_expr, eval_ternary_expr, eval_identifier, eval_assignment_expr, eval_unary_expr } from './eval/expressions'
@@ -25,9 +25,9 @@ export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
             return eval_ternary_expr(ast as TernaryExpr, scope)
         case "NumericLiteral":
             return {
-                type: 'number',
+                type: 'int',
                 value: (ast as NumericLiteral).value
-            } as RuntimeVal<number>
+            } as IntVal
         case "BooleanLiteral":
             return {
                 type: 'boolean',

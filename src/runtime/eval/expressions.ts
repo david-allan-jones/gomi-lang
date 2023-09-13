@@ -1,7 +1,7 @@
 import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope"
-import { RuntimeVal } from "../types"
+import { FloatVal, IntVal, NumberVal, RuntimeVal } from "../types"
 
 export function eval_identifier(identifier: Identifier, scope: Scope): RuntimeVal<unknown> {
     const val = scope.lookupVar(identifier.symbol)
@@ -16,9 +16,9 @@ export function eval_unary_expr(unary: UnaryExpr, scope: Scope): RuntimeVal<unkn
                 value as RuntimeVal<boolean>,
                 unary.operator
             )
-        case 'number':
+        case 'int':
             return eval_numeric_unary_expr(
-                value as RuntimeVal<number>,
+                value as NumberVal,
                 unary.operator
             )
         default:
@@ -39,45 +39,80 @@ export function eval_boolean_unary_expr(
 }
 
 export function eval_numeric_unary_expr(
-    value: RuntimeVal<number>,
+    value: NumberVal,
     op: NormalizedUnaryOperator
-): RuntimeVal<number> {
+): NumberVal {
+    switch (value.type) {
+        case 'int':
+            return eval_int_unary_expr(value as IntVal, op)
+        case 'float':
+            return eval_float_unary_expr(value as FloatVal, op)
+        default:
+            throw `Runtime Error: An unexpected unary operator numeric type was received by the interpreter: '${value.type}'`
+    }
+}
+
+function eval_int_unary_expr(
+    value: IntVal,
+    op: NormalizedUnaryOperator
+): IntVal {
     switch (op) {
         case '-':
-            return { type: 'number', value: -1 * value.value }
+            return { type: 'int', value: -1n * value.value }
         default:
             throw `Runtime Error: An unexpected numeric unary operator was received by the interpreter: '${op}'`
     }
 }
 
-export function eval_numeric_binary_expr(
-    left: RuntimeVal<number>,
-    right: RuntimeVal<number>,
+function eval_float_unary_expr(
+    value: FloatVal,
+    op: NormalizedUnaryOperator
+): FloatVal {
+    switch (op) {
+        default:
+            throw `Runtime Error: An unexpected numeric unary operator was received by the interpreter: '${op}'`
+    }
+}
+
+export function eval_int_binary_expr(
+    left: IntVal,
+    right: IntVal,
     op: NormalizedBinaryOperator
-): RuntimeVal<number | boolean> {
+): RuntimeVal<bigint | boolean> {
     switch (op) {
         case '+':
-            return { type: 'number', value: left.value + right.value }
+            return { type: 'int', value: left.value + right.value }
         case '-':
-            return { type: 'number', value: left.value - right.value }
+            return { type: 'int', value: left.value - right.value }
         case '*':
-            return { type: 'number', value: left.value * right.value }
+            return { type: 'int', value: left.value * right.value }
         case '/':
-            if (right.value === 0) {
+            if (right.value === 0n) {
                 throw 'You can not divide by zero'
             }
-            return { type: 'number', value: left.value / right.value }
+            return { type: 'int', value: left.value / right.value }
         case '%':
-            if (right.value === 0) {
+            if (right.value === 0n) {
                 throw 'You can not modulo 0'
             }
-            return { type: 'number', value: left.value % right.value }
+            return { type: 'int', value: left.value % right.value }
         case '^':
-            return { type: 'number', value: Math.pow(left.value, right.value) }
+            return { type: 'int', value: left.value ** right.value }
         case '>':
             return { type: 'boolean', value: left.value > right.value }
         case '<':
             return { type: 'boolean', value: left.value < right.value }
+        default:
+            throw `Runtime Error: An unexpected numeric operator was received by the interpreter: '${op}'`
+    }
+}
+
+export function eval_float_binary_expr(
+    left: FloatVal,
+    right: FloatVal,
+    op: NormalizedBinaryOperator
+): RuntimeVal<number | boolean> {
+    switch (op) {
         default:
             throw `Runtime Error: An unexpected numeric operator was received by the interpreter: '${op}'`
     }
@@ -107,10 +142,16 @@ export function eval_binary_expr(expr: BinaryExpr, scope: Scope): RuntimeVal<unk
     
     // We know they are the same type
     switch (left.type) {
-        case 'number':
-            return eval_numeric_binary_expr(
-                left as RuntimeVal<number>,
-                right as RuntimeVal<number>,
+        case 'int':
+            return eval_int_binary_expr(
+                left as IntVal,
+                right as IntVal,
+                expr.operator
+            )
+        case 'float':
+            return eval_float_binary_expr(
+                left as FloatVal,
+                right as FloatVal,
                 expr.operator
             )
         case 'boolean':

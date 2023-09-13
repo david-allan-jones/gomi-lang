@@ -12,7 +12,7 @@ describe('File reader', () => {
 
         it(`can interpret '${fileName}'`, async () => {
             const val = await evalFile(fileName)
-            expect(val.value).toBe(-4)
+            expect(val.value).toBe(-4n)
         })
     }
 })

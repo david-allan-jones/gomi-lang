@@ -1,5 +1,5 @@
 // Convert half-width and full-width numbers into number
-export function normalizeInt(numString: string): number {
+export function normalizeInt(numString: string): bigint {
     let normalized = ''
     for (let i = 0; i < numString.length; i++) {
         const charCode = numString.charCodeAt(i)
@@ -16,5 +16,5 @@ export function normalizeInt(numString: string): number {
         // unexpected characters
         throw `An unexpected number character was encountered while normalizing integer: ${numString[i]}`
     }
-    return parseFloat(normalized)
+    return BigInt(normalized)
 }
