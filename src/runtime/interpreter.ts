@@ -36,7 +36,7 @@ export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
         case "NullLiteral":
             return {
                 value: null,
-                type: 'null'
+                type: 'nil'
             } as RuntimeVal<null>
 
         // Error

@@ -1,5 +1,6 @@
 import GomiParser from "./src/frontend/parser";
 import { evaluate } from "./src/runtime/interpreter";
+import { print_runtime_val } from "./src/runtime/print";
 import Scope from "./src/runtime/scope";
 
 repl()
@@ -17,9 +18,9 @@ function repl() {
 
         try {
             const program = parser.produceAST(input)
-            const result = evaluate(program, scope)
-            if (result.type !== 'void') {
-                console.log(result.value)
+            const runtimeVal = evaluate(program, scope)
+            if (runtimeVal.type !== 'void') {
+                print_runtime_val(runtimeVal)
             }
         } catch(e) {
             console.error(e)

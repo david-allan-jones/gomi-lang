@@ -162,7 +162,7 @@ export function eval_binary_expr(expr: BinaryExpr, scope: Scope): RuntimeVal<unk
             )
         default:
             return {
-                type: 'null',
+                type: 'nil',
                 value: null
             } as RuntimeVal<null>
     }
