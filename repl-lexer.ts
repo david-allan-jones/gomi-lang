@@ -1,4 +1,4 @@
-import { tokenize } from "./src/frontend/lexer";
+import { tokenize } from "./src/frontend/tokenizer";
 
 repl()
 
