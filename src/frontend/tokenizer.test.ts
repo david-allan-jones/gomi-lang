@@ -149,6 +149,13 @@ describe('Tokenizer', () => {
     it('multi character binary operators', () => {
         testSources(['||', '&&', '｜｜', '＆＆'], TokenType.BinaryOperator)
     })
+    it('skips whitespace at end of file', () => {
+        const tokenizer = new GomiTokenizer('a ')
+        tokenizer.read_token()
+        const token = tokenizer.read_token()
+        expect(token.type).toBe(TokenType.EOF)
+        expect(token.value).toBe(TokenVal.EOF)
+    })
     it('skips whitespace, newlines and tabs', () => {
         const tokens: Token[] = []
         const tokenizer = new GomiTokenizer(`

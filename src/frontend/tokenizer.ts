@@ -135,15 +135,15 @@ export default class GomiTokenizer {
 	}
 
 	read_token(): Token {
-		if (this.i === this.src.length) {
-			return { type: TokenType.EOF, value: TokenVal.EOF }
-		}
-
 		while (skippable(this.at())) {
 			if (this.at() === '\n') {
 				this.lineCount++
 			}
 			this.i++
+		}
+
+		if (this.i >= this.src.length) {
+			return { type: TokenType.EOF, value: TokenVal.EOF }
 		}
 
 		// =========================
