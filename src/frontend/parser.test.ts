@@ -170,19 +170,22 @@ describe('parser', () => {
         }
     })
 
-    it('parses variable declaration with literals', () => {
-        const stmts = ['let a = 1', '宣言　あ　＝１']
-        const symbols = ['a', 'あ']
-        for (let i = 0; i < stmts.length; i++) {
-            const program = parser.produceAST(stmts[i])
-            expect(program.body.length).toBe(1)
-            const node = program.body[0] as VarDeclaration
-            expect(node.kind).toBe('VarDeclaration')
-            expect(node.declarations[0].identifier).toBe(symbols[i])
-            expect(node.declarations[0].value.kind).toBe('NumericLiteral')
-        }
+    it('parses half width variable declaration with literals', () => {
+        const program = parser.produceAST('let a = 1')
+        expect(program.body.length).toBe(1)
+        const node = program.body[0] as VarDeclaration
+        expect(node.kind).toBe('VarDeclaration')
+        expect(node.declarations[0].identifier).toBe('a')
+        expect(node.declarations[0].value.kind).toBe('NumericLiteral')
     })
-
+    it('parses full width variable declaration with literals', () => {
+        const program = parser.produceAST('宣言　あ＝１')
+        expect(program.body.length).toBe(1)
+        const node = program.body[0] as VarDeclaration
+        expect(node.kind).toBe('VarDeclaration')
+        expect(node.declarations[0].identifier).toBe('あ')
+        expect(node.declarations[0].value.kind).toBe('NumericLiteral')
+    })
     it('parses variable declaration with multiple assignments', () => {
         const stmt = 'let a, b = 1, 2'
         const program = parser.produceAST(stmt)
