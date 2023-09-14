@@ -1,4 +1,4 @@
-import { IntVal, ObjectValue, RuntimeVal } from './types'
+import { IntVal, ObjectVal, RuntimeVal } from './types'
 import { BinaryExpr, BooleanLiteral, Identifier, NumericLiteral, ObjectLiteral, Program, Stmt, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from '../frontend/ast'
 import Scope from './scope'
 import { eval_binary_expr, eval_ternary_expr, eval_identifier, eval_assignment_expr, eval_unary_expr, eval_object_expr } from './eval/expressions'
@@ -37,9 +37,8 @@ export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
             } as RuntimeVal<boolean>
         case "NullLiteral":
             return {
-                value: null,
                 type: 'object'
-            } as ObjectValue
+            } as ObjectVal
 
         // Error
         default:

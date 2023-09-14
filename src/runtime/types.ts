@@ -7,17 +7,17 @@ export type ValueType =
 
 export interface RuntimeVal<T> {
     type: ValueType
-    value: T
+    value?: T
 }
 
-export interface VoidValue extends RuntimeVal<null> {
+export interface VoidVal extends RuntimeVal<null> {
     type: 'void'
     value: null
 }
 
-export interface ObjectValue extends RuntimeVal<object | null> {
+export interface ObjectVal extends RuntimeVal<object | null> {
     type: 'object'
-    props: Map<string, RuntimeVal<unknown>>
+    value?: Map<string, RuntimeVal<unknown>>
 }
 
 export interface NumberVal extends RuntimeVal<bigint | number> {
