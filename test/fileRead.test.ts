@@ -10,8 +10,8 @@ function getFileName(path: string) {
 
 describe('File reader', () => {
     describe('correct file', () => {
-        it('simple.gomi', async () => {
-            const filePath = getFileName('simple.gomi')
+        it('everything.gomi', async () => {
+            const filePath = getFileName('everything.gomi')
             const val = await evalFile(filePath)
             expect(val.value).toBe(-4n)
         })
