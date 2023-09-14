@@ -9,6 +9,9 @@ export function print_runtime_val(runtimeVal: RuntimeVal<unknown>): void {
         case 'int':
             serialized = serialize_int(runtimeVal as IntVal)
             break
+        case 'string':
+            serialized = `'${runtimeVal.value}'`
+            break
         default:
             serialized = `${runtimeVal.value}`
             break
@@ -30,7 +33,15 @@ function serialize_obj(obj: ObjectVal, nestedLevel = 1): string {
     let serialized = '{\n'
     for (let i = 0; i < entries.length; i++) {
         const [key, value] = entries[i]
-        serialized += `${keyPadding}${key}: ${(value.type === 'object' ? serialize_obj(value as ObjectVal, nestedLevel + 1) : value.value)}\n`
+        let val
+        if (value.type === 'object') {
+            val = serialize_obj(value as ObjectVal, nestedLevel + 1)
+        } else if (value.type === 'string') {
+            val = `'${value.value}'`
+        } else {
+            val = value.value
+        }
+        serialized += `${keyPadding}${key}: ${val}\n`
     }
     serialized += `${closingBracePadding}}`
 
