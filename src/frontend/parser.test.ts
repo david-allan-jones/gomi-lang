@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import GomiParser from "./parser";
 import { fail } from "assert";
-import { BinaryExpr, BooleanLiteral, Identifier, NilLiteral, NumericLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
+import { BinaryExpr, BooleanLiteral, Identifier, NilLiteral, NumericLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
 
 describe('parser', () => {
     let parser: GomiParser
@@ -15,7 +15,6 @@ describe('parser', () => {
         expect(program.kind).toBe('Program')
         expect(program.body.length).toBe(0)
     })
-
     it('throws error on unrecognized tokens', () => {
         const thrown = 'thrown'
         const t = () => {
@@ -27,8 +26,7 @@ describe('parser', () => {
         }
         expect(t).toThrow(thrown)
     })
-
-    it('parses number literal', () => {
+    it('int', () => {
         const halfWidth = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
         const fullWidth = ['１', '２', '３', '４', '５', '６', '７', '８', '９', '１０']
         for (let i = 0; i < fullWidth.length; i++) {
@@ -43,8 +41,16 @@ describe('parser', () => {
             expect(node.value).toBe(BigInt(i + 1))
         }
     })
-
-    it('parses identifier', () => {
+    it('string', () => {
+        const tests = ["''", "'Test'", '””', '”テスト”']
+        for (let i = 0; i < tests.length; i++) {
+            const program = parser.produceAST(tests[i]) 
+            const node = program.body[0] as StringLiteral
+            expect(node.kind).toBe('StringLiteral')
+            expect(node.value).toBe(tests[i].substring(1, tests[i].length - 1))
+        }
+    })
+    it('identifier', () => {
         const identifiers = ['a', 'a0', 'a_b', 'あ', 'あ_１', 'あ０', 'あa', 'aあ']
         for (let i = 0; i < identifiers.length; i++) {
             const program = parser.produceAST(identifiers[i])
@@ -53,7 +59,6 @@ describe('parser', () => {
             expect(node.symbol).toBe(identifiers[i])
         }
     })
-
     it('parses binary additive expression', () => {
         const program = parser.produceAST('a + 1')
         expect(program.body.length).toBe(1)
@@ -70,14 +75,12 @@ describe('parser', () => {
         expect(right.symbol).toBe('c')
         expect(node.left.kind).toBe("BinaryExpr")
     })
-
     it('parses binary multiplicative expression', () => {
         const program = parser.produceAST('a * b')
         expect(program.body.length).toBe(1)
         const node = program.body[0] as BinaryExpr
         expect(node.kind).toBe("BinaryExpr")
     })
-
     it('parses modulo operator expression', () => {
         const expressions = ['n%2', 'n % 2', 'あ　％　２', 'あ％２']
         for (let i = 0; i < expressions.length; i++) {
@@ -89,7 +92,6 @@ describe('parser', () => {
             expect(node.right.kind).toBe('NumericLiteral')
         }
     })
-
     it('parses exponential operator expressions', () => {
         const expressions = ['n^m^k', 'n ^ m ^ k', 'あ　＾　い＾　う', 'あ＾い＾う']
         for (let i = 0; i < expressions.length; i++) {
@@ -106,7 +108,6 @@ describe('parser', () => {
             expect(operator === '^').toBeTrue()
         }
     })
-
     it('bang operators', () => {
         const stmt = '!a'
         const program = parser.produceAST(stmt)
@@ -116,7 +117,6 @@ describe('parser', () => {
         expect(node.operator).toBe('!')
         expect(node.operand.kind).toBe('Identifier')
     })
-
     it('double bang opeator not allowed', () => {
         const thrown = 'throw'
         const t = () => {
@@ -128,7 +128,6 @@ describe('parser', () => {
         }
         expect(t).toThrow(thrown)
     })
-
     it('unary precedence', () => {
         const ops = ['!', '-']
         for (let i = 0; i < ops.length; i++) {
@@ -138,7 +137,6 @@ describe('parser', () => {
             expect(node.left.kind).toBe('UnaryExpr')
         }
     })
-
     it('double negative unary not allowed', () => {
         const thrown = 'throw'
         const t = () => {
@@ -150,13 +148,11 @@ describe('parser', () => {
         }
         expect(t).toThrow(thrown)
     })
-
     it('parses parenthesized expressions', () => {
         const program = parser.produceAST('((1))')
         const node = program.body[0] as NumericLiteral
         expect(node.kind).toBe('NumericLiteral')
     })
-
     it('parses nil literals', () => {
         const literals = ['nil', '無']
         for (let i = 0; i < literals.length; i++) {

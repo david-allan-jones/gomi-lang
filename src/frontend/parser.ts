@@ -1,5 +1,5 @@
 import { normalizeInt } from '../utils/japanese'
-import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NilLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral } from './ast'
+import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NilLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, StringLiteral } from './ast'
 import GomiTokenizer, { Token, TokenType as TT, TokenVal, TokenType } from './tokenizer'
 
 export default class GomiParser {
@@ -332,6 +332,11 @@ export default class GomiParser {
                     kind: "NumericLiteral",
                     value: normalizeInt(prev.value)
                 } as NumericLiteral
+            case TT.String:
+                return {
+                    kind: "StringLiteral",
+                    value: prev.value
+                } as StringLiteral
             case TT.Nil:
                 return {
                     kind: "NilLiteral",
