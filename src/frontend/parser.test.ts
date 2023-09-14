@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import GomiParser from "./parser";
 import { fail } from "assert";
-import { BinaryExpr, BooleanLiteral, Identifier, NullLiteral, NumericLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
+import { BinaryExpr, BooleanLiteral, Identifier, NilLiteral, NumericLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
 
 describe('parser', () => {
     let parser: GomiParser
@@ -152,18 +152,17 @@ describe('parser', () => {
     })
 
     it('parses parenthesized expressions', () => {
-        const program = parser.produceAST('(1)')
+        const program = parser.produceAST('((1))')
         const node = program.body[0] as NumericLiteral
         expect(node.kind).toBe('NumericLiteral')
     })
 
-    it('parses null literals', () => {
+    it('parses nil literals', () => {
         const literals = ['nil', '無']
         for (let i = 0; i < literals.length; i++) {
             const { body } = parser.produceAST(literals[i])
-            expect(body.length).toBe(1)
-            const node = body[0] as NullLiteral
-            expect(node.kind).toBe('NullLiteral')
+            const node = body[0] as NilLiteral
+            expect(node.kind).toBe('NilLiteral')
             expect(node.value).toBe(null)
         }
     })

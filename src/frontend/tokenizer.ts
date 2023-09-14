@@ -12,17 +12,19 @@ export enum TokenVal {
 	HW_QUESTION = '?',		FW_QUESTION = '？',
 	HW_BANG = '!',			FW_BANG = '！',
 	EN_COMMENT = '#',		JP_COMMENT = '＃',
+	EN_STRING = "'",		JP_STRING = "”",
 	EN_LET = 'let', 		JP_LET = '宣言',
-	EN_NULL = 'nil', 		JP_NULL = '無',
+	EN_NIL = 'nil', 		JP_NIL = '無',
 	EN_TRUE = 'true', 		JP_TRUE = '本当',
 	EN_FALSE = 'false', 	JP_FALSE = '嘘',
 	EOF = 'EOF'
 }
 
 export enum TokenType {
-	Number = 'NUMBER',
+	Int = 'INT',
 	Boolean = 'BOOLEAN',
-	Null = 'NULL',
+	String = 'STRING',
+	Nil = 'NIL',
 	Identifier = 'IDENTIFIER',
 	Equals = 'EQUALS',
 	OpenParen = 'OPEN_PAREN',
@@ -44,8 +46,8 @@ export enum TokenType {
 const RESERVED: Record<string, TokenType> = {
 	[TokenVal.EN_LET]: TokenType.Let,
 	[TokenVal.JP_LET]: TokenType.Let,
-	[TokenVal.EN_NULL]: TokenType.Null,
-	[TokenVal.JP_NULL]: TokenType.Null,
+	[TokenVal.EN_NIL]: TokenType.Nil,
+	[TokenVal.JP_NIL]: TokenType.Nil,
 	[TokenVal.EN_TRUE]: TokenType.Boolean,
 	[TokenVal.JP_TRUE]: TokenType.Boolean,
 	[TokenVal.EN_FALSE]: TokenType.Boolean,
@@ -106,8 +108,8 @@ function skippable(source: string): boolean {
 		|| source === TokenVal.JP_COMMENT
 }
 
-export function unrecognizedError(line: number, c: string) {
-	return `Unrecognized character found on line ${line}: '${c}'`
+export function unrecognizedError(line: number, position: number, c: string) {
+	return `Unrecognized character found on line ${line}, position ${position}: '${c}'`
 }
 
 export default class GomiTokenizer {
@@ -203,6 +205,21 @@ export default class GomiTokenizer {
 		// Multiple character tokens
 		// =========================
 
+		// String check
+		if (this.at() === TokenVal.EN_STRING || this.at() === TokenVal.JP_STRING) {
+			let value = '' 
+			this.i++
+			while (this.at() !== TokenVal.EN_STRING && this.at() !== TokenVal.JP_STRING) {
+				if (this.at() === '\n' || !this.not_eof()) {
+					throw 'Strings must be closed and expressed on one line.'
+				}
+				value += this.at()
+				this.i++
+			}
+			this.i++
+			return { type: TokenType.String, value }
+		}
+
 		// Binary operators
 		if (['|', '&', '｜', '＆'].includes(this.at())) {
 			this.i++
@@ -217,7 +234,7 @@ export default class GomiTokenizer {
 			while (this.i < this.src.length && isInt(this.at())) {
 				value += this.src[this.i++]
 			}
-			return { type: TokenType.Number, value: value }
+			return { type: TokenType.Int, value: value }
 		}
 		if (identifierBeginAllowed(this.at())) {
 			let value = `${this.src[this.i++]}`
@@ -229,139 +246,6 @@ export default class GomiTokenizer {
 				? { type: RESERVED[value], value }
 				: { type: TokenType.Identifier, value }
 		}
-		throw unrecognizedError(this.lineCount, this.at())
+		throw unrecognizedError(this.lineCount, this.i, this.at())
 	}
-}
-
-export function tokenize(src: string): Token[] {
-	const tokens = new Array<Token>()
-
-	// Build tokens until end of source
-	let i = 0
-	let line = 1
-	while (i < src.length) {
-		if (src[i] === '\n') {
-			i++
-			line++
-			continue
-		}
-
-		// =========================
-		// Single character tokens
-		// =========================
-		
-		if (src[i] === TokenVal.HW_EQUALS || src[i] === TokenVal.FW_EQUALS) {
-			tokens.push({ type: TokenType.Equals, value: src[i] })
-			i++
-			continue
-		}
-		if (src[i] === TokenVal.HW_OPEN_PAREN || src[i] === TokenVal.FW_OPEN_PAREN) {
-			tokens.push({ type: TokenType.OpenParen, value: src[i] })
-			i++
-			continue
-		}
-		if (src[i] === TokenVal.HW_CLOSE_PAREN || src[i] === TokenVal.FW_CLOSE_PAREN) {
-			tokens.push({ type: TokenType.CloseParen, value: src[i] })
-			i++
-			continue
-		}
-		if (src[i] === TokenVal.HW_OPEN_BRACKET || src[i] === TokenVal.FW_OPEN_BRACKET) {
-			tokens.push({ type: TokenType.OpenBracket, value: src[i] })
-			i++
-			continue
-		}
-		if (src[i] === TokenVal.HW_CLOSE_BRACKET || src[i] === TokenVal.FW_CLOSE_BRACKET) {
-			tokens.push({ type: TokenType.CloseBracket, value: src[i] })
-			i++
-			continue
-		}
-		if (src[i] === TokenVal.HW_OPEN_BRACE || src[i] === TokenVal.FW_OPEN_BRACE) {
-			tokens.push({ type: TokenType.OpenBrace, value: src[i] })
-			i++
-			continue
-		}
-		if (src[i] === TokenVal.HW_CLOSE_BRACE || src[i] === TokenVal.FW_CLOSE_BRACE) {
-			tokens.push({ type: TokenType.CloseBrace, value: src[i] })
-			i++
-			continue
-		}
-		if (src[i] === TokenVal.HW_COLON || src[i] === TokenVal.FW_COLON) {
-			tokens.push({ type: TokenType.Colon, value: src[i] })
-			i++
-			continue
-		}
-		if (src[i] === TokenVal.HW_SEMICOLON || src[i] === TokenVal.FW_SEMICOLON) {
-			tokens.push({ type: TokenType.Semicolon, value: src[i] })
-			i++
-			continue
-		}
-		if (src[i] === TokenVal.HW_COMMA || src[i] === TokenVal.FW_COMMA_1 || src[i] === TokenVal.FW_COMMA_2) {
-			tokens.push({ type: TokenType.Comma, value: src[i] })
-			i++
-			continue
-		}
-		if (src[i] === TokenVal.HW_QUESTION || src[i] === TokenVal.FW_QUESTION) {
-			tokens.push({ type: TokenType.Question, value: src[i] })
-			i++
-			continue
-		}
-		if (src[i] === TokenVal.HW_BANG || src[i] === TokenVal.FW_BANG) {
-			tokens.push({ type: TokenType.Bang, value: src[i] })
-			i++
-			continue
-		}
-		// We need to lie to the TS compiler here just to check
-		if (binaryOperators.includes(src[i] as BinaryOperator)) {
-			tokens.push({ type: TokenType.BinaryOperator, value: src[i] })
-			i++
-			continue
-		}
-
-		// =========================
-		// Multiple character tokens
-		// =========================
-
-		// Binary operators
-		if (['|', '&', '｜', '＆'].includes(src[i])) {
-			i++
-			if (src[i] === src[i-1]) {
-				tokens.push({ type: TokenType.BinaryOperator, value: src[i].repeat(2)})
-				i++
-				continue
-			}
-		}
-
-		if (isInt(src[i])) {
-			let value = `${src[i++]}`
-			while (i < src.length && isInt(src[i])) {
-				value += src[i++]
-			}
-			tokens.push({ type: TokenType.Number, value: value })
-			continue
-		}
-
-		if (identifierBeginAllowed(src[i])) {
-			let value = `${src[i++]}`
-			while (i < src.length && identifierAllowed(src[i])) {
-				value += src[i++]
-			}
-			const reserved = RESERVED[value]
-			if (reserved !== undefined) {
-				tokens.push({ type: RESERVED[value], value })
-				continue
-			}
-			tokens.push({ type: TokenType.Identifier, value })
-			continue
-		}
-
-		if (skippable(src[i])) {
-			i++
-			continue
-		}
-
-		throw unrecognizedError(line, src[i])
-	}
-
-	tokens.push({ type: TokenType.EOF, value: TokenVal.EOF })
-	return tokens
 }

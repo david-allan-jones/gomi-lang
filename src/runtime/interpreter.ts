@@ -35,7 +35,7 @@ export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
                 type: 'boolean',
                 value: (ast as BooleanLiteral).value
             } as RuntimeVal<boolean>
-        case "NullLiteral":
+        case "NilLiteral":
             return {
                 type: 'object'
             } as ObjectVal

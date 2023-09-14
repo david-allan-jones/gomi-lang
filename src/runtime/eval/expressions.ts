@@ -1,4 +1,4 @@
-import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, NullLiteral, ObjectLiteral, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment } from "../../frontend/ast"
+import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, NilLiteral, ObjectLiteral, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope"
 import { FloatVal, IntVal, NumberVal, ObjectVal, RuntimeVal } from "../types"
@@ -194,7 +194,7 @@ export function eval_assignment_expr(assignment: VarAssignment, scope: Scope): R
     )
 }
 
-export function eval_object_expr(obj: ObjectLiteral | NullLiteral, scope: Scope): ObjectVal {
+export function eval_object_expr(obj: ObjectLiteral | NilLiteral, scope: Scope): ObjectVal {
     if (obj.kind === 'NullLiteral') {
         return { type: "object" }
     }

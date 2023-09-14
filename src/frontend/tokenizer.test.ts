@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test"
-import GomiTokenizer, { Token, TokenType, TokenVal, identifierBeginAllowed, isInt, tokenize, unrecognizedError } from "./tokenizer"
+import GomiTokenizer, { Token, TokenType, TokenVal, identifierBeginAllowed, isInt, unrecognizedError } from "./tokenizer"
 import { fail } from "assert"
 
 describe('identifierBeginAllowed', () => {
@@ -91,7 +91,7 @@ describe('Tokenizer', () => {
             1 
         `)   
         const token = tokenizer.read_token()
-        expect(token.type).toBe(TokenType.Number)
+        expect(token.type).toBe(TokenType.Int)
         expect(token.value).toBe('1')
     })
     it('open paren', () => {
@@ -128,10 +128,19 @@ describe('Tokenizer', () => {
         testSources(['!', '！'], TokenType.Bang)
     })
     it('number', () => {
-        testSources(['1', '１', '10', '１０'], TokenType.Number)
+        testSources(['1', '１', '10', '１０'], TokenType.Int)
+    })
+    it('string', () => {
+        const tests = ["''", "'Test'", '””', '”テスト”']
+        for (let i = 0; i < tests.length; i++) {
+           let tokenizer = new GomiTokenizer(tests[i]) 
+           const token = tokenizer.read_token()
+           expect(token.type).toBe(TokenType.String)
+           expect(token.value).toBe(tests[i].substring(1, tests[i].length - 1))
+        }
     })
     it('null', () => {
-        testSources(['nil', '無'], TokenType.Null)
+        testSources(['nil', '無'], TokenType.Nil)
     })
     it('true', () => {
         testSources(['true', '本当'], TokenType.Boolean)
@@ -177,13 +186,15 @@ describe('Tokenizer', () => {
     })
     it('errors on unrecognized character', () => {
         try {
-            const src = `
+            const tokenizer = new GomiTokenizer(`
                 let a = 1$
-            `
-            tokenize(src)
+            `)
+            while (tokenizer.not_eof()) {
+                tokenizer.read_token()
+            }
             fail('Was able to tokenize bad characters')
         } catch (e) {
-            expect(e).toBe(unrecognizedError(2, '$'))
+            expect(e).toBe(unrecognizedError(2, 26, '$'))
         }
     })
 

@@ -1,4 +1,4 @@
-import { tokenize } from "./src/frontend/tokenizer";
+import GomiTokenizer from "./src/frontend/tokenizer";
 
 repl()
 
@@ -11,8 +11,10 @@ function repl() {
         }
 
         try {
-            const tokens = tokenize(input)
-            console.log(tokens)
+            const tokenizer = new GomiTokenizer(input)
+            while (tokenizer.not_eof()) {
+                console.log(tokenizer.read_token())
+            }
         } catch(e) {
             console.error(e)
         }

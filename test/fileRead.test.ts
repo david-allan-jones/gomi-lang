@@ -32,7 +32,7 @@ describe('File reader', () => {
             const t = async () => {
                 const val = await evalFile(filePath)
             }
-            expect(t).toThrow(unrecognizedError(1, '@'))
+            expect(t).toThrow(unrecognizedError(1, 33, '@'))
         })
     })
 })

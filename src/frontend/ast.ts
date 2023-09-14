@@ -10,7 +10,7 @@ export type NodeType =
     | "TernaryExpr"
     | "Identifier"
     | "NumericLiteral"
-    | "NullLiteral"
+    | "NilLiteral"
     | "BooleanLiteral"
     | "ObjectLiteral"
     | "Property"
@@ -72,8 +72,8 @@ export interface NumericLiteral extends PrimaryExpr {
     value: bigint
 }
 
-export interface NullLiteral extends PrimaryExpr {
-    kind: "NullLiteral"
+export interface NilLiteral extends PrimaryExpr {
+    kind: "NilLiteral"
     value: null
 }
 

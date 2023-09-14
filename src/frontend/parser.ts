@@ -1,10 +1,10 @@
 import { normalizeInt } from '../utils/japanese'
-import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral } from './ast'
+import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NilLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral } from './ast'
 import GomiTokenizer, { Token, TokenType as TT, TokenVal, TokenType } from './tokenizer'
 
 export default class GomiParser {
     private tokenizer: GomiTokenizer = new GomiTokenizer('')
-    private at: Token = { type: TT.Null, value: 'nil' }
+    private at: Token = { type: TT.Nil, value: 'nil' }
 
     public produceAST(source: string): Program {
         this.tokenizer = new GomiTokenizer(source)
@@ -327,16 +327,16 @@ export default class GomiParser {
                     kind: "Identifier",
                     symbol: prev.value
                 } as Identifier
-            case TT.Number:
+            case TT.Int:
                 return {
                     kind: "NumericLiteral",
                     value: normalizeInt(prev.value)
                 } as NumericLiteral
-            case TT.Null:
+            case TT.Nil:
                 return {
-                    kind: "NullLiteral",
+                    kind: "NilLiteral",
                     value: null
-                } as NullLiteral
+                } as NilLiteral
             case TT.Boolean:
                 return {
                     kind: "BooleanLiteral",
