@@ -3,6 +3,7 @@ export type ValueType =
     | "object"
     | "int"
     | "float"
+    | "string"
     | "boolean"
 
 export interface RuntimeVal<T> {
@@ -33,6 +34,11 @@ export interface IntVal extends NumberVal {
 export interface FloatVal extends NumberVal {
     type: 'float'
     value: number
+}
+
+export interface StringVal extends RuntimeVal<string> {
+    type: 'string'
+    value: string
 }
 
 export interface BooleanValue extends RuntimeVal<boolean> {
