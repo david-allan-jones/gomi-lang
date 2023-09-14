@@ -86,6 +86,14 @@ describe('Tokenizer', () => {
         expect(token.type).toBe(TokenType.EOF)
         expect(token.value).toBe(TokenVal.EOF)
     })
+    it('line comment', () => {
+        const tokenizer = new GomiTokenizer(`#b
+            1 
+        `)   
+        const token = tokenizer.read_token()
+        expect(token.type).toBe(TokenType.Number)
+        expect(token.value).toBe('1')
+    })
     it('open paren', () => {
         testSources(['(', '（'], TokenType.OpenParen)
     })

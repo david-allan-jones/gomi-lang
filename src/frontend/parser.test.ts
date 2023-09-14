@@ -20,7 +20,7 @@ describe('parser', () => {
         const thrown = 'thrown'
         const t = () => {
             try {
-                parser.produceAST('#')
+                parser.produceAST('~')
             } catch(e) {
                 throw thrown
             }

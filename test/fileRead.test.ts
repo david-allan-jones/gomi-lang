@@ -9,7 +9,7 @@ function getFileName(path: string) {
 }
 
 describe('File reader', () => {
-    describe('correct file parsing', () => {
+    describe('correct file', () => {
         it('simple.gomi', async () => {
             const filePath = getFileName('simple.gomi')
             const val = await evalFile(filePath)
@@ -20,8 +20,13 @@ describe('File reader', () => {
             const val = await evalFile(filePath)
             expect(val.value).toBe(10000n)
         })
+        it('comment.gomi', async () => {
+            const filePath = getFileName('comment.gomi')
+            const val = await evalFile(filePath)
+            expect(val.value).toBe(50n)
+        })
     })
-    describe('correct file parsing', () => {
+    describe('invalid files', () => {
         it('invalid-character.gomi', async () => {
             const filePath = getFileName('invalid-character.gomi')
             const t = async () => {

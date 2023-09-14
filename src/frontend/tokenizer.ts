@@ -11,6 +11,7 @@ export enum TokenVal {
 	HW_COMMA = ',', 		FW_COMMA_1 = '，',			FW_COMMA_2 = '、',
 	HW_QUESTION = '?',		FW_QUESTION = '？',
 	HW_BANG = '!',			FW_BANG = '！',
+	EN_COMMENT = '#',		JP_COMMENT = '＃',
 	EN_LET = 'let', 		JP_LET = '宣言',
 	EN_NULL = 'nil', 		JP_NULL = '無',
 	EN_TRUE = 'true', 		JP_TRUE = '本当',
@@ -101,6 +102,8 @@ function skippable(source: string): boolean {
 		|| source === '　'
 		|| source === '\r'
 		|| source === '\n'
+		|| source === TokenVal.EN_COMMENT
+		|| source === TokenVal.JP_COMMENT
 }
 
 export function unrecognizedError(line: number, c: string) {
@@ -135,9 +138,14 @@ export default class GomiTokenizer {
 	}
 
 	read_token(): Token {
-		while (skippable(this.at())) {
+		let inComment = false
+		while ((skippable(this.at()) || inComment) && this.i < this.src.length) {
+			if (this.at() === TokenVal.EN_COMMENT || this.at() === TokenVal.JP_COMMENT) {
+				inComment = true
+			}
 			if (this.at() === '\n') {
 				this.lineCount++
+				inComment = false
 			}
 			this.i++
 		}

@@ -1,0 +1,8 @@
+# This is a comment. None of these words should be tokenized.
+
+# Neither should any of these.
+
+# This int should be tokenized though.
+50
+
+# Hope it works properly.
