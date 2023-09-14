@@ -20,7 +20,7 @@ export function print_runtime_val(runtimeVal: RuntimeVal<unknown>): void {
 }
 
 function serialize_obj(obj: ObjectVal, nestedLevel = 1): string {
-    if (obj.value === undefined) {
+    if (obj.value === null) {
         return 'nil'
     }
     const keyPadding = ' '.repeat((nestedLevel)*2)
