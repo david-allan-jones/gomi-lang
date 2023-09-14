@@ -1,7 +1,7 @@
 import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, NullLiteral, ObjectLiteral, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope"
-import { FloatVal, IntVal, NumberVal, ObjectVal as ObjectVal, ObjectVal, RuntimeVal } from "../types"
+import { FloatVal, IntVal, NumberVal, ObjectVal, RuntimeVal } from "../types"
 
 export function eval_identifier(identifier: Identifier, scope: Scope): RuntimeVal<unknown> {
     const val = scope.lookupVar(identifier.symbol)
@@ -183,6 +183,11 @@ export function eval_assignment_expr(assignment: VarAssignment, scope: Scope): R
     }
     const identifier = (assignment.assignee as Identifier).symbol
 
+    const oldValue = scope.lookupVar(identifier) as RuntimeVal<unknown>
+    const newValue = evaluate(assignment.value, scope)
+    if (oldValue.type !== newValue.type) {
+        throw `Mismatched assignment. Both sides of the = must be the same type. Received '${oldValue.type}' and '${newValue.type}'.`
+    }
     return scope.assignVar(
         identifier,
         evaluate(assignment.value, scope)

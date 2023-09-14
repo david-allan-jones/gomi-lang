@@ -23,6 +23,10 @@ function serialize_obj(obj: ObjectVal, nestedLevel = 1): string {
     const keyPadding = ' '.repeat((nestedLevel)*2)
     const closingBracePadding = ' '.repeat((nestedLevel - 1)*2)
     const entries = [...obj.value.entries()]
+    if (entries.length === 0) {
+        return '{}'
+    }
+
     let serialized = '{\n'
     for (let i = 0; i < entries.length; i++) {
         const [key, value] = entries[i]
