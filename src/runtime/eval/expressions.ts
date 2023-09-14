@@ -1,7 +1,8 @@
+import exp from "constants"
 import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, NilLiteral, ObjectLiteral, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope"
-import { FloatVal, IntVal, NumberVal, ObjectVal, RuntimeVal } from "../types"
+import { BooleanValue, FloatVal, IntVal, NumberVal, ObjectVal, RuntimeVal, StringVal } from "../types"
 
 export function eval_identifier(identifier: Identifier, scope: Scope): RuntimeVal<unknown> {
     const val = scope.lookupVar(identifier.symbol)
@@ -119,10 +120,10 @@ export function eval_float_binary_expr(
 }
 
 export function eval_boolean_binary_expr(
-    left: RuntimeVal<boolean>,
-    right: RuntimeVal<boolean>,
+    left: BooleanValue,
+    right: BooleanValue,
     op: NormalizedBinaryOperator
-): RuntimeVal<boolean> {
+): BooleanValue {
     switch (op) { 
         case '||':
             return { type: 'boolean', value: left.value || right.value }
@@ -130,6 +131,25 @@ export function eval_boolean_binary_expr(
             return { type: 'boolean', value: left.value && right.value }
         default:
             throw `Runtime Error: An unexpected boolean operator was received by the interpreter: '${op}'`
+    }
+}
+
+export function eval_string_binary_expr(
+    left: StringVal,
+    right: StringVal,
+    op: NormalizedBinaryOperator
+): StringVal {
+    switch (op) {
+        case '+':
+            return { type: 'string', value: left.value + right.value }
+        case '-':
+            return { type: 'string', value: left.value.replace(right.value, '') }
+        case '*':
+            return { type: 'string', value: `${right.value}${left.value}${right.value}`}
+        case '/':
+            return { type: 'string', value: left.value.replaceAll(right.value, '') }
+        default:
+            throw `Runtime Error: An unexpected string operator was received by the interpreter: '${op}'`
     }
 }
 
@@ -154,16 +174,20 @@ export function eval_binary_expr(expr: BinaryExpr, scope: Scope): RuntimeVal<unk
                 right as FloatVal,
                 expr.operator
             )
+        case 'string':
+            return eval_string_binary_expr(
+                left as StringVal,
+                right as StringVal,
+                expr.operator
+            )
         case 'boolean':
             return eval_boolean_binary_expr(
-                left as RuntimeVal<boolean>,
-                right as RuntimeVal<boolean>,
+                left as BooleanValue,
+                right as BooleanValue,
                 expr.operator
             )
         default:
-            return {
-                type: 'object',
-            } as ObjectVal
+            throw `No binary expression evaluation has been defined for type '${left.type}'`
     }
 }
 
@@ -195,7 +219,7 @@ export function eval_assignment_expr(assignment: VarAssignment, scope: Scope): R
 }
 
 export function eval_object_expr(obj: ObjectLiteral | NilLiteral, scope: Scope): ObjectVal {
-    if (obj.kind === 'NullLiteral') {
+    if (obj.kind === 'NilLiteral') {
         return { type: "object" }
     }
     const object: ObjectVal =  { type: "object", value: new Map() }
