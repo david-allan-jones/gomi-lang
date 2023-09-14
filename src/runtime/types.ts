@@ -1,6 +1,6 @@
 export type ValueType = 
     | "void"
-    | "nil"
+    | "object"
     | "int"
     | "float"
     | "boolean"
@@ -15,9 +15,9 @@ export interface VoidValue extends RuntimeVal<null> {
     value: null
 }
 
-export interface NilValue extends RuntimeVal<null> {
-    type: 'nil'
-    value: null
+export interface ObjectValue extends RuntimeVal<object | null> {
+    type: 'object'
+    props: Map<string, RuntimeVal<unknown>>
 }
 
 export interface NumberVal extends RuntimeVal<bigint | number> {

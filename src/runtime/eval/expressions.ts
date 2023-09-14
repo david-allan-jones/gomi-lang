@@ -1,10 +1,12 @@
-import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment } from "../../frontend/ast"
+import { env } from "process"
+import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, ObjectLiteral, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope"
-import { FloatVal, IntVal, NumberVal, RuntimeVal } from "../types"
+import { FloatVal, IntVal, NumberVal, ObjectValue as ObjectVal, ObjectValue, RuntimeVal } from "../types"
 
 export function eval_identifier(identifier: Identifier, scope: Scope): RuntimeVal<unknown> {
     const val = scope.lookupVar(identifier.symbol)
+    console.log(val)
     return val
 }
 
@@ -162,9 +164,9 @@ export function eval_binary_expr(expr: BinaryExpr, scope: Scope): RuntimeVal<unk
             )
         default:
             return {
-                type: 'nil',
+                type: 'object',
                 value: null
-            } as RuntimeVal<null>
+            } as ObjectVal
     }
 }
 
@@ -188,4 +190,15 @@ export function eval_assignment_expr(assignment: VarAssignment, scope: Scope): R
         identifier,
         evaluate(assignment.value, scope)
     )
+}
+
+export function eval_object_expr(obj: ObjectLiteral, scope: Scope): ObjectValue {
+    const object =  { type: "object", props: new Map() } as ObjectValue
+    for (const { key, value } of obj.props) {
+        const runtimeVal = (value === undefined) 
+            ? scope.lookupVar(key)
+            : evaluate(value, scope)
+        object.props.set(key, runtimeVal)
+    }
+    return object
 }

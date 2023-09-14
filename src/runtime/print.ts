@@ -1,9 +1,9 @@
-import { IntVal, RuntimeVal } from './types'
+import { IntVal, ObjectValue, RuntimeVal } from './types'
 
 export function print_runtime_val(runtimeVal: RuntimeVal<unknown>): void {
     let serialized
     switch(runtimeVal.type) {
-        case 'nil':
+        case 'object':
             serialized = 'nil'
             break
         case 'int':

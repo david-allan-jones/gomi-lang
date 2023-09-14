@@ -4,7 +4,7 @@ import Scope from "../scope"
 import { RuntimeVal } from "../types"
 
 export function eval_program(program: Program, scope: Scope): RuntimeVal<unknown> {
-    let lastResult: RuntimeVal<unknown> = { type: 'nil', value: 'null' }
+    let lastResult: RuntimeVal<unknown> = { type: 'object', value: null }
     for (let i = 0; i < program.body.length; i++) {
         lastResult = evaluate(program.body[i], scope)
     }

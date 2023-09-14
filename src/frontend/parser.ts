@@ -1,6 +1,6 @@
 import { normalizeInt } from '../utils/japanese'
-import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr } from './ast'
-import GomiTokenizer, { Token, TokenType as TT, TokenVal } from './tokenizer'
+import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NullLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral } from './ast'
+import GomiTokenizer, { Token, TokenType as TT, TokenVal, TokenType } from './tokenizer'
 
 export default class GomiParser {
     private tokenizer: GomiTokenizer = new GomiTokenizer('')
@@ -113,7 +113,7 @@ export default class GomiParser {
     }
 
     private parse_assign_expr(): Expr {
-        const left = this.parse_ternary_expr()
+        const left = this.parse_object_expr()
         if (this.at.type === TT.Equals) {
             this.eat_token()
             const value = this.parse_assign_expr()
@@ -126,14 +126,49 @@ export default class GomiParser {
         return left
     }
 
+    private parse_object_expr(): Expr {
+        if (this.at.type !== TT.OpenBrace) {
+            return this.parse_ternary_expr()
+        }
+
+        this.eat_token()
+        const props: Property[] = []
+        while (this.not_eof() && this.at.type !== TT.CloseBrace) {
+            this.validate_token(TT.Identifier, 'Object literal key expected')
+            const key = this.at.value
+            this.eat_token()
+
+            if (this.at.type === TT.Comma) {
+                this.eat_token()
+                props.push({ key, kind: 'Property' })
+                continue
+            } else if (this.at.type === TT.CloseBrace) {
+                props.push({ key, kind: 'Property' })
+                continue
+            }
+
+            this.validate_token(TT.Colon, 'Colon expected in object literal')
+            this.eat_token()
+            const value = this.parse_expr()
+            props.push({ kind: 'Property', value, key })
+            if (this.at.type !== TokenType.CloseBrace) {
+                this.validate_token(TT.Comma, 'Expected comma following object literal property')
+                this.eat_token()
+            }
+        }
+        this.validate_token(TT.CloseBrace, 'Missing closing brace in object literal.')
+        this.eat_token()
+        return { kind: 'ObjectLiteral', props } as ObjectLiteral
+    }
+
     private parse_ternary_expr(): Expr {
         let left = this.parse_logical_or_expr()
         if (this.at.type === TT.Question) {
             this.eat_token()
-            const mid = this.parse_ternary_expr()
+            const mid = this.parse_object_expr()
             this.validate_token(TT.Colon, 'Invalid character detected in ternary expression')
             this.eat_token()
-            const right = this.parse_ternary_expr()
+            const right = this.parse_object_expr()
             return {
                 kind: 'TernaryExpr',
                 left,

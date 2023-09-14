@@ -82,9 +82,15 @@ export interface BooleanLiteral extends PrimaryExpr {
     value: boolean
 }
 
+export interface Property extends Expr {
+    kind: "Property",
+    key: string,
+    value?: Expr
+}
+
 export interface ObjectLiteral extends PrimaryExpr {
     kind: "ObjectLiteral"
-    props: Map<string, Property>
+    props: Property[]
 }
 
 export interface Property extends Expr {
