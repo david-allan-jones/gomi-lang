@@ -2,9 +2,11 @@ export type NodeType =
     // Statements
     | "Program"
     | "VarDeclaration"
-    | "VarAssignment"
 
     // Expressions
+    | "VarAssignment"
+    | "CallExpr"
+    | "MemberExpr"
     | "UnaryExpr"
     | "BinaryExpr"
     | "TernaryExpr"
@@ -40,6 +42,18 @@ export interface VarAssignment extends Expr {
 }
 
 export interface Expr extends Stmt {}
+
+export interface CallExpr extends Expr {
+    kind: "CallExpr",
+    callee:  Expr
+    args: Expr[]
+}
+
+export interface MemberExpr extends Expr {
+    kind: "MemberExpr",
+    object: Expr,
+    prop: Expr
+}
 
 export interface UnaryExpr extends Expr {
     kind: "UnaryExpr"

@@ -1,5 +1,5 @@
 import { normalizeInt } from '../utils/japanese'
-import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NilLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, StringLiteral } from './ast'
+import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NilLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, StringLiteral, CallExpr, MemberExpr } from './ast'
 import GomiLexer, { Token, TokenType as TT, TokenVal, TokenType } from './lexer'
 
 export default class GomiParser {
@@ -297,13 +297,13 @@ export default class GomiParser {
         if (this.at.value === '-') {
             return this.parse_negative_expr()
         }
-        return this.parse_primary_expr()
+        return this.parse_call_member_expr()
     }
 
     private parse_bang_expr(): Expr {
         // Consume the bang
         this.eat_token()
-        const operand = this.parse_primary_expr()
+        const operand = this.parse_call_member_expr()
         return {
             kind: 'UnaryExpr',
             operator: '!',
@@ -314,12 +314,70 @@ export default class GomiParser {
     private parse_negative_expr(): Expr {
         // Consume the negative sign
         this.eat_token()
-        const operand = this.parse_primary_expr()
+        const operand = this.parse_call_member_expr()
         return {
             kind: 'UnaryExpr',
             operator: '-',
             operand
         } as UnaryExpr
+    }
+
+    private parse_call_member_expr(): Expr {
+        const member = this.parse_member_expr()
+        if (this.at.type === TT.OpenParen) {
+            return this.parse_call_expr(member)
+        }
+        return member
+    }
+
+    private parse_call_expr(callee: Expr): CallExpr {
+        let callExpr: CallExpr = {
+            kind: 'CallExpr',
+            callee,
+            args: this.parse_args()
+        } 
+        if (this.at.type === TT.OpenParen) {
+            callExpr = this.parse_call_expr(callExpr)
+        }
+        return callExpr
+    }
+
+    private parse_args(): Expr[] {
+        this.validate_token(TT.OpenParen, 'Expected open paren')  
+        this.eat_token()
+        const args = this.at.type === TT.CloseParen
+            ? []
+            : this.parse_arg_lit()
+
+        this.validate_token(TT.CloseParen, 'Missing closing paren in call expression')
+        this.eat_token()
+        return args
+    }
+
+    private parse_arg_lit(): Expr[] {
+        const args = [this.parse_expr()]
+        while (this.not_eof() && this.at.type === TT.Comma) {
+            this.eat_token()
+            args.push(this.parse_expr())
+        }
+        return args
+    }
+
+    private parse_member_expr(): Expr {
+        let object = this.parse_primary_expr()
+        while (this.at.type === TT.Period) {
+            this.eat_token()
+            let prop = this.parse_primary_expr()
+            if (prop.kind !== 'Identifier') {
+                throw 'Cannot access props on an object that are not identifiers'
+            }
+            object = {
+                kind: 'MemberExpr',
+                object,
+                prop
+            } as MemberExpr
+        }
+        return object
     }
 
     private parse_primary_expr(): Expr {

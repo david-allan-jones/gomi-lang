@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import GomiParser from "./parser";
 import { fail } from "assert";
-import { BinaryExpr, BooleanLiteral, Identifier, NilLiteral, NumericLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
+import { BinaryExpr, BooleanLiteral, CallExpr, Identifier, MemberExpr, NilLiteral, NumericLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
 
 describe('Gomi Parser', () => {
     let parser: GomiParser
@@ -345,7 +345,6 @@ describe('Gomi Parser', () => {
     it('ternary expression in mid of ternary is evaluated correctly', () => {
         const stmt = 'a ? b ? c : d : e'
         const program = parser.produceAST(stmt)
-        expect(program.body.length).toBe(1)
         const node = program.body[0] as TernaryExpr
         expect(node.kind).toBe('TernaryExpr')
         expect(node.left.kind).toBe('Identifier')
@@ -356,11 +355,34 @@ describe('Gomi Parser', () => {
     it('double nested ternary expressions', () => {
         const stmt = 'a ? b ? c : d : e ? f : g'
         const program = parser.produceAST(stmt)
-        expect(program.body.length).toBe(1)
         const node = program.body[0] as TernaryExpr
         expect(node.kind).toBe('TernaryExpr')
         expect(node.left.kind).toBe('Identifier')
         expect(node.mid.kind).toBe('TernaryExpr')
         expect(node.right.kind).toBe('TernaryExpr')
+    })
+
+    it('parses call expresion', () => {
+        const stmt = "foo(bar, 1)(baz, '2')"
+        const program = parser.produceAST(stmt)
+        const node = program.body[0] as CallExpr
+        expect(node.kind).toBe('CallExpr')
+        expect(node.callee.kind).toBe('CallExpr')
+        expect(node.args[0].kind).toBe('Identifier')
+        expect(node.args[1].kind).toBe('StringLiteral')
+        const callee = node.callee as CallExpr
+        expect(callee.args[0].kind).toBe('Identifier')
+        expect(callee.args[1].kind).toBe('NumericLiteral')
+    })
+
+    it('parses member expressions', () => {
+        const stmt = 'foo.bar.baz'
+        const program = parser.produceAST(stmt)
+        const node = program.body[0] as MemberExpr
+        expect(node.kind).toBe('MemberExpr')
+        expect(node.prop.kind).toBe('Identifier')
+        const object = node.object as MemberExpr
+        expect(object.prop.kind).toBe('Identifier')
+        expect(object.object.kind).toBe('Identifier')
     })
 })

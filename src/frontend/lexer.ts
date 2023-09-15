@@ -7,6 +7,7 @@ export enum TokenVal {
 	HW_OPEN_BRACE = '{', FW_OPEN_BRACE = '｛',
 	HW_CLOSE_BRACE = '}', FW_CLOSE_BRACE = '｝',
 	HW_COLON = ':', FW_COLON = '：',
+	HW_PERIOD = '.', FW_PERIOD = '。',
 	HW_SEMICOLON = ';', FW_SEMICOLON = '；',
 	HW_COMMA = ',', FW_COMMA_1 = '，', FW_COMMA_2 = '、',
 	HW_QUESTION = '?', FW_QUESTION = '？',
@@ -35,6 +36,7 @@ export enum TokenType {
 	OpenBrace = 'OPEN_BRACE',
 	CloseBrace = 'CLOSE_BRACE',
 	Colon = 'COLON',
+	Period = 'PERIOD',
 	Semicolon = 'SEMICOLON',
 	Comma = 'COMMA',
 	Question = 'QUESTION',
@@ -187,6 +189,9 @@ export default class GomiLexer {
 		}
 		if (this.at() === TokenVal.HW_OPEN_BRACE || this.at() === TokenVal.FW_OPEN_BRACE) {
 			return this.mk_token(this.src[this.i], TokenType.OpenBrace)
+		}
+		if (this.at() === TokenVal.HW_PERIOD || this.at() === TokenVal.FW_PERIOD) {
+			return this.mk_token(this.src[this.i], TokenType.Period)
 		}
 		if (this.at() === TokenVal.HW_CLOSE_BRACE || this.at() === TokenVal.FW_CLOSE_BRACE) {
 			return this.mk_token(this.src[this.i], TokenType.CloseBrace)
