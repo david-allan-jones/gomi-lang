@@ -1,0 +1,10 @@
+function test1(n) {
+    function test2(m) {
+        function test3(k) {
+            k
+        }
+        test3(m)
+    }
+    test2(n)
+}
+test1(2)

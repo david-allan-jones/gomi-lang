@@ -25,6 +25,11 @@ describe('File reader', () => {
             const val = await evalFile(filePath)
             expect(val.value).toBe(50n)
         })
+        it('nested-functions.gomi', async () => {
+            const filePath = getFileName('nested-functions.gomi')
+            const val = await evalFile(filePath)
+            expect(val.value).toBe(2n)
+        })
     })
     describe('invalid files', () => {
         it('invalid-character.gomi', async () => {
