@@ -14,6 +14,7 @@ export enum TokenVal {
 	HW_BANG = '!', FW_BANG = '！',
 	EN_COMMENT = '#', JP_COMMENT = '＃',
 	EN_STRING = "'", JP_STRING = "”",
+	EN_FUNCTION = 'function', JP_FUNCTION = '関数',
 	EN_LET = 'let', JP_LET = '宣言',
 	EN_NIL = 'nil', JP_NIL = '無',
 	EN_TRUE = 'true', JP_TRUE = '本当',
@@ -42,6 +43,7 @@ export enum TokenType {
 	Question = 'QUESTION',
 	Bang = 'BANG',
 	Let = 'LET',
+	Function = 'Function',
 	EOF = 'EOF'
 }
 
@@ -53,7 +55,9 @@ const RESERVED: Record<string, TokenType> = {
 	[TokenVal.EN_TRUE]: TokenType.Boolean,
 	[TokenVal.JP_TRUE]: TokenType.Boolean,
 	[TokenVal.EN_FALSE]: TokenType.Boolean,
-	[TokenVal.JP_FALSE]: TokenType.Boolean
+	[TokenVal.JP_FALSE]: TokenType.Boolean,
+	[TokenVal.EN_FUNCTION]: TokenType.Function,
+	[TokenVal.JP_FUNCTION]: TokenType.Function
 }
 
 export interface Token {
