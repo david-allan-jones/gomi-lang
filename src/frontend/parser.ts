@@ -4,7 +4,7 @@ import GomiLexer, { Token, TokenType as TT, TokenVal, TokenType } from './lexer'
 
 export default class GomiParser {
     private tokenizer: GomiLexer = new GomiLexer('')
-    private at: Token = { type: TT.Nil, value: 'nil' }
+    private at: Token = { type: TT.Nil, value: 'nil', line: 1, column: 1 }
 
     public produceAST(source: string): Program {
         this.tokenizer = new GomiLexer(source)
@@ -133,15 +133,18 @@ export default class GomiParser {
 
         this.eat_token()
         const props: Property[] = []
+        // @ts-ignore
         while (this.not_eof() && this.at.type !== TT.CloseBrace) {
             this.validate_token(TT.Identifier, 'Object literal key expected')
             const key = this.at.value
             this.eat_token()
 
+            // @ts-ignore
             if (this.at.type === TT.Comma) {
                 this.eat_token()
                 props.push({ key, kind: 'Property' })
                 continue
+            // @ts-ignore
             } else if (this.at.type === TT.CloseBrace) {
                 props.push({ key, kind: 'Property' })
                 continue
@@ -151,6 +154,7 @@ export default class GomiParser {
             this.eat_token()
             const value = this.parse_expr()
             props.push({ kind: 'Property', value, key })
+            // @ts-ignore
             if (this.at.type !== TokenType.CloseBrace) {
                 this.validate_token(TT.Comma, 'Expected comma following object literal property')
                 this.eat_token()
