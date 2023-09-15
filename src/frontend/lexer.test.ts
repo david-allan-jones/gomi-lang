@@ -203,23 +203,15 @@ describe('Gomi Lexer', () => {
             a
             b
         `)
-        expect(tokenizer.get_line()).toBe(1)
-        tokenizer.read_token()
-        expect(tokenizer.get_line()).toBe(2)
-        tokenizer.read_token()
-        expect(tokenizer.get_line()).toBe(3)
-        tokenizer.read_token()
-        expect(tokenizer.get_line()).toBe(4)
+        expect(tokenizer.read_token().line).toBe(2) //a
+        expect(tokenizer.read_token().line).toBe(3) //b
+        expect(tokenizer.read_token().line).toBe(4) //EOF
     })
 
     it('tracks position correctly', () => {
         const tokenizer = new GomiLexer('ab cd e')
-        expect(tokenizer.get_position()).toBe(1)
-        tokenizer.read_token()
-        expect(tokenizer.get_position()).toBe(3)
-        tokenizer.read_token()
-        expect(tokenizer.get_position()).toBe(6)
-        tokenizer.read_token()
-        expect(tokenizer.get_position()).toBe(8)
+        expect(tokenizer.read_token().column).toBe(1) //a
+        expect(tokenizer.read_token().column).toBe(4) //a
+        expect(tokenizer.read_token().column).toBe(7) //a
     })
 })
