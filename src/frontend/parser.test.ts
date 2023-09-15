@@ -3,7 +3,7 @@ import GomiParser from "./parser";
 import { fail } from "assert";
 import { BinaryExpr, BooleanLiteral, Identifier, NilLiteral, NumericLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
 
-describe('parser', () => {
+describe('Gomi Parser', () => {
     let parser: GomiParser
 
     beforeEach(() => {

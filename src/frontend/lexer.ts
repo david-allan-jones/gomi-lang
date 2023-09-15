@@ -112,7 +112,7 @@ export function unrecognizedError(line: number, position: number, c: string) {
 	return `Unrecognized character found on line ${line}, position ${position}: '${c}'`
 }
 
-export default class GomiTokenizer {
+export default class GomiLexer {
 	private src: string = ''
 	private i: number = 0
 	private lineCount: number = 1

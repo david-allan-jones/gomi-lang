@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { _resolveFilename } from "module";
 import { evalFile } from "./fileRead";
-import { unrecognizedError } from "../src/frontend/tokenizer";
+import { unrecognizedError } from "../src/frontend/lexer";
 
 // TODO: Get this working so it doesn't require being at root
 function getFileName(path: string) {

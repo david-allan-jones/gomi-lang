@@ -1,13 +1,13 @@
 import { normalizeInt } from '../utils/japanese'
 import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NilLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, StringLiteral } from './ast'
-import GomiTokenizer, { Token, TokenType as TT, TokenVal, TokenType } from './tokenizer'
+import GomiLexer, { Token, TokenType as TT, TokenVal, TokenType } from './lexer'
 
 export default class GomiParser {
-    private tokenizer: GomiTokenizer = new GomiTokenizer('')
+    private tokenizer: GomiLexer = new GomiLexer('')
     private at: Token = { type: TT.Nil, value: 'nil' }
 
     public produceAST(source: string): Program {
-        this.tokenizer = new GomiTokenizer(source)
+        this.tokenizer = new GomiLexer(source)
         return this.parse_program()
     }
 

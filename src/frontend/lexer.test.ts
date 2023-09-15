@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test"
-import GomiTokenizer, { Token, TokenType, TokenVal, identifierBeginAllowed, isInt, unrecognizedError } from "./tokenizer"
+import GomiLexer, { Token, TokenType, TokenVal, identifierBeginAllowed, isInt, unrecognizedError } from "./lexer"
 import { fail } from "assert"
 
 describe('identifierBeginAllowed', () => {
@@ -62,11 +62,11 @@ describe('isInteger', () => {
     })
 })
 
-describe('Tokenizer', () => {
+describe('Gomi Lexer', () => {
     const testSources = (sources: string[], type: TokenType): void => {
         const errors = []
         for (let i = 0; i < sources.length; i++) {
-            const tokenizer = new GomiTokenizer(sources[i])
+            const tokenizer = new GomiLexer(sources[i])
             const token = tokenizer.read_token()
             if (token.value !== sources[i]) {
                 errors.push({ received: token.value, expected: sources[i]})
@@ -81,13 +81,13 @@ describe('Tokenizer', () => {
     }
 
     it('gives only EOF token on empty string', () => {
-        const tokenizer = new GomiTokenizer('')
+        const tokenizer = new GomiLexer('')
         const token = tokenizer.read_token()
         expect(token.type).toBe(TokenType.EOF)
         expect(token.value).toBe(TokenVal.EOF)
     })
     it('line comment', () => {
-        const tokenizer = new GomiTokenizer(`#b
+        const tokenizer = new GomiLexer(`#b
             1 
         `)   
         const token = tokenizer.read_token()
@@ -133,7 +133,7 @@ describe('Tokenizer', () => {
     it('string', () => {
         const tests = ["''", "'Test'", '””', '”テスト”']
         for (let i = 0; i < tests.length; i++) {
-           let tokenizer = new GomiTokenizer(tests[i]) 
+           let tokenizer = new GomiLexer(tests[i]) 
            const token = tokenizer.read_token()
            expect(token.type).toBe(TokenType.String)
            expect(token.value).toBe(tests[i].substring(1, tests[i].length - 1))
@@ -167,7 +167,7 @@ describe('Tokenizer', () => {
         testSources(['||', '&&', '｜｜', '＆＆'], TokenType.BinaryOperator)
     })
     it('skips whitespace at end of file', () => {
-        const tokenizer = new GomiTokenizer('a ')
+        const tokenizer = new GomiLexer('a ')
         tokenizer.read_token()
         const token = tokenizer.read_token()
         expect(token.type).toBe(TokenType.EOF)
@@ -175,7 +175,7 @@ describe('Tokenizer', () => {
     })
     it('skips whitespace, newlines and tabs', () => {
         const tokens: Token[] = []
-        const tokenizer = new GomiTokenizer(`
+        const tokenizer = new GomiLexer(`
             a
         `)
         while (tokenizer.not_eof()) {
@@ -186,7 +186,7 @@ describe('Tokenizer', () => {
     })
     it('errors on unrecognized character', () => {
         try {
-            const tokenizer = new GomiTokenizer(`
+            const tokenizer = new GomiLexer(`
                 let a = 1$
             `)
             while (tokenizer.not_eof()) {
@@ -199,7 +199,7 @@ describe('Tokenizer', () => {
     })
 
     it('tracks line number correctly', () => {
-        const tokenizer = new GomiTokenizer(`
+        const tokenizer = new GomiLexer(`
             a
             b
         `)
@@ -213,7 +213,7 @@ describe('Tokenizer', () => {
     })
 
     it('tracks position correctly', () => {
-        const tokenizer = new GomiTokenizer('ab cd e')
+        const tokenizer = new GomiLexer('ab cd e')
         expect(tokenizer.get_position()).toBe(1)
         tokenizer.read_token()
         expect(tokenizer.get_position()).toBe(3)
