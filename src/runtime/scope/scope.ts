@@ -4,8 +4,10 @@ import globals from './globals'
 export function createGlobalScope(): Scope {
     const scope = new Scope()
     for (let i = 0; i < globals.length; i++) {
-        const { identifier, value } = globals[i]
-        scope.declareVar(identifier, value) 
+        const { identifiers, value } = globals[i]
+        for (let j = 0; j < identifiers.length; j++) {
+            scope.declareVar(identifiers[j], value) 
+        }
     }
     return scope
 }
