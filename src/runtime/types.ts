@@ -1,3 +1,4 @@
+import { Stmt } from "../frontend/ast"
 import Scope from "./scope/scope"
 
 export type ValueType = 
@@ -7,6 +8,7 @@ export type ValueType =
     | "float"
     | "string"
     | "boolean"
+    | "native-function"
     | "function"
 
 export interface RuntimeVal<T> {
@@ -54,11 +56,19 @@ export type FunctionCall = (
     scope: Scope
 ) => RuntimeVal<unknown>
 
-export interface FunctionValue extends RuntimeVal<unknown> {
-    type: "function"
+export interface NativeFunctionValue extends RuntimeVal<unknown> {
+    type: "native-function"
     call: FunctionCall
 }
 
-export function mk_function(call: FunctionCall): FunctionValue {
-    return { type: 'function', call }
+export interface FunctionValue extends RuntimeVal<unknown> {
+    type: "function"
+    name: string
+    parameters: string[]
+    declarationScope: Scope
+    body: Stmt[]
+}
+
+export function mk_native_function(call: FunctionCall): NativeFunctionValue {
+    return { type: 'native-function', call }
 }

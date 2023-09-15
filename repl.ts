@@ -7,6 +7,7 @@ repl()
 
 function repl() {
     const parser = new GomiParser()
+    const scope = createGlobalScope()
 
     console.log("ゴミ箱へようこそ")
     while (true) {
@@ -17,10 +18,11 @@ function repl() {
 
         try {
             const program = parser.produceAST(input)
-            const runtimeVal = evaluate(program, createGlobalScope())
-            if (runtimeVal.type !== 'void') {
-                print_runtime_val(runtimeVal)
+            const runtimeVal = evaluate(program, scope)
+            if (runtimeVal.type === 'void' || runtimeVal.type === 'function' || runtimeVal.type === 'native-function') {
+                continue
             }
+            print_runtime_val(runtimeVal)
         } catch(e) {
             console.error(e)
         }

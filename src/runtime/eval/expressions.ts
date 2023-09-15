@@ -2,7 +2,7 @@ import exp from "constants"
 import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, NilLiteral, ObjectLiteral, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment, CallExpr } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope/scope"
-import { BooleanValue, FloatVal, FunctionValue, IntVal, NumberVal, ObjectVal, RuntimeVal, StringVal } from "../types"
+import { BooleanValue, FloatVal, NativeFunctionValue, IntVal, NumberVal, ObjectVal, RuntimeVal, StringVal, FunctionValue, VoidVal } from "../types"
 
 export function eval_identifier(identifier: Identifier, scope: Scope): RuntimeVal<unknown> {
     const val = scope.lookupVar(identifier.symbol)
@@ -235,9 +235,23 @@ export function eval_object_expr(obj: ObjectLiteral | NilLiteral, scope: Scope):
 export function eval_call_expr(expr: CallExpr, scope: Scope): RuntimeVal<unknown> {
     const args = expr.args.map(a => evaluate(a, scope))
     const fn = evaluate(expr.callee, scope)
-    if (fn.type !== 'function') {
-        throw 'Cannot call value that is not a function: ' + JSON.stringify(fn)
+    if (fn.type === 'native-function') {
+        const result = (fn as NativeFunctionValue).call(args, scope)
+        return result
     }
-    const result = (fn as FunctionValue).call(args, scope)
-    return result
+    if (fn.type === 'function') {
+        const func = fn as FunctionValue
+        const funcScope = new Scope(func.declarationScope)
+
+        //Create the variables
+        for (let i = 0; i < func.parameters.length; i++) {
+            funcScope.declareVar(func.parameters[i], args[i])
+        }
+        let result: RuntimeVal<unknown> = { type: 'void', value: null }
+        for (let i = 0; i < func.body.length; i++) {
+            result = evaluate(func.body[i], funcScope)
+        }
+        return result
+    }
+    throw 'Cannot call value that is not a function: ' + JSON.stringify(fn)
 }
