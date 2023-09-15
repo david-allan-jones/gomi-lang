@@ -148,6 +148,9 @@ describe('Gomi Lexer', () => {
     it('false', () => {
         testSources(['false', '嘘'], TokenType.Boolean)
     })
+    it('if', () => {
+        testSources(['if', 'もし'], TokenType.If)
+    })
     it('let', () => {
         testSources(['let', '宣言'], TokenType.Let)
     })

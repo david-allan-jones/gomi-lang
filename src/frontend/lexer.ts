@@ -19,6 +19,7 @@ export enum TokenVal {
 	EN_NIL = 'nil', JP_NIL = '無',
 	EN_TRUE = 'true', JP_TRUE = '本当',
 	EN_FALSE = 'false', JP_FALSE = '嘘',
+	EN_IF = 'if', JP_IF = 'もし',
 	EOF = 'EOF'
 }
 
@@ -43,7 +44,8 @@ export enum TokenType {
 	Question = 'QUESTION',
 	Bang = 'BANG',
 	Let = 'LET',
-	Function = 'Function',
+	Function = 'FUNCTION',
+	If = 'IF',
 	EOF = 'EOF'
 }
 
@@ -56,6 +58,8 @@ const RESERVED: Record<string, TokenType> = {
 	[TokenVal.JP_TRUE]: TokenType.Boolean,
 	[TokenVal.EN_FALSE]: TokenType.Boolean,
 	[TokenVal.JP_FALSE]: TokenType.Boolean,
+	[TokenVal.EN_IF]: TokenType.If,
+	[TokenVal.JP_IF]: TokenType.If,
 	[TokenVal.EN_FUNCTION]: TokenType.Function,
 	[TokenVal.JP_FUNCTION]: TokenType.Function
 }
