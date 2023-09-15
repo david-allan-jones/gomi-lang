@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import GomiParser from "./parser";
 import { fail } from "assert";
-import { BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, MemberExpr, NilLiteral, NumericLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
+import { BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, IfStatement, MemberExpr, NilLiteral, NumericLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
 
 describe('Gomi Parser', () => {
     let parser: GomiParser
@@ -400,5 +400,35 @@ describe('Gomi Parser', () => {
         expect(node.params[0]).toBe('n')
         expect(node.params[1]).toBe('m')
         expect(node.body.length).toBe(2)
+    })
+
+    it('if statement', () => {
+        const stmt = `
+            if (condition) {
+                someFunc()
+                nil
+            }
+        `
+        const program = parser.produceAST(stmt)
+        const node = program.body[0] as IfStatement
+        expect(node.kind).toBe('IfStatement')
+        const condition = node.condition as Identifier
+        expect(condition.kind).toBe('Identifier')
+        expect(condition.symbol).toBe('condition')
+        expect(node.body.length).toBe(2)
+    })
+
+    it('errors on missing closing brace on if statement', () => {
+        const stmt = `
+            if (condition) {
+                someFunc()
+                nil
+        `
+        try {
+            parser.produceAST(stmt)
+            fail('Was able to parse if with missing closing brace')
+        } catch(e) {
+            expect(e).toInclude('If statements must have a closing brace.')
+        }
     })
 })

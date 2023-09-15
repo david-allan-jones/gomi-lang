@@ -1,5 +1,5 @@
 import { normalizeInt } from '../utils/japanese'
-import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NilLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, StringLiteral, CallExpr, MemberExpr, FunctionDeclaration } from './ast'
+import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NilLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, StringLiteral, CallExpr, MemberExpr, FunctionDeclaration, IfStatement } from './ast'
 import GomiLexer, { Token, TokenType as TT, TokenVal, TokenType } from './lexer'
 
 export default class GomiParser {
@@ -29,11 +29,11 @@ export default class GomiParser {
 
     private validate_token(type: TT, hint?: string): void {
         if (!this.at || this.at.type !== type) {
-            console.error(`ゴミ Parser Error\nExpected: '${this.at.value}'\nReceived: '${this.at.value}'`)
+            let message = `ゴミ Parser Error\nExpected: '${this.at.value}'\nReceived: '${this.at.value}'`
             if (hint !== undefined) {
-                console.error(`Hint: ${hint}`)
+                message += `\nHint: ${hint}`
             }
-            process.exit(1)
+            throw message
         }
     }
 
@@ -47,6 +47,8 @@ export default class GomiParser {
                 return this.parse_var_declaration()
             case TT.Function:
                 return this.parse_function_declaration()
+            case TT.If:
+                return this.parse_if_stmt()
             default:
                 return this.parse_expr()
         }
@@ -147,6 +149,32 @@ export default class GomiParser {
             params,
             body
         } as FunctionDeclaration
+    }
+
+    private parse_if_stmt(): IfStatement {
+        // Eat the if
+        this.eat_token()
+
+        // Condition
+        const condition = this.parse_expr()
+
+        // Body
+        this.validate_token(TT.OpenBrace, `If statements must have an opening brace. Check line ${this.at.line}, column ${this.at.column}`)
+        this.eat_token()
+
+        const body: Stmt[] = []
+        while (this.not_eof() && this.at.type !== TT.CloseBrace) {
+            body.push(this.parse_stmt())
+        }
+
+        this.validate_token(TT.CloseBrace, `If statements must have a closing brace. Check line ${this.at.line}, column ${this.at.column}`)
+        this.eat_token()
+
+        return {
+            kind: 'IfStatement',
+            condition,
+            body
+        } as IfStatement
     }
 
     private parse_expr(): Expr {

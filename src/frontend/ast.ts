@@ -3,6 +3,7 @@ export type NodeType =
     | "Program"
     | "VarDeclaration"
     | "FunctionDeclaration"
+    | "IfStatement"
     // Expressions
     | "VarAssignment"
     | "CallExpr"
@@ -39,6 +40,12 @@ export interface FunctionDeclaration extends Stmt {
     kind: "FunctionDeclaration"
     params: string[]
     name: string
+    body: Stmt[]
+}
+
+export interface IfStatement extends Stmt {
+    kind: "IfStatement"
+    condition: Expr
     body: Stmt[]
 }
 
