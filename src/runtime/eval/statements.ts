@@ -1,6 +1,6 @@
 import { Program, VarDeclaration as VarDeclarations } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
-import Scope from "../scope"
+import Scope from "../scope/scope"
 import { RuntimeVal } from "../types"
 
 export function eval_program(program: Program, scope: Scope): RuntimeVal<unknown> {

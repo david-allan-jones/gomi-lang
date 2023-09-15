@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import Scope, { declareError, resolveError } from "./scope";
+import Scope, { declareError, resolveError } from "./scope/scope";
 import { fail } from "assert";
 
 describe('Scope class', () => {

@@ -1,8 +1,8 @@
 import exp from "constants"
-import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, NilLiteral, ObjectLiteral, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment } from "../../frontend/ast"
+import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, NilLiteral, ObjectLiteral, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment, CallExpr } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
-import Scope from "../scope"
-import { BooleanValue, FloatVal, IntVal, NumberVal, ObjectVal, RuntimeVal, StringVal } from "../types"
+import Scope from "../scope/scope"
+import { BooleanValue, FloatVal, FunctionValue, IntVal, NumberVal, ObjectVal, RuntimeVal, StringVal } from "../types"
 
 export function eval_identifier(identifier: Identifier, scope: Scope): RuntimeVal<unknown> {
     const val = scope.lookupVar(identifier.symbol)
@@ -230,4 +230,14 @@ export function eval_object_expr(obj: ObjectLiteral | NilLiteral, scope: Scope):
         object.value?.set(key, runtimeVal)
     }
     return object
+}
+
+export function eval_call_expr(expr: CallExpr, scope: Scope): RuntimeVal<unknown> {
+    const args = expr.args.map(a => evaluate(a, scope))
+    const fn = evaluate(expr.callee, scope)
+    if (fn.type !== 'function') {
+        throw 'Cannot call value that is not a function: ' + JSON.stringify(fn)
+    }
+    const result = (fn as FunctionValue).call(args, scope)
+    return result
 }

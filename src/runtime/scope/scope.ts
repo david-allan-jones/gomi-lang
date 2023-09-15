@@ -1,4 +1,14 @@
-import { RuntimeVal } from "./types"
+import { RuntimeVal } from "../types"
+import globals from './globals'
+
+export function createGlobalScope(): Scope {
+    const scope = new Scope()
+    for (let i = 0; i < globals.length; i++) {
+        const { identifier, value } = globals[i]
+        scope.declareVar(identifier, value) 
+    }
+    return scope
+}
 
 export function declareError(symbol: string): string {
     return `Cannot declare variable ${symbol} as it is already define.`

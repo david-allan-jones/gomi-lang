@@ -1,3 +1,5 @@
+import Scope from "./scope/scope"
+
 export type ValueType = 
     | "void"
     | "object"
@@ -5,6 +7,7 @@ export type ValueType =
     | "float"
     | "string"
     | "boolean"
+    | "function"
 
 export interface RuntimeVal<T> {
     type: ValueType
@@ -44,4 +47,18 @@ export interface StringVal extends RuntimeVal<string> {
 export interface BooleanValue extends RuntimeVal<boolean> {
     type: 'boolean'
     value: boolean
+}
+
+export type FunctionCall = (
+    args: RuntimeVal<unknown>[],
+    scope: Scope
+) => RuntimeVal<unknown>
+
+export interface FunctionValue extends RuntimeVal<unknown> {
+    type: "function"
+    call: FunctionCall
+}
+
+export function mk_function(call: FunctionCall): FunctionValue {
+    return { type: 'function', call }
 }

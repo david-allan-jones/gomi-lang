@@ -1,6 +1,6 @@
 import GomiParser from "../src/frontend/parser"
 import { evaluate } from "../src/runtime/interpreter"
-import Scope from "../src/runtime/scope"
+import Scope, { createGlobalScope } from "../src/runtime/scope/scope"
 
 export async function evalFile(fileName: string) {
     const file = Bun.file(fileName)
@@ -9,5 +9,5 @@ export async function evalFile(fileName: string) {
     const parser = new GomiParser()
     const program = parser.produceAST(src)
     
-    return evaluate(program, new Scope())
+    return evaluate(program, createGlobalScope())
 }

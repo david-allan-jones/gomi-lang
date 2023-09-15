@@ -1,13 +1,12 @@
 import GomiParser from "./src/frontend/parser";
 import { evaluate } from "./src/runtime/interpreter";
 import { print_runtime_val } from "./src/runtime/print";
-import Scope from "./src/runtime/scope";
+import { createGlobalScope } from "./src/runtime/scope/scope";
 
 repl()
 
 function repl() {
     const parser = new GomiParser()
-    const scope = new Scope()
 
     console.log("ゴミ箱へようこそ")
     while (true) {
@@ -18,7 +17,7 @@ function repl() {
 
         try {
             const program = parser.produceAST(input)
-            const runtimeVal = evaluate(program, scope)
+            const runtimeVal = evaluate(program, createGlobalScope())
             if (runtimeVal.type !== 'void') {
                 print_runtime_val(runtimeVal)
             }

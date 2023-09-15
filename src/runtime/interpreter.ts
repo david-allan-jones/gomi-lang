@@ -1,7 +1,7 @@
 import { IntVal, ObjectVal, RuntimeVal, StringVal } from './types'
-import { BinaryExpr, BooleanLiteral, Identifier, NumericLiteral, ObjectLiteral, Program, Stmt, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from '../frontend/ast'
-import Scope from './scope'
-import { eval_binary_expr, eval_ternary_expr, eval_identifier, eval_assignment_expr, eval_unary_expr, eval_object_expr } from './eval/expressions'
+import { BinaryExpr, BooleanLiteral, CallExpr, Identifier, NumericLiteral, ObjectLiteral, Program, Stmt, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from '../frontend/ast'
+import Scope from './scope/scope'
+import { eval_binary_expr, eval_ternary_expr, eval_identifier, eval_assignment_expr, eval_unary_expr, eval_object_expr, eval_call_expr } from './eval/expressions'
 import { eval_program, eval_var_declaration } from './eval/statements'
 
 export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
@@ -25,6 +25,8 @@ export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
             return eval_ternary_expr(ast as TernaryExpr, scope)
         case "ObjectLiteral":
             return eval_object_expr(ast as  ObjectLiteral, scope)
+        case "CallExpr":
+            return eval_call_expr(ast as CallExpr, scope)
         case "NumericLiteral":
             return {
                 type: 'int',
