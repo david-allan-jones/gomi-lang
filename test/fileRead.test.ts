@@ -30,6 +30,11 @@ describe('File reader', () => {
             const val = await evalFile(filePath)
             expect(val.value).toBe(2n)
         })
+        it('recursion.gomi', async () => {
+            const filePath = getFileName('recursion.gomi')
+            const val = await evalFile(filePath)
+            expect(val.value).toBe(24n)
+        })
     })
     describe('invalid files', () => {
         it('invalid-character.gomi', async () => {
