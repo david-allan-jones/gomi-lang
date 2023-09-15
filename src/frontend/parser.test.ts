@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import GomiParser from "./parser";
 import { fail } from "assert";
-import { BinaryExpr, BooleanLiteral, CallExpr, Identifier, MemberExpr, NilLiteral, NumericLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
+import { BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, MemberExpr, NilLiteral, NumericLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
 
 describe('Gomi Parser', () => {
     let parser: GomiParser
@@ -384,5 +384,21 @@ describe('Gomi Parser', () => {
         const object = node.object as MemberExpr
         expect(object.prop.kind).toBe('Identifier')
         expect(object.object.kind).toBe('Identifier')
+    })
+
+    it('function declaration', () => {
+        const stmt = `
+            function add (n, m) {
+                let sum = n + m;
+                sum
+            } 
+        `
+        const program = parser.produceAST(stmt)
+        const node = program.body[0] as FunctionDeclaration
+        expect(node.kind).toBe('FunctionDeclaration')
+        expect(node.name).toBe('add')
+        expect(node.params[0]).toBe('n')
+        expect(node.params[1]).toBe('m')
+        expect(node.body.length).toBe(2)
     })
 })

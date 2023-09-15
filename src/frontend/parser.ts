@@ -1,5 +1,5 @@
 import { normalizeInt } from '../utils/japanese'
-import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NilLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, StringLiteral, CallExpr, MemberExpr } from './ast'
+import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NilLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, StringLiteral, CallExpr, MemberExpr, FunctionDeclaration } from './ast'
 import GomiLexer, { Token, TokenType as TT, TokenVal, TokenType } from './lexer'
 
 export default class GomiParser {
@@ -45,6 +45,8 @@ export default class GomiParser {
         switch (this.at.type) {
             case TT.Let:
                 return this.parse_var_declaration()
+            case TT.Function:
+                return this.parse_function_declaration()
             default:
                 return this.parse_expr()
         }
@@ -106,6 +108,45 @@ export default class GomiParser {
             kind: 'VarDeclaration',
             declarations,
         }
+    }
+
+    private parse_function_declaration(): FunctionDeclaration {
+        // Eat the function keyword
+        this.eat_token()
+        
+        // Get the name
+        this.validate_token(TT.Identifier, 'Function name must be an identifier')
+        const name = this.at.value
+        this.eat_token()
+
+        // Parse the arguments and verify identifiers
+        const args = this.parse_args()
+        const params: string[] = []
+        for (let i = 0; i < args.length; i++) {
+            if (args[i].kind !== 'Identifier') {
+                throw `Expected identifiers inside function parameteres. Received ${args[i]}`
+            }
+            params.push((args[i] as Identifier).symbol)
+        }
+
+        this.validate_token(TT.OpenBrace, 'Function declarations must be enclosed in braces')
+        this.eat_token()
+
+        // Get function body
+        const body: Stmt[] = []
+        while (this.not_eof() && this.at.type !== TT.CloseBrace) {
+            body.push(this.parse_stmt())
+        }
+
+        this.validate_token(TT.CloseBrace, 'Function declarations must be enclosed in braces')
+        this.eat_token()
+
+        return {
+            kind: 'FunctionDeclaration',
+            name,
+            params,
+            body
+        } as FunctionDeclaration
     }
 
     private parse_expr(): Expr {
