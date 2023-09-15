@@ -10,7 +10,12 @@ let no = false;
 let agree = yes && no;
 
 agree = !agree
-n = -n
+
+function oppositeSign(n) {
+    -n
+}
+
+oppositeSign(n)
 
 let str = 'a' + 'b' * 'c' / 'd';
 
@@ -31,7 +36,12 @@ let bilingual = 'a' + ”あ”;
 宣言　賛成＝はい＆＆いいえ；
 
 賛成＝！賛成
-え＝-え
+
+関数　マイナス（ば）｛
+    -ば
+｝
+
+マイナス（え）
 
 宣言　糸　＝　”あ”＋”い”-”う”＊”え”／”お”；
 
