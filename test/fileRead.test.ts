@@ -35,6 +35,11 @@ describe('File reader', () => {
             const val = await evalFile(filePath)
             expect(val.value).toBe(24n)
         })
+        it('member-expressions.gomi', async () => {
+            const filePath = getFileName('member-expressions.gomi')
+            const val = await evalFile(filePath)
+            expect(val.value).toBe(2n)
+        })
     })
     describe('invalid files', () => {
         it('invalid-character.gomi', async () => {

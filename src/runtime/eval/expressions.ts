@@ -1,5 +1,5 @@
 import exp from "constants"
-import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, NilLiteral, ObjectLiteral, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment, CallExpr } from "../../frontend/ast"
+import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, NilLiteral, ObjectLiteral, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment, CallExpr, MemberExpr } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope/scope"
 import { BooleanValue, FloatVal, NativeFunctionValue, IntVal, NumberVal, ObjectVal, RuntimeVal, StringVal, FunctionValue, VoidVal } from "../types"
@@ -104,7 +104,7 @@ export function eval_int_binary_expr(
         case '<':
             return { type: 'boolean', value: left.value < right.value }
         default:
-            throw `Runtime Error: An unexpected numeric operator was received by the interpreter: '${op}'`
+            throw `Runtime Error: An unexpected int operator was received by the interpreter: '${op}'`
     }
 }
 
@@ -114,8 +114,25 @@ export function eval_float_binary_expr(
     op: NormalizedBinaryOperator
 ): RuntimeVal<number | boolean> {
     switch (op) {
+        case '+':
+            return { type: 'int', value: left.value + right.value }
+        case '-':
+            return { type: 'int', value: left.value - right.value }
+        case '*':
+            return { type: 'int', value: left.value * right.value }
+        case '/':
+            if (right.value === 0) {
+                throw 'You can not divide by zero'
+            }
+            return { type: 'int', value: left.value / right.value }
+        case '^':
+            return { type: 'int', value: left.value ** right.value }
+        case '>':
+            return { type: 'boolean', value: left.value > right.value }
+        case '<':
+            return { type: 'boolean', value: left.value < right.value }
         default:
-            throw `Runtime Error: An unexpected numeric operator was received by the interpreter: '${op}'`
+            throw `Runtime Error: An unexpected float operator was received by the interpreter: '${op}'`
     }
 }
 
@@ -230,6 +247,22 @@ export function eval_object_expr(obj: ObjectLiteral | NilLiteral, scope: Scope):
         object.value?.set(key, runtimeVal)
     }
     return object
+}
+
+export function eval_member_expr(expr: MemberExpr, scope: Scope): RuntimeVal<unknown> {
+    const { type, value } = evaluate(expr.object, scope) as ObjectVal
+    if (type !== 'object') {
+        throw `Member expressions only supported for object types. Received: ${obj.type}`
+    }
+    const { symbol } = expr.prop as Identifier
+    if (value === undefined) {
+        throw 'No value on an object'
+    }
+    if (value.has(symbol) === false) {
+        return { type: 'object' } as ObjectVal
+    }
+    // @ts-ignore
+    return value.get(symbol)
 }
 
 export function eval_call_expr(expr: CallExpr, scope: Scope): RuntimeVal<unknown> {

@@ -1,7 +1,7 @@
 import { IntVal, ObjectVal, RuntimeVal, StringVal } from './types'
-import { BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, NumericLiteral, ObjectLiteral, Program, Stmt, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from '../frontend/ast'
+import { BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, MemberExpr, NumericLiteral, ObjectLiteral, Program, Stmt, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from '../frontend/ast'
 import Scope from './scope/scope'
-import { eval_binary_expr, eval_ternary_expr, eval_identifier, eval_assignment_expr, eval_unary_expr, eval_object_expr, eval_call_expr } from './eval/expressions'
+import { eval_binary_expr, eval_ternary_expr, eval_identifier, eval_assignment_expr, eval_unary_expr, eval_object_expr, eval_call_expr, eval_member_expr } from './eval/expressions'
 import { eval_function_declaration, eval_program, eval_var_declaration } from './eval/statements'
 
 export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
@@ -27,6 +27,8 @@ export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
             return eval_ternary_expr(ast as TernaryExpr, scope)
         case "ObjectLiteral":
             return eval_object_expr(ast as  ObjectLiteral, scope)
+        case "MemberExpr":
+            return eval_member_expr(ast as MemberExpr, scope)
         case "CallExpr":
             return eval_call_expr(ast as CallExpr, scope)
         case "NumericLiteral":
