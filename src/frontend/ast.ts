@@ -17,6 +17,7 @@ export type NodeType =
     | "StringLiteral"
     | "NilLiteral"
     | "BooleanLiteral"
+    | "ArrayLiteral"
     | "ObjectLiteral"
     | "Property"
 
@@ -127,6 +128,11 @@ export interface Property extends Expr {
     kind: "Property",
     key: string,
     value?: Expr
+}
+
+export interface ArrayLiteral extends PrimaryExpr {
+    kind: "ArrayLiteral"
+    values: Expr[]
 }
 
 export interface ObjectLiteral extends PrimaryExpr {
