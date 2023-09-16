@@ -163,3 +163,16 @@ export type NormalizedBinaryOperator =
 export type NormalizedUnaryOperator =
     | '!'
     | '-'
+
+
+//=================================
+// Helper Factories
+//=================================
+
+export function mk_numeric_literal(value: bigint): NumericLiteral {
+    return { kind: 'NumericLiteral', value }
+}
+
+export function mk_identifier(symbol: string): Identifier {
+    return { kind: 'Identifier', symbol }
+}
