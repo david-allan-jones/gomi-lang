@@ -3,10 +3,12 @@ import { TokenVal } from "./lexer"
 export type NodeType =
     // Statements
     | "Program"
+    | "ModuleImport"
     | "VarDeclaration"
     | "FunctionDeclaration"
     | "IfStatement"
     | "WhileStatement"
+
     // Expressions
     | "VarAssignment"
     | "CallExpr"
@@ -33,6 +35,15 @@ export interface Program extends Stmt {
     body: Stmt[]
 }
 
+// module './somePath.gomi' import { someIdentifier }
+// Paths are always relative to GOMI_PATH env variable
+export interface ModuleImport extends Stmt {
+    kind: "ModuleImport"
+    path: string
+    identifiers: string[]
+}
+
+// let n = 0;
 export interface VarDeclaration extends Stmt {
     kind: "VarDeclaration"
     declarations: {
@@ -41,6 +52,11 @@ export interface VarDeclaration extends Stmt {
     }[]
 }
 
+/**
+ * function addOne(n) {
+ *     n + 1 
+ * }
+ */
 export interface FunctionDeclaration extends Stmt {
     kind: "FunctionDeclaration"
     params: string[]
@@ -48,18 +64,30 @@ export interface FunctionDeclaration extends Stmt {
     body: Stmt[]
 }
 
+/**
+ * if a == b {
+ *     doSomething() 
+ * }
+ */
 export interface IfStatement extends Stmt {
     kind: "IfStatement"
     condition: Expr
     body: Stmt[]
 }
 
+/**
+ * while i < n {
+ *     doSomethig()
+ *     i = i + 1
+ * }
+ */
 export interface WhileStatement extends Stmt {
     kind: "WhileStatement"
     condition: Expr
     body: Stmt[]
 }
 
+// a = b
 export interface VarAssignment extends Expr {
     kind: "VarAssignment"
     assignee: Expr
@@ -68,24 +96,28 @@ export interface VarAssignment extends Expr {
 
 export interface Expr extends Stmt { }
 
+// doSomething()
 export interface CallExpr extends Expr {
     kind: "CallExpr",
     callee: Expr
     args: Expr[]
 }
 
+// a.b
 export interface MemberExpr extends Expr {
     kind: "MemberExpr",
     object: Expr,
     prop: Expr
 }
 
+// !flag, -n
 export interface UnaryExpr extends Expr {
     kind: "UnaryExpr"
     operator: NormalizedUnaryOperator
     operand: PrimaryExpr
 }
 
+// a * b
 export interface BinaryExpr extends Expr {
     kind: "BinaryExpr"
     left: Expr
@@ -93,6 +125,7 @@ export interface BinaryExpr extends Expr {
     operator: NormalizedBinaryOperator
 }
 
+// a ? b : c
 export interface TernaryExpr extends Expr {
     kind: "TernaryExpr"
     left: Expr
@@ -102,53 +135,54 @@ export interface TernaryExpr extends Expr {
 
 export interface PrimaryExpr extends Expr { }
 
+// a
 export interface Identifier extends PrimaryExpr {
     kind: "Identifier"
     symbol: string
 }
 
+// 1
 export interface NumericLiteral extends PrimaryExpr {
     kind: "NumericLiteral"
     value: bigint
 }
 
+// 'finished'
 export interface StringLiteral extends PrimaryExpr {
     kind: "StringLiteral"
     value: string
 }
 
+// nil
 export interface NilLiteral extends PrimaryExpr {
     kind: "NilLiteral"
     value: null
 }
 
+// false, true
 export interface BooleanLiteral extends PrimaryExpr {
     kind: "BooleanLiteral"
     value: boolean
 }
 
+// a: 1, b: 'b', c: true
 export interface Property extends Expr {
     kind: "Property",
     key: string,
     value?: Expr
 }
 
+// [1, 2, 3, 4]
 export interface ArrayLiteral extends PrimaryExpr {
     kind: "ArrayLiteral"
     values: Expr[]
 }
 
+// { a: 1, b: 'b' }
 export interface ObjectLiteral extends PrimaryExpr {
     kind: "ObjectLiteral"
     props: Property[]
 }
-
-export interface Property extends Expr {
-    kind: "Property"
-    key: string
-    value?: Expr
-}
-
 
 // Helpers
 export type NormalizedBinaryOperator =

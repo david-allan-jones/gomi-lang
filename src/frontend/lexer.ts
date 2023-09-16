@@ -1,4 +1,6 @@
 export enum TokenVal {
+	EN_MODULE = 'module', JP_MODULE = 'モジュールを',
+	EN_IMPORT = 'import', JP_IMPORT = 'からインポート',
 	HW_EQUALS = '=', FW_EQUALS = '＝',
 	HW_OPEN_PAREN = '(', FW_OPEN_PAREN = '（',
 	HW_CLOSE_PAREN = ')', FW_CLOSE_PAREN = '）',
@@ -25,6 +27,8 @@ export enum TokenVal {
 }
 
 export enum TokenType {
+	Module = 'MODULE',
+	Import = 'IMPORT',
 	Int = 'INT',
 	Boolean = 'BOOLEAN',
 	String = 'STRING',
@@ -52,6 +56,10 @@ export enum TokenType {
 }
 
 const RESERVED: Record<string, TokenType> = {
+	[TokenVal.EN_MODULE]: TokenType.Module,
+	[TokenVal.JP_MODULE]: TokenType.Module,
+	[TokenVal.EN_IMPORT]: TokenType.Import,
+	[TokenVal.JP_IMPORT]: TokenType.Import,
 	[TokenVal.EN_LET]: TokenType.Let,
 	[TokenVal.JP_LET]: TokenType.Let,
 	[TokenVal.EN_NIL]: TokenType.Nil,
@@ -99,7 +107,7 @@ const binaryOperators: BinaryOperator[] = [
 ]
 
 export function identifierBeginAllowed(source: string): boolean {
-	const regex = /[a-zA-Z\u3041-\u3096\u30a1-\u30f6\u4e00-\u9faf]/u
+	const regex = /[a-zA-Z\u3041-\u3096\u30a1-\u30f6\u4e00-\u9faf\u30fc]/u
 	return regex.test(source)
 }
 

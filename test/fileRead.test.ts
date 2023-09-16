@@ -58,7 +58,12 @@ describe('File reader', () => {
         it('digits.gomi', async () => {
             const filePath = getFileName('digits.gomi')
             const val = await evalFile(filePath)
-            expect(val.value).toBe(29n)
+            expect(val.value).toBe(4n)
+        })
+        it('module-import.gomi', async () => {
+            const filePath = getFileName('module-import.gomi')
+            const val = await evalFile(filePath)
+            expect(val.value).toBe(10n)
         })
     })
     describe('invalid files', () => {

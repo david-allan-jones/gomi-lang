@@ -1,0 +1,7 @@
+function minusOne(n) {
+    n - 1
+}
+
+function addOne(n) {
+    n + 1
+}

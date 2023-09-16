@@ -1,7 +1,9 @@
-import { FunctionDeclaration, IfStatement, Program, VarDeclaration as VarDeclarations, WhileStatement } from "../../frontend/ast"
+import { FunctionDeclaration, IfStatement, ModuleImport, Program, VarDeclaration as VarDeclarations, WhileStatement } from "../../frontend/ast"
+import GomiParser from "../../frontend/parser"
 import { evaluate } from "../interpreter"
 import Scope from "../scope/scope"
 import { BooleanValue, FunctionValue, RuntimeVal, VoidVal } from "../types"
+
 
 export function eval_program(program: Program, scope: Scope): RuntimeVal<unknown> {
     let lastResult: RuntimeVal<unknown> = { type: 'object', value: null }
@@ -9,6 +11,31 @@ export function eval_program(program: Program, scope: Scope): RuntimeVal<unknown
         lastResult = evaluate(program.body[i], scope)
     }
     return lastResult
+}
+
+export function eval_module_import(moduleImport: ModuleImport, scope: Scope): VoidVal {
+
+    // Read source file and prepare AST
+    const fs = require('fs')
+    if (process?.env?.GOMI_PATH === undefined) {
+        throw 'To run module imports you must have a GOMI_PATH environment variable set up. All module paths are relative to that.'
+    }
+    const file = fs.readFileSync(`${process.env.GOMI_PATH}/${moduleImport.path}`)
+    const src = file.toString()
+    const parser = new GomiParser()
+    const program = parser.produceAST(src)
+
+    // Execute AST in isolated scope
+    const moduleScope = new Scope()
+    evaluate(program, moduleScope)
+
+    // Copy over requested identifiers to current scope
+    for (let i = 0; i < moduleImport.identifiers.length; i++) {
+        const moduleVal = moduleScope.lookupVar(moduleImport.identifiers[i])
+        scope.declareVar(moduleImport.identifiers[i], moduleVal)
+    }
+
+    return { type: 'void' } as VoidVal
 }
 
 export function eval_var_declaration(varDeclarations: VarDeclarations, scope: Scope): VoidVal {

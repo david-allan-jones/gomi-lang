@@ -157,6 +157,12 @@ describe('Gomi Lexer', () => {
     it('let', () => {
         testSources(['let', '宣言'], TokenType.Let)
     })
+    it('module', () => {
+        testSources(['module', 'モジュールを'], TokenType.Module)
+    })
+    it('import', () => {
+        testSources(['import', 'からインポート'], TokenType.Import)
+    })
     it('function', () => {
         testSources(['function', '関数'], TokenType.Function)
     })
@@ -175,6 +181,7 @@ describe('Gomi Lexer', () => {
     it('multi character binary operators', () => {
         testSources(['||', '&&', '==', '｜｜', '＆＆', '＝＝'], TokenType.BinaryOperator)
     })
+
     it('skips whitespace at end of file', () => {
         const tokenizer = new GomiLexer('a ')
         tokenizer.read_token()
@@ -182,6 +189,7 @@ describe('Gomi Lexer', () => {
         expect(token.type).toBe(TokenType.EOF)
         expect(token.value).toBe(TokenVal.EOF)
     })
+
     it('skips whitespace, newlines and tabs', () => {
         const tokens: Token[] = []
         const tokenizer = new GomiLexer(`
@@ -193,6 +201,7 @@ describe('Gomi Lexer', () => {
         // Add 1 for EOF
         expect(tokens.length).toBe(2)
     })
+
     it('errors on unrecognized character', () => {
         try {
             const tokenizer = new GomiLexer(`

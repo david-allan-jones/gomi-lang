@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import GomiParser from "./parser";
 import { fail } from "assert";
-import { ArrayLiteral, BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, IfStatement, MemberExpr, NilLiteral, NumericLiteral, ObjectLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
+import { ArrayLiteral, BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, IfStatement, MemberExpr, ModuleImport, NilLiteral, NumericLiteral, ObjectLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
 
 describe('Gomi Parser', () => {
     let parser: GomiParser
@@ -535,6 +535,79 @@ describe('Gomi Parser', () => {
             fail('Was able to parse while with missing closing brace')
         } catch(e) {
             expect(e).toInclude('While statements must have a closing brace.')
+        }
+    })
+
+    it('module import', () => {
+        const stmt = `
+            module './data-structures.gomi' import { createStack, createQueue }
+        `
+        const program = parser.produceAST(stmt)
+        expect(program.body.length).toBe(1)
+        const node = program.body[0] as ModuleImport
+        expect(node.kind).toBe('ModuleImport')
+        expect(node.path).toBe('./data-structures.gomi')
+        expect(node.identifiers[0]).toBe('createStack')
+        expect(node.identifiers[1]).toBe('createQueue')
+    })
+
+    it('module import errors on missing string path', () => {
+        try {
+            const stmt = `
+                module err import { createStack, createQueue }
+            `
+            parser.produceAST(stmt)
+            fail('Was able to parse module import with missing string path')
+        } catch(e) {
+            expect(e).toInclude('Module imports must be in the form')
+        }
+    })
+
+    it('module import errors on missing import keyword', () => {
+        try {
+            const stmt = `
+                module './data-structures.gomi' { createStack, createQueue }"
+            `
+            parser.produceAST(stmt)
+            fail('Was able to parse module import with missing import keyword')
+        } catch(e) {
+            expect(e).toInclude('Module imports must be in the form')
+        }
+    })
+
+    it('module import errors on missing open brace', () => {
+        try {
+            const stmt = `
+                module './data-structures.gomi' import createStack, createQueue }"
+            `
+            parser.produceAST(stmt)
+            fail('Was able to parse module import with missing opening brace')
+        } catch(e) {
+            expect(e).toInclude('Module imports must be in the form')
+        }
+    })
+
+    it('module import errors on missing closing brace paren', () => {
+        try {
+            const stmt = `
+                module './data-structures.gomi' import { createStack, createQueue
+            `
+            parser.produceAST(stmt)
+            fail('Was able to parse module import with missing closing brace')
+        } catch(e) {
+            expect(e).toInclude('Module imports must be in the form')
+        }
+    })
+
+    it('module import errors on bad identifiers', () => {
+        try {
+            const stmt = `
+                module './data-structures.gomi' import { createStack, 'createQueue' }"
+            `
+            parser.produceAST(stmt)
+            fail('Was able to parse module import with malformed identifiers')
+        } catch(e) {
+            expect(e).toInclude('Module imports must be in the form')
         }
     })
 })

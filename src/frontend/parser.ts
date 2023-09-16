@@ -1,5 +1,5 @@
 import { normalizeInt } from '../utils/japanese'
-import { Stmt, Program, Expr, BinaryExpr, Identifier, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, CallExpr, MemberExpr, FunctionDeclaration, IfStatement, WhileStatement, ArrayLiteral, mk_numeric_literal, mk_string_literal, mk_identifier, mk_nil_literal, mk_boolean_literal } from './ast'
+import { Stmt, Program, Expr, BinaryExpr, Identifier, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, CallExpr, MemberExpr, FunctionDeclaration, IfStatement, WhileStatement, ArrayLiteral, mk_numeric_literal, mk_string_literal, mk_identifier, mk_nil_literal, mk_boolean_literal, ModuleImport } from './ast'
 import GomiLexer, { Token, TokenType as TT, TokenVal, TokenType } from './lexer'
 
 export default class GomiParser {
@@ -37,12 +37,19 @@ export default class GomiParser {
         }
     }
 
+    private validate_and_eat_token(type: TT, hint?: string): void {
+        this.validate_token(type, hint)
+        this.eat_token()
+    }
+
     private not_eof(): boolean {
         return this.at.type !== TT.EOF
     }
 
     private parse_stmt(): Stmt {
         switch (this.at.type) {
+            case TT.Module:
+                return this.parse_module_import()
             case TT.Let:
                 return this.parse_var_declaration()
             case TT.Function:
@@ -53,6 +60,43 @@ export default class GomiParser {
                 return this.parse_while_statement()
             default:
                 return this.parse_expr()
+        }
+    }
+
+    private parse_module_import(): ModuleImport {
+        // Consume module keyword
+        this.eat_token()
+
+        const err = `Module imports must be in the form "module '/somePath.gomi' import { someIdentifier }". Check line ${this.at.line}, column ${this.at.column}`
+
+        // Grab the path
+        this.validate_token(TT.String, err)
+        const path = this.at.value
+        this.eat_token()
+
+        this.validate_and_eat_token(TT.Import, err)
+        this.validate_and_eat_token(TT.OpenBrace, err)
+
+        // Grab the identifiers to bring into scope
+        const identifiers: string[] = []
+        while (this.not_eof() && this.at.type !== TT.CloseBrace) {
+            this.validate_token(TT.Identifier, err)
+            //@ts-ignore
+            identifiers.push(this.at.value)
+            this.eat_token()
+
+            //@ts-ignore
+            if (this.at.type === TT.Comma) {
+                this.eat_token()
+                continue
+            }
+        }
+        this.validate_and_eat_token(TT.CloseBrace, err)
+
+        return {
+            kind: "ModuleImport",
+            path,
+            identifiers
         }
     }
 
@@ -77,11 +121,7 @@ export default class GomiParser {
             }
         }
 
-        this.validate_token(
-            TT.Equals,
-            'Expected equals sign following identifier in variable declaration'
-        )
-        this.eat_token()
+        this.validate_and_eat_token(TT.Equals, 'Expected equals sign following identifier in variable declaration')
 
         // Consume expression by expression
         while (this.not_eof() && this.at.type !== TT.Semicolon) {
@@ -92,8 +132,7 @@ export default class GomiParser {
         }
 
         if (this.not_eof()) {
-            this.validate_token(TT.Semicolon, 'Declaration error. Please end it with a semicolon.')
-            this.eat_token()
+            this.validate_and_eat_token(TT.Semicolon, 'Declaration error. Please end it with a semicolon.')
         }
 
         if (identifiers.length !== values.length) {
@@ -117,7 +156,7 @@ export default class GomiParser {
     private parse_function_declaration(): FunctionDeclaration {
         // Eat the function keyword
         this.eat_token()
-        
+
         // Get the name
         this.validate_token(TT.Identifier, 'Function name must be an identifier')
         const name = this.at.value
@@ -133,17 +172,13 @@ export default class GomiParser {
             params.push((args[i] as Identifier).symbol)
         }
 
-        this.validate_token(TT.OpenBrace, 'Function declarations must be enclosed in braces')
-        this.eat_token()
-
         // Get function body
+        this.validate_and_eat_token(TT.OpenBrace, 'Function declarations must be enclosed in braces')
         const body: Stmt[] = []
         while (this.not_eof() && this.at.type !== TT.CloseBrace) {
             body.push(this.parse_stmt())
         }
-
-        this.validate_token(TT.CloseBrace, 'Function declarations must be enclosed in braces')
-        this.eat_token()
+        this.validate_and_eat_token(TT.CloseBrace, 'Function declarations must be enclosed in braces')
 
         return {
             kind: 'FunctionDeclaration',
@@ -161,16 +196,12 @@ export default class GomiParser {
         const condition = this.parse_expr()
 
         // Body
-        this.validate_token(TT.OpenBrace, `If statements must have an opening brace. Check line ${this.at.line}, column ${this.at.column}`)
-        this.eat_token()
-
+        this.validate_and_eat_token(TT.OpenBrace, `If statements must have an opening brace. Check line ${this.at.line}, column ${this.at.column}`)
         const body: Stmt[] = []
         while (this.not_eof() && this.at.type !== TT.CloseBrace) {
             body.push(this.parse_stmt())
         }
-
-        this.validate_token(TT.CloseBrace, `If statements must have a closing brace. Check line ${this.at.line}, column ${this.at.column}`)
-        this.eat_token()
+        this.validate_and_eat_token(TT.CloseBrace, `If statements must have a closing brace. Check line ${this.at.line}, column ${this.at.column}`)
 
         return {
             kind: 'IfStatement',
@@ -187,16 +218,12 @@ export default class GomiParser {
         const condition = this.parse_expr()
 
         // Body
-        this.validate_token(TT.OpenBrace, `While statements must have an opening brace. Check line ${this.at.line}, column ${this.at.column}`)
-        this.eat_token()
-
+        this.validate_and_eat_token(TT.OpenBrace, `While statements must have an opening brace. Check line ${this.at.line}, column ${this.at.column}`)
         const body: Stmt[] = []
         while (this.not_eof() && this.at.type !== TT.CloseBrace) {
             body.push(this.parse_stmt())
         }
-
-        this.validate_token(TT.CloseBrace, `While statements must have a closing brace. Check line ${this.at.line}, column ${this.at.column}`)
-        this.eat_token()
+        this.validate_and_eat_token(TT.CloseBrace, `While statements must have a closing brace. Check line ${this.at.line}, column ${this.at.column}`)
 
         return {
             kind: 'WhileStatement',
@@ -228,7 +255,7 @@ export default class GomiParser {
             return this.parse_object_expr()
         }
         this.eat_token()
-            
+
         // Parse expression by expression
         const values: Expr[] = []
 
@@ -238,14 +265,13 @@ export default class GomiParser {
             //@ts-ignore
             if (this.at.type === TT.Comma) {
                 this.eat_token()
-            //@ts-ignore
+                //@ts-ignore
             } else if (this.at.type !== TT.CloseBracket) {
                 this.validate_token(TT.Comma, `Expected a comma or closing bracket at line ${this.at.line}, column ${this.at.column}`)
             }
         }
 
-        this.validate_token(TT.CloseBracket, `All array expressions must have matching closing bracket. Check line ${this.at.line}, column ${this.at.column}`)
-        this.eat_token()
+        this.validate_and_eat_token(TT.CloseBracket, `All array expressions must have matching closing bracket. Check line ${this.at.line}, column ${this.at.column}`)
 
         return {
             kind: 'ArrayLiteral',
@@ -271,24 +297,21 @@ export default class GomiParser {
                 this.eat_token()
                 props.push({ key, kind: 'Property' })
                 continue
-            // @ts-ignore
+                // @ts-ignore
             } else if (this.at.type === TT.CloseBrace) {
                 props.push({ key, kind: 'Property' })
                 continue
             }
 
-            this.validate_token(TT.Colon, 'Colon expected in object literal')
-            this.eat_token()
+            this.validate_and_eat_token(TT.Colon, 'Colon expected in object literal')
             const value = this.parse_expr()
             props.push({ kind: 'Property', value, key })
             // @ts-ignore
             if (this.at.type !== TokenType.CloseBrace) {
-                this.validate_token(TT.Comma, 'Expected comma following object literal property')
-                this.eat_token()
+                this.validate_and_eat_token(TT.Comma, 'Expected comma following object literal property')
             }
         }
-        this.validate_token(TT.CloseBrace, 'Missing closing brace in object literal.')
-        this.eat_token()
+        this.validate_and_eat_token(TT.CloseBrace, 'Missing closing brace in object literal.')
         return { kind: 'ObjectLiteral', props } as ObjectLiteral
     }
 
@@ -297,14 +320,12 @@ export default class GomiParser {
         if (this.at.type === TT.Question) {
             this.eat_token()
             const mid = this.parse_assign_expr()
-            this.validate_token(TT.Colon, 'Invalid character detected in ternary expression')
-            this.eat_token()
-            const right = this.parse_assign_expr()
+            this.validate_and_eat_token(TT.Colon, 'Invalid character detected in ternary expression')
             return {
                 kind: 'TernaryExpr',
                 left,
                 mid,
-                right
+                right: this.parse_assign_expr()
             } as TernaryExpr
         }
         return left
@@ -477,7 +498,7 @@ export default class GomiParser {
             kind: 'CallExpr',
             callee,
             args: this.parse_args()
-        } 
+        }
         if (this.at.type === TT.OpenParen) {
             callExpr = this.parse_call_expr(callExpr)
         }
@@ -485,14 +506,11 @@ export default class GomiParser {
     }
 
     private parse_args(): Expr[] {
-        this.validate_token(TT.OpenParen, 'Expected open paren')  
-        this.eat_token()
+        this.validate_and_eat_token(TT.OpenParen, 'Expected open paren')
         const args = this.at.type === TT.CloseParen
             ? []
             : this.parse_arg_lit()
-
-        this.validate_token(TT.CloseParen, 'Missing closing paren in call expression')
-        this.eat_token()
+        this.validate_and_eat_token(TT.CloseParen, 'Missing closing paren in call expression')
         return args
     }
 
@@ -537,7 +555,7 @@ export default class GomiParser {
             case TT.Boolean:
                 return mk_boolean_literal(prev.value as TokenVal)
             case TT.OpenParen:
-                const expr =  this.parse_expr()
+                const expr = this.parse_expr()
                 this.validate_token(TT.CloseParen)
                 this.eat_token()
                 return expr

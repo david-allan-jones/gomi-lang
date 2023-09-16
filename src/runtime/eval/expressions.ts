@@ -1,4 +1,3 @@
-import exp from "constants"
 import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, NilLiteral, ObjectLiteral, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment, CallExpr, MemberExpr, ArrayLiteral } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope/scope"
