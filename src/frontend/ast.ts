@@ -1,3 +1,5 @@
+import { TokenVal } from "./lexer"
+
 export type NodeType =
     // Statements
     | "Program"
@@ -8,6 +10,8 @@ export type NodeType =
     // Expressions
     | "VarAssignment"
     | "CallExpr"
+    | "IndexExpr"
+    | "UnaryExpr"
     | "MemberExpr"
     | "UnaryExpr"
     | "BinaryExpr"
@@ -75,6 +79,12 @@ export interface MemberExpr extends Expr {
     kind: "MemberExpr",
     object: Expr,
     prop: Expr
+}
+
+export interface IndexExpr extends Expr {
+    kind: "IndexExpr",
+    expr: Expr,
+    index: number
 }
 
 export interface UnaryExpr extends Expr {
@@ -173,6 +183,21 @@ export function mk_numeric_literal(value: bigint): NumericLiteral {
     return { kind: 'NumericLiteral', value }
 }
 
+export function mk_string_literal(value: string): StringLiteral {
+    return { kind: 'StringLiteral', value }
+}
+
 export function mk_identifier(symbol: string): Identifier {
     return { kind: 'Identifier', symbol }
+}
+
+export function mk_nil_literal(): NilLiteral {
+    return { kind: 'NilLiteral', value: null }
+}
+
+export function mk_boolean_literal(value: TokenVal): BooleanLiteral {
+    return {
+        kind: 'BooleanLiteral',
+        value: [TokenVal.EN_TRUE, TokenVal.JP_TRUE].includes(value) ? true : false
+    }
 }

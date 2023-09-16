@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import GomiParser from "./parser";
 import { fail } from "assert";
-import { ArrayLiteral, BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, IfStatement, MemberExpr, NilLiteral, NumericLiteral, ObjectLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
+import { ArrayLiteral, BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, IfStatement, IndexExpr, MemberExpr, NilLiteral, NumericLiteral, ObjectLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
 
 describe('Gomi Parser', () => {
     let parser: GomiParser
@@ -390,6 +390,15 @@ describe('Gomi Parser', () => {
         expect(node.kind).toBe('ArrayLiteral')
         expect(node.values[0].kind).toBe('NumericLiteral')
         expect(node.values[1].kind).toBe('Identifier')
+    })
+
+    it('parses index expressions', () => {
+        const stmt = 'foo[0]'
+        const program = parser.produceAST(stmt)
+        const node = program.body[0] as IndexExpr
+        expect(node.kind).toBe('IndexExpr')
+        expect(node.expr.kind).toBe('Identifier')
+        expect(node.index).toBe(0)
     })
 
     it('parses member expressions', () => {

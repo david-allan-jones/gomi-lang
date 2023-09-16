@@ -1,5 +1,5 @@
 import { normalizeInt } from '../utils/japanese'
-import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NilLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, StringLiteral, CallExpr, MemberExpr, FunctionDeclaration, IfStatement, WhileStatement, ArrayLiteral } from './ast'
+import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NilLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, StringLiteral, CallExpr, MemberExpr, FunctionDeclaration, IfStatement, WhileStatement, ArrayLiteral, mk_numeric_literal, mk_string_literal, mk_identifier, mk_nil_literal, mk_boolean_literal } from './ast'
 import GomiLexer, { Token, TokenType as TT, TokenVal, TokenType } from './lexer'
 
 export default class GomiParser {
@@ -512,30 +512,15 @@ export default class GomiParser {
         this.eat_token()
         switch (prev.type) {
             case TT.Identifier:
-                return {
-                    kind: "Identifier",
-                    symbol: prev.value
-                } as Identifier
+                return mk_identifier(prev.value)
             case TT.Int:
-                return {
-                    kind: "NumericLiteral",
-                    value: normalizeInt(prev.value)
-                } as NumericLiteral
+                return mk_numeric_literal(normalizeInt(prev.value))
             case TT.String:
-                return {
-                    kind: "StringLiteral",
-                    value: prev.value
-                } as StringLiteral
+                return mk_string_literal(prev.value)
             case TT.Nil:
-                return {
-                    kind: "NilLiteral",
-                    value: null
-                } as NilLiteral
+                return mk_nil_literal()
             case TT.Boolean:
-                return {
-                    kind: "BooleanLiteral",
-                    value: [TokenVal.EN_TRUE, TokenVal.JP_TRUE].includes(prev.value as TokenVal) ? true : false
-                } as BooleanLiteral
+                return mk_boolean_literal(prev.value as TokenVal)
             case TT.OpenParen:
                 const expr =  this.parse_expr()
                 this.validate_token(TT.CloseParen)
