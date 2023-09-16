@@ -50,11 +50,9 @@ const globals: Global[] = [
                     throw 'args to range should all be of type int'
                 }
             }
-            let [{ value: start }, { value: end }, { value: step }] = args
-            if (step === undefined) {
-                step = 1
-            }
-            console.log(start, end, step)
+            const start = args[0].value
+            const end = args[1].value
+            const step = args[2] ? args[2].value : 1n
 
             const result: IntVal[] = []
             // @ts-ignore
