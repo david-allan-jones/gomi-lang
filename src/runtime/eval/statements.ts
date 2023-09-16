@@ -57,7 +57,6 @@ export function eval_while_statement(whileStatement: WhileStatement, scope: Scop
         throw `The condition in a while statement must resolve to a boolean value. Received: ${keepLooping.type}`
     }
     while (keepLooping.type === 'boolean' && (keepLooping as BooleanValue).value) {
-        console.log('hit')
         for (let i = 0; i < body.length; i++) {
             evaluate(body[i], whileScope)
         }

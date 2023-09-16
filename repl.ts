@@ -41,19 +41,27 @@ rl.on('line', (input: string) => {
         return
     }
 
-    // Handle stack
-    if (input.endsWith('{') || input.endsWith('｛')) {
-        stack.push('{')
-    }
-    if (input.endsWith('}') || input.endsWith('｝')) {
-        stack.pop()
+    for (let i = 0; i < input.length; i++) {
+        switch (input[i]) {
+            case '{':
+            case '[':
+            case '｛':
+            case '【':
+                stack.push(input[i])
+                break
+            case '}':
+            case ']':
+            case '｝':
+            case '】':
+                stack.pop()
+                break
+        }
     }
 
     // Execute
     if (stack.length) {
         buffer += `\n${input}`
     } else {
-        console.log(`${buffer}\n${input}`)
         runRepl(`${buffer}\n${input}`)
         buffer = ''
     }

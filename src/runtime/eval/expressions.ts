@@ -1,8 +1,8 @@
 import exp from "constants"
-import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, NilLiteral, ObjectLiteral, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment, CallExpr, MemberExpr } from "../../frontend/ast"
+import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, NilLiteral, ObjectLiteral, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment, CallExpr, MemberExpr, ArrayLiteral } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope/scope"
-import { BooleanValue, FloatVal, NativeFunctionValue, IntVal, NumberVal, ObjectVal, RuntimeVal, StringVal, FunctionValue, VoidVal } from "../types"
+import { BooleanValue, FloatVal, NativeFunctionValue, IntVal, NumberVal, ObjectVal, RuntimeVal, StringVal, FunctionValue, VoidVal, ArrayVal } from "../types"
 
 export function eval_identifier(identifier: Identifier, scope: Scope): RuntimeVal<unknown> {
     const val = scope.lookupVar(identifier.symbol)
@@ -247,6 +247,15 @@ export function eval_object_expr(obj: ObjectLiteral | NilLiteral, scope: Scope):
         object.value?.set(key, runtimeVal)
     }
     return object
+}
+
+export function eval_array_expr(arr: ArrayLiteral, scope: Scope): ArrayVal {
+    const value: RuntimeVal<unknown>[] = []
+    for (let i = 0; i < arr.values.length; i++) {
+        const runtimeVal = evaluate(arr.values[i], scope)
+        value.push(runtimeVal)
+    }
+    return { type: 'array', value }
 }
 
 export function eval_member_expr(expr: MemberExpr, scope: Scope): RuntimeVal<unknown> {

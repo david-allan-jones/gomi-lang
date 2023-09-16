@@ -4,6 +4,7 @@ import Scope from "./scope/scope"
 export type ValueType = 
     | "void"
     | "object"
+    | "array"
     | "int"
     | "float"
     | "string"
@@ -24,6 +25,11 @@ export interface VoidVal extends RuntimeVal<null> {
 export interface ObjectVal extends RuntimeVal<object | null> {
     type: 'object'
     value?: Map<string, RuntimeVal<unknown>>
+}
+
+export interface ArrayVal extends RuntimeVal<unknown[]> {
+    type: 'array'
+    value: RuntimeVal<unknown>[]
 }
 
 export interface NumberVal extends RuntimeVal<bigint | number> {

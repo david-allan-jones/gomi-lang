@@ -1,5 +1,5 @@
 import { normalizeInt } from '../utils/japanese'
-import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NilLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, StringLiteral, CallExpr, MemberExpr, FunctionDeclaration, IfStatement, WhileStatement } from './ast'
+import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NilLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, StringLiteral, CallExpr, MemberExpr, FunctionDeclaration, IfStatement, WhileStatement, ArrayLiteral } from './ast'
 import GomiLexer, { Token, TokenType as TT, TokenVal, TokenType } from './lexer'
 
 export default class GomiParser {
@@ -29,7 +29,7 @@ export default class GomiParser {
 
     private validate_token(type: TT, hint?: string): void {
         if (!this.at || this.at.type !== type) {
-            let message = `ゴミ Parser Error\nExpected: '${this.at.value}'\nReceived: '${this.at.value}'`
+            let message = `ゴミ Parser Error\nExpected: '${type}'\nReceived: '${this.at.type}'`
             if (hint !== undefined) {
                 message += `\nHint: ${hint}`
             }
@@ -210,7 +210,7 @@ export default class GomiParser {
     }
 
     private parse_assign_expr(): Expr {
-        const left = this.parse_object_expr()
+        const left = this.parse_array_expr()
         if (this.at.type === TT.Equals) {
             this.eat_token()
             const value = this.parse_assign_expr()
@@ -221,6 +221,36 @@ export default class GomiParser {
             } as VarAssignment
         }
         return left
+    }
+
+    private parse_array_expr(): Expr {
+        if (this.at.type !== TT.OpenBracket) {
+            return this.parse_object_expr()
+        }
+        this.eat_token()
+            
+        // Parse expression by expression
+        const values: Expr[] = []
+
+        //@ts-ignore
+        while (this.not_eof() && this.at.type !== TT.CloseBracket) {
+            values.push(this.parse_expr())
+            //@ts-ignore
+            if (this.at.type === TT.Comma) {
+                this.eat_token()
+            //@ts-ignore
+            } else if (this.at.type !== TT.CloseBracket) {
+                this.validate_token(TT.Comma, `Expected a comma or closing bracket at line ${this.at.line}, column ${this.at.column}`)
+            }
+        }
+
+        this.validate_token(TT.CloseBracket, `All array expressions must have matching closing bracket. Check line ${this.at.line}, column ${this.at.column}`)
+        this.eat_token()
+
+        return {
+            kind: 'ArrayLiteral',
+            values
+        } as ArrayLiteral
     }
 
     private parse_object_expr(): Expr {
@@ -266,7 +296,7 @@ export default class GomiParser {
         let left = this.parse_logical_or_expr()
         if (this.at.type === TT.Question) {
             this.eat_token()
-            const mid = this.parse_object_expr()
+            const mid = this.parse_array_expr()
             this.validate_token(TT.Colon, 'Invalid character detected in ternary expression')
             this.eat_token()
             const right = this.parse_object_expr()
