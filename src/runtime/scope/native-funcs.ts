@@ -30,7 +30,7 @@ const nativeFuncs = [
             const arr = args[0] as ArrayVal
             return {
                 type: 'int',
-                value: arr.value.length
+                value: BigInt(arr.value.length)
             }
         })
     },
