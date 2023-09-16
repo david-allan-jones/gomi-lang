@@ -252,7 +252,7 @@ export function eval_object_expr(obj: ObjectLiteral | NilLiteral, scope: Scope):
 export function eval_member_expr(expr: MemberExpr, scope: Scope): RuntimeVal<unknown> {
     const { type, value } = evaluate(expr.object, scope) as ObjectVal
     if (type !== 'object') {
-        throw `Member expressions only supported for object types. Received: ${obj.type}`
+        throw `Member expressions only supported for object types. Received: ${type}`
     }
     const { symbol } = expr.prop as Identifier
     if (value === undefined) {
