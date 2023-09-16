@@ -1,7 +1,7 @@
-import { FunctionDeclaration, IfStatement, Program, VarDeclaration as VarDeclarations } from "../../frontend/ast"
+import { FunctionDeclaration, IfStatement, Program, VarDeclaration as VarDeclarations, WhileStatement } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope/scope"
-import { FunctionValue, RuntimeVal, VoidVal } from "../types"
+import { BooleanValue, FunctionValue, RuntimeVal, VoidVal } from "../types"
 
 export function eval_program(program: Program, scope: Scope): RuntimeVal<unknown> {
     let lastResult: RuntimeVal<unknown> = { type: 'object', value: null }
@@ -44,6 +44,28 @@ export function eval_if_statement(ifStatement: IfStatement, scope: Scope): VoidV
         for (let i = 0; i < body.length; i++) {
             evaluate(body[i], ifScope)
         }
+    }
+    return { type: 'void', value: null }
+}
+
+export function eval_while_statement(whileStatement: WhileStatement, scope: Scope): VoidVal {
+    const { condition, body } = whileStatement
+
+    const whileScope = new Scope(scope)
+    let keepLooping = evaluate(condition, whileScope)
+    if (keepLooping.type !== 'boolean') {
+        throw `The condition in a while statement must resolve to a boolean value. Received: ${keepLooping.type}`
+    }
+    while (keepLooping.type === 'boolean' && (keepLooping as BooleanValue).value) {
+        console.log('hit')
+        for (let i = 0; i < body.length; i++) {
+            evaluate(body[i], whileScope)
+        }
+        keepLooping = evaluate(condition, whileScope)
+    }
+
+    if (keepLooping.type !== 'boolean') {
+        throw `The condition in a while statement must resolve to a boolean value. Received: ${keepLooping.type}`
     }
     return { type: 'void', value: null }
 }

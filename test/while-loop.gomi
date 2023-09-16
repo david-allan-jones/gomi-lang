@@ -3,7 +3,8 @@ let n = 4;
 let acc = 0;
 
 while i < n {
-    acc + i
+    acc = acc + i
+    i = i + 1
 }
 
 acc
