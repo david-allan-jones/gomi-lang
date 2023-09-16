@@ -1,6 +1,6 @@
 import { ArrayVal, IntVal, ObjectVal, RuntimeVal } from './types'
 
-export function print_runtime_val(runtimeVal: RuntimeVal<unknown>): void {
+export function print_runtime_val(runtimeVal: RuntimeVal<unknown>, color = true): void {
     let serialized
     switch(runtimeVal.type) {
         case 'object':
@@ -19,7 +19,8 @@ export function print_runtime_val(runtimeVal: RuntimeVal<unknown>): void {
             serialized = `${runtimeVal.value}`
             break
     }
-    console.log(`\x1b[33m${serialized}\x1b[0m`)
+    if (color) serialized = `\x1b[33m${serialized}\x1b[0m`
+    console.log(serialized)
 }
 
 function serialize_obj(obj: ObjectVal, nestedLevel = 1): string {
