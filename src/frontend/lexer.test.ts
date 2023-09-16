@@ -151,6 +151,9 @@ describe('Gomi Lexer', () => {
     it('if', () => {
         testSources(['if', 'もし'], TokenType.If)
     })
+    it('while', () => {
+        testSources(['while', '繰り返す'], TokenType.While)
+    })
     it('let', () => {
         testSources(['let', '宣言'], TokenType.Let)
     })

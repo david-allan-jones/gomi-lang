@@ -1,5 +1,5 @@
 import { normalizeInt } from '../utils/japanese'
-import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NilLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, StringLiteral, CallExpr, MemberExpr, FunctionDeclaration, IfStatement } from './ast'
+import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NilLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, StringLiteral, CallExpr, MemberExpr, FunctionDeclaration, IfStatement, WhileStatement } from './ast'
 import GomiLexer, { Token, TokenType as TT, TokenVal, TokenType } from './lexer'
 
 export default class GomiParser {
@@ -49,6 +49,8 @@ export default class GomiParser {
                 return this.parse_function_declaration()
             case TT.If:
                 return this.parse_if_stmt()
+            case TT.While:
+                return this.parse_while_statement()
             default:
                 return this.parse_expr()
         }
@@ -175,6 +177,32 @@ export default class GomiParser {
             condition,
             body
         } as IfStatement
+    }
+
+    private parse_while_statement(): WhileStatement {
+        // Eat the while
+        this.eat_token()
+
+        // Condition
+        const condition = this.parse_expr()
+
+        // Body
+        this.validate_token(TT.OpenBrace, `While statements must have an opening brace. Check line ${this.at.line}, column ${this.at.column}`)
+        this.eat_token()
+
+        const body: Stmt[] = []
+        while (this.not_eof() && this.at.type !== TT.CloseBrace) {
+            body.push(this.parse_stmt())
+        }
+
+        this.validate_token(TT.CloseBrace, `While statements must have a closing brace. Check line ${this.at.line}, column ${this.at.column}`)
+        this.eat_token()
+
+        return {
+            kind: 'WhileStatement',
+            condition,
+            body
+        } as WhileStatement
     }
 
     private parse_expr(): Expr {

@@ -418,6 +418,21 @@ describe('Gomi Parser', () => {
         expect(node.body.length).toBe(2)
     })
 
+    it('errors on missing opening brace on if statement', () => {
+        const stmt = `
+            if (condition) 
+                someFunc()
+                nil
+            }
+        `
+        try {
+            parser.produceAST(stmt)
+            fail('Was able to parse if with missing closing brace')
+        } catch(e) {
+            expect(e).toInclude('If statements must have an opening brace.')
+        }
+    })
+
     it('errors on missing closing brace on if statement', () => {
         const stmt = `
             if (condition) {
@@ -429,6 +444,51 @@ describe('Gomi Parser', () => {
             fail('Was able to parse if with missing closing brace')
         } catch(e) {
             expect(e).toInclude('If statements must have a closing brace.')
+        }
+    })
+
+    it('while statement', () => {
+        const stmt = `
+            while condition {
+                someFunc()
+                nil
+            }
+        `
+        const program = parser.produceAST(stmt)
+        const node = program.body[0] as IfStatement
+        expect(node.kind).toBe('WhileStatement')
+        const condition = node.condition as Identifier
+        expect(condition.kind).toBe('Identifier')
+        expect(condition.symbol).toBe('condition')
+        expect(node.body.length).toBe(2)
+    })
+
+    it('errors on missing opening brace on while statement', () => {
+        const stmt = `
+            while condition 
+                someFunc()
+                nil
+            }
+        `
+        try {
+            parser.produceAST(stmt)
+            fail('Was able to parse while with missing opening brace')
+        } catch(e) {
+            expect(e).toInclude('While statements must have an opening brace.')
+        }
+    })
+
+    it('errors on missing closing brace on while statement', () => {
+        const stmt = `
+            while condition {
+                someFunc()
+                nil
+        `
+        try {
+            parser.produceAST(stmt)
+            fail('Was able to parse while with missing closing brace')
+        } catch(e) {
+            expect(e).toInclude('While statements must have a closing brace.')
         }
     })
 })

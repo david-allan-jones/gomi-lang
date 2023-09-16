@@ -50,6 +50,11 @@ describe('File reader', () => {
             const val = await evalFile(filePath)
             expect(val.value).toBe(1n)
         })
+        it('while-loop.gomi', async () => {
+            const filePath = getFileName('while-loop.gomi')
+            const val = await evalFile(filePath)
+            expect(val.value).toBe(6n)
+        })
     })
     describe('invalid files', () => {
         it('invalid-character.gomi', async () => {
