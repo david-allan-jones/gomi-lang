@@ -59,7 +59,7 @@ rl.on('line', (input: string) => {
     }
 
     // Execute
-    if (stack.length) {
+    if (stack.length || input === '') {
         buffer += `\n${input}`
     } else {
         runRepl(`${buffer}\n${input}`)

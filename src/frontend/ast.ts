@@ -66,11 +66,11 @@ export interface VarAssignment extends Expr {
     value: Expr
 }
 
-export interface Expr extends Stmt {}
+export interface Expr extends Stmt { }
 
 export interface CallExpr extends Expr {
     kind: "CallExpr",
-    callee:  Expr
+    callee: Expr
     args: Expr[]
 }
 
@@ -100,7 +100,7 @@ export interface TernaryExpr extends Expr {
     right: Expr
 }
 
-export interface PrimaryExpr extends Expr {}
+export interface PrimaryExpr extends Expr { }
 
 export interface Identifier extends PrimaryExpr {
     kind: "Identifier"
@@ -151,7 +151,7 @@ export interface Property extends Expr {
 
 
 // Helpers
-export type NormalizedBinaryOperator = 
+export type NormalizedBinaryOperator =
     | '||'
     | '&&'
     | '<'
@@ -162,6 +162,7 @@ export type NormalizedBinaryOperator =
     | '/'
     | '%'
     | '^'
+    | '=='
 
 export type NormalizedUnaryOperator =
     | '!'

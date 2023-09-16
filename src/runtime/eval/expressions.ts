@@ -103,6 +103,8 @@ export function eval_int_binary_expr(
             return { type: 'boolean', value: left.value > right.value }
         case '<':
             return { type: 'boolean', value: left.value < right.value }
+        case '==':
+            return { type: 'boolean', value: left.value === right.value}
         default:
             throw `Runtime Error: An unexpected int operator was received by the interpreter: '${op}'`
     }
@@ -131,6 +133,8 @@ export function eval_float_binary_expr(
             return { type: 'boolean', value: left.value > right.value }
         case '<':
             return { type: 'boolean', value: left.value < right.value }
+        case '==':
+            return { type: 'boolean', value: left.value === right.value }
         default:
             throw `Runtime Error: An unexpected float operator was received by the interpreter: '${op}'`
     }
@@ -146,6 +150,8 @@ export function eval_boolean_binary_expr(
             return { type: 'boolean', value: left.value || right.value }
         case '&&':
             return { type: 'boolean', value: left.value && right.value }
+        case '==':
+            return { type: 'boolean', value: left.value === right.value }
         default:
             throw `Runtime Error: An unexpected boolean operator was received by the interpreter: '${op}'`
     }
@@ -155,7 +161,7 @@ export function eval_string_binary_expr(
     left: StringVal,
     right: StringVal,
     op: NormalizedBinaryOperator
-): StringVal {
+): StringVal | BooleanValue {
     switch (op) {
         case '+':
             return { type: 'string', value: left.value + right.value }
@@ -165,6 +171,8 @@ export function eval_string_binary_expr(
             return { type: 'string', value: `${right.value}${left.value}${right.value}`}
         case '/':
             return { type: 'string', value: left.value.replaceAll(right.value, '') }
+        case '==':
+            return { type: 'boolean', value: left.value === right.value }
         default:
             throw `Runtime Error: An unexpected string operator was received by the interpreter: '${op}'`
     }

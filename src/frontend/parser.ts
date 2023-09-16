@@ -312,13 +312,14 @@ export default class GomiParser {
 
     private parse_equality_expr(): Expr {
         let left = this.parse_logical_or_expr()
-        while (this.at.value === '==' || this.at.value === '＝＝') {
+        while (['==', '＝＝'].includes(this.at.value)) {
             this.eat_token()
             const right = this.parse_logical_or_expr()
-            return {
+            left = {
                 kind: 'BinaryExpr',
                 left,
-                right
+                right,
+                operator: '=='
             } as BinaryExpr
         }
         return left
