@@ -40,6 +40,11 @@ describe('File reader', () => {
             const val = await evalFile(filePath)
             expect(val.value).toBe(2n)
         })
+        it('if-statement.gomi', async () => {
+            const filePath = getFileName('if-statement.gomi')
+            const val = await evalFile(filePath)
+            expect(val.value).toBe(1n)
+        })
     })
     describe('invalid files', () => {
         it('invalid-character.gomi', async () => {

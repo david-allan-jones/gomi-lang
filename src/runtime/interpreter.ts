@@ -1,8 +1,8 @@
 import { IntVal, ObjectVal, RuntimeVal, StringVal } from './types'
-import { BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, MemberExpr, NumericLiteral, ObjectLiteral, Program, Stmt, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from '../frontend/ast'
+import { BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, IfStatement, MemberExpr, NumericLiteral, ObjectLiteral, Program, Stmt, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from '../frontend/ast'
 import Scope from './scope/scope'
 import { eval_binary_expr, eval_ternary_expr, eval_identifier, eval_assignment_expr, eval_unary_expr, eval_object_expr, eval_call_expr, eval_member_expr } from './eval/expressions'
-import { eval_function_declaration, eval_program, eval_var_declaration } from './eval/statements'
+import { eval_function_declaration, eval_if_statement, eval_program, eval_var_declaration } from './eval/statements'
 
 export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
     switch (ast.kind) {
@@ -13,10 +13,12 @@ export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
             return eval_var_declaration(ast as VarDeclaration, scope)
         case "FunctionDeclaration":
             return eval_function_declaration(ast as FunctionDeclaration, scope)
-        case "VarAssignment":
-            return eval_assignment_expr(ast as VarAssignment, scope)
+        case "IfStatement":
+            return eval_if_statement(ast as IfStatement, scope)
 
         // Expressions
+        case "VarAssignment":
+            return eval_assignment_expr(ast as VarAssignment, scope)
         case "Identifier":
             return eval_identifier(ast as Identifier, scope)
         case "UnaryExpr":

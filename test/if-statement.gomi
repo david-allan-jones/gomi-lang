@@ -1,0 +1,14 @@
+let a = true;
+let b = 0;
+
+if a {
+    let c = 1;
+    b = 1
+}
+
+if !a {
+    let c = 2;
+    b = c
+}
+
+b
