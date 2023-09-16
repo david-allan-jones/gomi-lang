@@ -64,6 +64,41 @@ const globals: Global[] = [
                 value: result
             }
         })
+    },
+    {
+        identifiers: ["append", "追加"],
+        value: mk_native_function(args => {
+            if (args.length !== 2) {
+                throw 'append takes 2 arguments'
+            }
+            const arr = args[0] as ArrayVal
+            const val = args[1] as RuntimeVal<unknown>
+            return {
+                type: 'array',
+                value: [...arr.value, val]
+            }
+        })
+    },
+    {
+        identifiers: ["slice", "スライス"],
+        value: mk_native_function(args => {
+            if (args.length !== 2 && args.length !== 3) {
+                throw 'slice takes 2-3 arguments'
+            }
+            const arr = args[0] as ArrayVal
+            const start = args[1] as IntVal
+            if (args[2] === undefined) {
+                return {
+                    type: 'array',
+                    value: arr.value.slice(Number(start.value))
+                }
+            }
+            const end = args[2] as IntVal
+            return {
+                type: 'array',
+                value: arr.value.slice(Number(start.value), Number(end.value))
+            }
+        })
     }
 ]
 
