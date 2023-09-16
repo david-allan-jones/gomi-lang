@@ -1,5 +1,5 @@
 import { print_runtime_val } from "../print"
-import { RuntimeVal, mk_native_function } from "../types"
+import { ArrayVal, RuntimeVal, mk_native_function } from "../types"
 
 type Global = {
     identifiers: string[],
@@ -22,6 +22,22 @@ const globals: Global[] = [
             type: 'int',
             value: BigInt(Date.now())
         }))
+    },
+    {
+        identifiers: ["len", "サイス"],
+        value: mk_native_function(args => {
+            if (args.length > 1) {
+                throw `This function only takes one argument`
+            }
+            if (args[0].type !== 'array') {
+                throw `Argument must be of type array`
+            }
+            const arr = args[0] as ArrayVal
+            return {
+                type: 'int',
+                value: arr.value.length
+            }
+        })
     }
 ]
 
