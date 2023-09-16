@@ -1,4 +1,3 @@
-import { env } from "process"
 import { FunctionDeclaration, IfStatement, Program, VarDeclaration as VarDeclarations } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope/scope"
