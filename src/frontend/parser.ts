@@ -1,5 +1,5 @@
 import { normalizeInt } from '../utils/japanese'
-import { Stmt, Program, Expr, BinaryExpr, NumericLiteral, Identifier, NilLiteral, BooleanLiteral, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, StringLiteral, CallExpr, MemberExpr, FunctionDeclaration, IfStatement, WhileStatement, ArrayLiteral, mk_numeric_literal, mk_string_literal, mk_identifier, mk_nil_literal, mk_boolean_literal } from './ast'
+import { Stmt, Program, Expr, BinaryExpr, Identifier, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, CallExpr, MemberExpr, FunctionDeclaration, IfStatement, WhileStatement, ArrayLiteral, mk_numeric_literal, mk_string_literal, mk_identifier, mk_nil_literal, mk_boolean_literal } from './ast'
 import GomiLexer, { Token, TokenType as TT, TokenVal, TokenType } from './lexer'
 
 export default class GomiParser {
@@ -293,19 +293,33 @@ export default class GomiParser {
     }
 
     private parse_ternary_expr(): Expr {
-        let left = this.parse_logical_or_expr()
+        let left = this.parse_equality_expr()
         if (this.at.type === TT.Question) {
             this.eat_token()
-            const mid = this.parse_array_expr()
+            const mid = this.parse_assign_expr()
             this.validate_token(TT.Colon, 'Invalid character detected in ternary expression')
             this.eat_token()
-            const right = this.parse_object_expr()
+            const right = this.parse_assign_expr()
             return {
                 kind: 'TernaryExpr',
                 left,
                 mid,
                 right
             } as TernaryExpr
+        }
+        return left
+    }
+
+    private parse_equality_expr(): Expr {
+        let left = this.parse_logical_or_expr()
+        while (this.at.value === '==' || this.at.value === '＝＝') {
+            this.eat_token()
+            const right = this.parse_logical_or_expr()
+            return {
+                kind: 'BinaryExpr',
+                left,
+                right
+            } as BinaryExpr
         }
         return left
     }
@@ -527,7 +541,7 @@ export default class GomiParser {
                 this.eat_token()
                 return expr
             default:
-                throw `Unexpected token found during parsing: '${prev.value}'`
+                throw `Unexpected token found during parsing: '${prev.value}' at line ${prev.line}, column ${prev.column}`
         }
     }
 }

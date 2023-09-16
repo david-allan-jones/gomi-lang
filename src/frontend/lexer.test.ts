@@ -163,7 +163,7 @@ describe('Gomi Lexer', () => {
     it('identifier', () => {
         testSources(['a', 'a1', 'あ', 'あ１', 'a_x', 'あ＿え'], TokenType.Identifier)
     })
-    it('equals', () => {
+    it('assignment', () => {
         testSources(['=', '＝'], TokenType.Equals)
     })
     it('single character binary operator', () => {
@@ -173,7 +173,7 @@ describe('Gomi Lexer', () => {
         )
     })
     it('multi character binary operators', () => {
-        testSources(['||', '&&', '｜｜', '＆＆'], TokenType.BinaryOperator)
+        testSources(['||', '&&', '==', '｜｜', '＆＆', '＝＝'], TokenType.BinaryOperator)
     })
     it('skips whitespace at end of file', () => {
         const tokenizer = new GomiLexer('a ')

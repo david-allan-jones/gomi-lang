@@ -10,7 +10,6 @@ export type NodeType =
     // Expressions
     | "VarAssignment"
     | "CallExpr"
-    | "IndexExpr"
     | "UnaryExpr"
     | "MemberExpr"
     | "UnaryExpr"
@@ -79,12 +78,6 @@ export interface MemberExpr extends Expr {
     kind: "MemberExpr",
     object: Expr,
     prop: Expr
-}
-
-export interface IndexExpr extends Expr {
-    kind: "IndexExpr",
-    expr: Expr,
-    index: number
 }
 
 export interface UnaryExpr extends Expr {

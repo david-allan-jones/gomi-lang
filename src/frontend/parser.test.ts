@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import GomiParser from "./parser";
 import { fail } from "assert";
-import { ArrayLiteral, BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, IfStatement, IndexExpr, MemberExpr, NilLiteral, NumericLiteral, ObjectLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
+import { ArrayLiteral, BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, IfStatement, MemberExpr, NilLiteral, NumericLiteral, ObjectLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
 
 describe('Gomi Parser', () => {
     let parser: GomiParser
@@ -264,6 +264,15 @@ describe('Gomi Parser', () => {
         } 
     })
 
+    it('equality left associative', () => {
+        const stmt = 'a == b == c'
+        const program = parser.produceAST(stmt)
+        expect(program.body.length).toBe(1)
+        const node = program.body[0] as BinaryExpr
+        expect(node.kind).toBe('BinaryExpr')
+        expect(node.left.kind).toBe('BinaryExpr')
+    })
+
     it('left associative operators', () => {
         const ops = ['||', '&&', '<', '+', '-', '*', '/', '%']
         for (let i = 0; i < ops.length; i++) {
@@ -392,15 +401,6 @@ describe('Gomi Parser', () => {
         expect(node.values[1].kind).toBe('Identifier')
     })
 
-    it('parses index expressions', () => {
-        const stmt = 'foo[0]'
-        const program = parser.produceAST(stmt)
-        const node = program.body[0] as IndexExpr
-        expect(node.kind).toBe('IndexExpr')
-        expect(node.expr.kind).toBe('Identifier')
-        expect(node.index).toBe(0)
-    })
-
     it('parses member expressions', () => {
         const stmt = 'foo.bar.baz'
         const program = parser.produceAST(stmt)
@@ -410,6 +410,26 @@ describe('Gomi Parser', () => {
         const object = node.object as MemberExpr
         expect(object.prop.kind).toBe('Identifier')
         expect(object.object.kind).toBe('Identifier')
+    })
+
+    it('ternary with two assignments', () => {
+        const stmt = 'a ? a = 1 : a = 2'
+        const program = parser.produceAST(stmt)
+        const node = program.body[0] as TernaryExpr
+        expect(node.kind).toBe('TernaryExpr')
+        expect(node.left.kind).toBe('Identifier')
+        expect(node.mid.kind).toBe('VarAssignment')
+        expect(node.right.kind).toBe('VarAssignment')
+    })
+    
+    it('ternary with two array values', () => {
+        const stmt = 'a ? [] : []'
+        const program = parser.produceAST(stmt)
+        const node = program.body[0] as TernaryExpr
+        expect(node.kind).toBe('TernaryExpr')
+        expect(node.left.kind).toBe('Identifier')
+        expect(node.mid.kind).toBe('ArrayLiteral')
+        expect(node.right.kind).toBe('ArrayLiteral')
     })
 
     it('function declaration', () => {

@@ -184,9 +184,6 @@ export default class GomiLexer {
 		// Single character tokens
 		// =========================
 
-		if (this.at() === TokenVal.HW_EQUALS || this.at() === TokenVal.FW_EQUALS) {
-			return this.mk_token(this.src[this.i], TokenType.Equals)
-		}
 		if (this.at() === TokenVal.HW_OPEN_PAREN || this.at() === TokenVal.FW_OPEN_PAREN) {
 			return this.mk_token(this.src[this.i], TokenType.OpenParen)
 		}
@@ -231,6 +228,17 @@ export default class GomiLexer {
 		// =========================
 		// Multiple character tokens
 		// =========================
+
+		// Equality check
+		if (this.at() === TokenVal.HW_EQUALS || this.at() === TokenVal.FW_EQUALS) {
+			let value = this.src[this.i++]
+			if (this.at() === TokenVal.HW_EQUALS || this.at() === TokenVal.FW_EQUALS) {
+				return this.mk_token(value + this.src[this.i], TokenType.BinaryOperator)
+			}
+			// Make up for the factory side effect
+			this.i--
+			return this.mk_token(value, TokenType.Equals)
+		}
 
 		// String check
 		if (this.at() === TokenVal.EN_STRING || this.at() === TokenVal.JP_STRING) {
