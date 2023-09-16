@@ -9,7 +9,6 @@ export async function evalFile(fileName: string) {
     const parser = new GomiParser()
     const scope = createGlobalScope()
     const program = parser.produceAST(src)
-    
 
     return evaluate(program, scope)
 }

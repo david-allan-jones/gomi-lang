@@ -30,6 +30,11 @@ describe('File reader', () => {
             const val = await evalFile(filePath)
             expect(val.value).toBe(2n)
         })
+        it('func-as-params.gomi', async () => {
+            const filePath = getFileName('func-as-params.gomi')
+            const val = await evalFile(filePath)
+            expect(val.value).toBe(2n)
+        })
         it('recursion.gomi', async () => {
             const filePath = getFileName('recursion.gomi')
             const val = await evalFile(filePath)
