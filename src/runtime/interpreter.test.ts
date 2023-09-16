@@ -94,7 +94,6 @@ describe('Gomi Interpreter', () => {
         } as VarDeclaration
         const scope = new Scope()
         const result = evaluate(stmt, scope) as VoidVal
-        console.log(result)
         expect(result.type).toBe('void')
         expect(result.value).toBe(null)
 

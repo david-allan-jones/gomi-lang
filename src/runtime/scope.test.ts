@@ -30,7 +30,7 @@ describe('Scope class', () => {
         const symbol = 'a'
         const scope = new Scope()
         const val = scope.declareVar(symbol, { value: 0, type: 'int' })
-        expect(val.type).toBe('number')
+        expect(val.type).toBe('int')
         expect(val.value).toBe(0)
     })
 
@@ -39,7 +39,7 @@ describe('Scope class', () => {
         const scope = new Scope()
         scope.declareVar(symbol, { value: 0, type: 'int' })
         const val = scope.assignVar(symbol, { value: 1, type: 'int' })
-        expect(val.type).toBe('number')
+        expect(val.type).toBe('int')
         expect(val.value).toBe(1)
     })
 
@@ -48,7 +48,7 @@ describe('Scope class', () => {
         const scope = new Scope()
         scope.declareVar(symbol, { value: 0, type: 'int' })
         const val = scope.lookupVar(symbol)
-        expect(val.type).toBe('number')
+        expect(val.type).toBe('int')
         expect(val.value).toBe(0)
     })
 
@@ -58,7 +58,7 @@ describe('Scope class', () => {
         globalScope.declareVar(symbol, { value: 0, type: 'int' })
         const childScope = new Scope(globalScope)
         const val = childScope.assignVar(symbol, { value: 1, type: 'int' })
-        expect(val.type).toBe('number')
+        expect(val.type).toBe('int')
         expect(val.value).toBe(1)
     })
 
@@ -68,7 +68,7 @@ describe('Scope class', () => {
         globalScope.declareVar(symbol, { value: 0, type: 'int' })
         const childScope = new Scope(globalScope)
         const val = childScope.lookupVar(symbol)
-        expect(val.type).toBe('number')
+        expect(val.type).toBe('int')
         expect(val.value).toBe(0)
     })
 })
