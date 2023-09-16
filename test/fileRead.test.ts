@@ -55,6 +55,11 @@ describe('File reader', () => {
             const val = await evalFile(filePath)
             expect(val.value).toBe(6n)
         })
+        it('digits.gomi', async () => {
+            const filePath = getFileName('digits.gomi')
+            const val = await evalFile(filePath)
+            expect(val.value).toBe(29n)
+        })
     })
     describe('invalid files', () => {
         it('invalid-character.gomi', async () => {

@@ -1,0 +1,29 @@
+function digits(n) {
+	let digits = 0;
+	if n == 0 {
+		digits = 1
+	}
+	if !(n==0) {
+		while n > 0 {
+			n = n / 10
+			digits = digits + 1
+		}
+	}
+	digits
+}
+
+function divisibleBy(n, a, b) {
+	(n % a == 0) && (n % b == 0)
+}
+
+# Print how many numbers from 0 to 1000 that are divisible by 3 and 5
+# Also their digits must be divisible by 2
+let i, count, list = 0, 0, [];
+while i < 10000 {
+	if (digits(i) % 2 == 0) && divisibleBy(i, 13, 24) {
+		list = append(list, i)
+	}
+	i = i + 1
+}
+
+len(list)
