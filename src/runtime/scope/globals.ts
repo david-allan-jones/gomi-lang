@@ -1,5 +1,5 @@
 import { print_runtime_val } from "../print"
-import { ArrayVal, RuntimeVal, mk_native_function } from "../types"
+import { ArrayVal, IntVal, RuntimeVal, mk_native_function } from "../types"
 
 type Global = {
     identifiers: string[],
@@ -36,6 +36,34 @@ const globals: Global[] = [
             return {
                 type: 'int',
                 value: arr.value.length
+            }
+        })
+    },
+    {
+        identifiers: ["range", "範囲"],
+        value: mk_native_function(args => {
+            if (2 > args.length || 3 < args.length) {
+                throw 'range takes 2-3 arguments'
+            }
+            for (let i = 0; i < args.length; i++) {
+                if (args[i].type !== 'int') {
+                    throw 'args to range should all be of type int'
+                }
+            }
+            let [{ value: start }, { value: end }, { value: step }] = args
+            if (step === undefined) {
+                step = 1
+            }
+            console.log(start, end, step)
+
+            const result: IntVal[] = []
+            // @ts-ignore
+            for (let i = start; i < end; i += step) {
+                result.push({ type: 'int', value: i as bigint })
+            }
+            return {
+                type: 'array',
+                value: result
             }
         })
     }
