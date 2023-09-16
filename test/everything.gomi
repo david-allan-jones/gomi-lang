@@ -4,6 +4,15 @@ n = n + 1
 
 let t = 1 + 1 - 1 * 1 / 1 % 1 ^ 1;
 let u = { a: t, i, j };
+print(u.a)
+print(u.i)
+print(u.j)
+
+now()
+
+if (true) {
+    nil
+}
 
 let yes = true;
 let no = false;
@@ -30,6 +39,15 @@ let bilingual = 'a' + ”あ”;
 
 宣言　た＝１＋１-１＊１／１％１＾１;
 宣言 ふ＝｛あ：た, い、う｝；
+プリント（ふ。あ）
+プリント（ふ。い）
+プリント（ふ。う）
+
+今()
+
+もし（本当）｛
+    無
+｝
 
 宣言　はい＝本当；
 宣言　いいえ＝嘘；
