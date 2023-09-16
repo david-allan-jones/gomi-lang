@@ -26,7 +26,7 @@ export function eval_module_import(moduleImport: ModuleImport, scope: Scope): Vo
     const program = parser.produceAST(src)
 
     // Execute AST in isolated scope
-    const moduleScope = new Scope()
+    const moduleScope = new Scope(scope)
     evaluate(program, moduleScope)
 
     // Copy over requested identifiers to current scope
