@@ -1,3 +1,0 @@
-module '/test/module-export.gomi' import { addOne, minusOne }
-
-minusOne(addOne(10))

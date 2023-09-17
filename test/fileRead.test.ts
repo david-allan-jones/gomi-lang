@@ -5,7 +5,7 @@ import { unrecognizedError } from "../src/frontend/lexer";
 
 // TODO: Get this working so it doesn't require being at root
 function getFileName(path: string) {
-    return `test/${path}`
+    return `test/files/${path}`
 }
 
 describe('File reader', () => {
