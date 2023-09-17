@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test";
 import { evaluate } from "./interpreter";
-import { ArrayLiteral, BooleanLiteral, Expr, MemberExpr, NilLiteral, NumericLiteral, ObjectLiteral, StringLiteral, VarAssignment, VarDeclaration, mk_identifier, mk_numeric_literal } from "../frontend/ast";
+import { ArrayLiteral, BooleanLiteral, Expr, MemberExpr, NilLiteral, IntLiteral, ObjectLiteral, StringLiteral, VarAssignment, VarDeclaration, mk_identifier, mk_int_literal } from "../frontend/ast";
 import Scope from "./scope/scope";
 import { fail } from "assert";
 import { IntVal, ObjectVal, VoidVal } from "./types";
 
 describe('Gomi Interpreter', () => {
     it('numeric literals', () => {
-        const stmt = mk_numeric_literal(1n)
+        const stmt = mk_int_literal(1n)
         const result = evaluate(stmt, new Scope())
         expect(result.type).toBe('int')
         expect(result.value).toBe(1n)
@@ -47,8 +47,8 @@ describe('Gomi Interpreter', () => {
         const stmt = {
             kind: 'ArrayLiteral',
             values: [
-                mk_numeric_literal(1n),
-                mk_numeric_literal(2n),
+                mk_int_literal(1n),
+                mk_int_literal(2n),
             ]
         } as ArrayLiteral
         const result = evaluate(stmt, new Scope())
@@ -67,7 +67,7 @@ describe('Gomi Interpreter', () => {
                 {
                     kind: 'Property',
                     key: 'a',
-                    value: mk_numeric_literal(1n)
+                    value: mk_int_literal(1n)
                 },
             ]
         } as Expr
@@ -84,11 +84,11 @@ describe('Gomi Interpreter', () => {
             declarations: [
                 {
                     identifier: 'a',
-                    value: mk_numeric_literal(1n)
+                    value: mk_int_literal(1n)
                 },
                 {
                     identifier: 'b',
-                    value: mk_numeric_literal(2n)
+                    value: mk_int_literal(2n)
                 },
             ],
             mutable: true
@@ -108,7 +108,7 @@ describe('Gomi Interpreter', () => {
             declarations: [
                 {
                     identifier: 'a',
-                    value: mk_numeric_literal(1n)
+                    value: mk_int_literal(1n)
                 }
             ],
             mutable: true
@@ -119,7 +119,7 @@ describe('Gomi Interpreter', () => {
         const stmt = {
             kind: 'VarAssignment',
             assignee: mk_identifier('a'),
-            value: mk_numeric_literal(2n)
+            value: mk_int_literal(2n)
         } as VarAssignment
 
         const result = evaluate(stmt, scope)
@@ -133,7 +133,7 @@ describe('Gomi Interpreter', () => {
             declarations: [
                 {
                     identifier: 'a',
-                    value: mk_numeric_literal(1n)
+                    value: mk_int_literal(1n)
                 }
             ],
             mutable: false
@@ -144,7 +144,7 @@ describe('Gomi Interpreter', () => {
         const stmt = {
             kind: 'VarAssignment',
             assignee: mk_identifier('a'),
-            value: mk_numeric_literal(2n)
+            value: mk_int_literal(2n)
         } as VarAssignment
 
         try {

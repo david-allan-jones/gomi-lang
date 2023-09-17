@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import GomiParser from "./parser";
 import { fail } from "assert";
-import { ArrayLiteral, BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, IfStatement, MemberExpr, ModuleImport, NilLiteral, NumericLiteral, ObjectLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
+import { ArrayLiteral, BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, IfStatement, MemberExpr, ModuleImport, NilLiteral, IntLiteral, ObjectLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
 
 describe('Gomi Parser', () => {
     let parser: GomiParser
@@ -31,13 +31,13 @@ describe('Gomi Parser', () => {
         const fullWidth = ['１', '２', '３', '４', '５', '６', '７', '８', '９', '１０']
         for (let i = 0; i < fullWidth.length; i++) {
             let program = parser.produceAST(halfWidth[i])
-            let node = program.body[0] as NumericLiteral
-            expect(node.kind).toBe('NumericLiteral')
+            let node = program.body[0] as IntLiteral
+            expect(node.kind).toBe('IntLiteral')
             expect(node.value).toBe(BigInt(i + 1))
 
             program = parser.produceAST(fullWidth[i])
-            node = program.body[0] as NumericLiteral
-            expect(node.kind).toBe('NumericLiteral')
+            node = program.body[0] as IntLiteral
+            expect(node.kind).toBe('IntLiteral')
             expect(node.value).toBe(BigInt(i + 1))
         }
     })
@@ -89,7 +89,7 @@ describe('Gomi Parser', () => {
             const node = program.body[0] as BinaryExpr
             expect(node.operator).toBe('%')
             expect(node.left.kind).toBe('Identifier')
-            expect(node.right.kind).toBe('NumericLiteral')
+            expect(node.right.kind).toBe('IntLiteral')
         }
     })
     it('parses exponential operator expressions', () => {
@@ -150,8 +150,8 @@ describe('Gomi Parser', () => {
     })
     it('parses parenthesized expressions', () => {
         const program = parser.produceAST('((1))')
-        const node = program.body[0] as NumericLiteral
-        expect(node.kind).toBe('NumericLiteral')
+        const node = program.body[0] as IntLiteral
+        expect(node.kind).toBe('IntLiteral')
     })
     it('parses nil literals', () => {
         const literals = ['nil', '無']
@@ -180,7 +180,7 @@ describe('Gomi Parser', () => {
         const node = program.body[0] as VarDeclaration
         expect(node.kind).toBe('VarDeclaration')
         expect(node.declarations[0].identifier).toBe('a')
-        expect(node.declarations[0].value.kind).toBe('NumericLiteral')
+        expect(node.declarations[0].value.kind).toBe('IntLiteral')
         expect(node.mutable).toBe(true)
     })
     
@@ -196,7 +196,7 @@ describe('Gomi Parser', () => {
         const node = program.body[0] as VarDeclaration
         expect(node.kind).toBe('VarDeclaration')
         expect(node.declarations[0].identifier).toBe('あ')
-        expect(node.declarations[0].value.kind).toBe('NumericLiteral')
+        expect(node.declarations[0].value.kind).toBe('IntLiteral')
     })
     
     it('parses variable declaration with multiple assignments', () => {
@@ -209,13 +209,13 @@ describe('Gomi Parser', () => {
         const [a, b] = node.declarations
 
         expect(a.identifier).toBe('a')
-        const aExpr = node.declarations[0].value as NumericLiteral
-        expect(aExpr.kind).toBe('NumericLiteral')
+        const aExpr = node.declarations[0].value as IntLiteral
+        expect(aExpr.kind).toBe('IntLiteral')
         expect(aExpr.value).toBe(1n)
 
         expect(b.identifier).toBe('b')
-        const bExpr = b.value as NumericLiteral
-        expect(bExpr.kind).toBe('NumericLiteral')
+        const bExpr = b.value as IntLiteral
+        expect(bExpr.kind).toBe('IntLiteral')
         expect(bExpr.value).toBe(2n)
     })
 
@@ -235,7 +235,7 @@ describe('Gomi Parser', () => {
             expect(node.kind).toBe('VarAssignment')
             const assignee = node.assignee as Identifier
             expect(assignee.symbol).toBe(symbols[i])
-            expect(node.value.kind).toBe('NumericLiteral')
+            expect(node.value.kind).toBe('IntLiteral')
         }
     })
 
@@ -389,7 +389,7 @@ describe('Gomi Parser', () => {
         expect(node.args[1].kind).toBe('StringLiteral')
         const callee = node.callee as CallExpr
         expect(callee.args[0].kind).toBe('Identifier')
-        expect(callee.args[1].kind).toBe('NumericLiteral')
+        expect(callee.args[1].kind).toBe('IntLiteral')
     })
 
     it('parses object literals', () => {
@@ -405,7 +405,7 @@ describe('Gomi Parser', () => {
         const program = parser.produceAST(stmt)
         const node = program.body[0] as ArrayLiteral
         expect(node.kind).toBe('ArrayLiteral')
-        expect(node.values[0].kind).toBe('NumericLiteral')
+        expect(node.values[0].kind).toBe('IntLiteral')
         expect(node.values[1].kind).toBe('Identifier')
     })
 

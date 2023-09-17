@@ -18,7 +18,7 @@ export type NodeType =
     | "BinaryExpr"
     | "TernaryExpr"
     | "Identifier"
-    | "NumericLiteral"
+    | "IntLiteral"
     | "StringLiteral"
     | "NilLiteral"
     | "BooleanLiteral"
@@ -146,8 +146,8 @@ export interface Identifier extends PrimaryExpr {
 }
 
 // 1
-export interface NumericLiteral extends PrimaryExpr {
-    kind: "NumericLiteral"
+export interface IntLiteral extends PrimaryExpr {
+    kind: "IntLiteral"
     value: bigint
 }
 
@@ -211,8 +211,8 @@ export type NormalizedUnaryOperator =
 // Helper Factories
 //=================================
 
-export function mk_numeric_literal(value: bigint): NumericLiteral {
-    return { kind: 'NumericLiteral', value }
+export function mk_int_literal(value: bigint): IntLiteral {
+    return { kind: 'IntLiteral', value }
 }
 
 export function mk_string_literal(value: string): StringLiteral {

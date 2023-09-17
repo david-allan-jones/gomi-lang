@@ -1,5 +1,5 @@
 import { normalizeInt } from '../utils/japanese'
-import { Stmt, Program, Expr, BinaryExpr, Identifier, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, CallExpr, MemberExpr, FunctionDeclaration, IfStatement, WhileStatement, ArrayLiteral, mk_numeric_literal, mk_string_literal, mk_identifier, mk_nil_literal, mk_boolean_literal, ModuleImport, Declaration } from './ast'
+import { Stmt, Program, Expr, BinaryExpr, Identifier, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, CallExpr, MemberExpr, FunctionDeclaration, IfStatement, WhileStatement, ArrayLiteral, mk_int_literal, mk_string_literal, mk_identifier, mk_nil_literal, mk_boolean_literal, ModuleImport, Declaration } from './ast'
 import GomiLexer, { Token, TokenType as TT, TokenVal, TokenType } from './lexer'
 
 export default class GomiParser {
@@ -565,7 +565,7 @@ export default class GomiParser {
             case TT.Identifier:
                 return mk_identifier(prev.value)
             case TT.Int:
-                return mk_numeric_literal(normalizeInt(prev.value))
+                return mk_int_literal(normalizeInt(prev.value))
             case TT.String:
                 return mk_string_literal(prev.value)
             case TT.Nil:
