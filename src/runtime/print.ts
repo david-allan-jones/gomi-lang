@@ -1,4 +1,4 @@
-import { ArrayVal, IntVal, ObjectVal, RuntimeVal } from './types'
+import { ArrayVal, FunctionValue, IntVal, ObjectVal, RuntimeVal } from './types'
 
 export function print_runtime_val(runtimeVal: RuntimeVal<unknown>, color = true): void {
     let serialized
@@ -14,6 +14,9 @@ export function print_runtime_val(runtimeVal: RuntimeVal<unknown>, color = true)
             break
         case 'string':
             serialized = `'${runtimeVal.value}'`
+            break
+        case 'function':
+            serialized = `[Function: ${(runtimeVal as FunctionValue).name}]`
             break
         default:
             serialized = `${runtimeVal.value}`
@@ -44,6 +47,8 @@ function serialize_obj(obj: ObjectVal, nestedLevel = 1): string {
             val = `'${value.value}'`
         } else if (value.type === 'array') {
             val = serialize_array(value as ArrayVal, nestedLevel + 1)
+        } else if (value.type === 'function') {
+            val = serialize_function(value as FunctionValue)
         } else {
             val = value.value
         }
@@ -69,6 +74,8 @@ function serialize_array(arr: ArrayVal, nestedLevel = 1): string {
             val = serialize_obj(indexVal as ObjectVal, nestedLevel + 1)
         } else if (indexVal.type === 'array') {
             val = serialize_array(indexVal as ArrayVal, nestedLevel + 1)
+        } else if (indexVal.type === 'function') {
+            val = serialize_function(indexVal as FunctionValue)
         } else if (indexVal.type === 'string') {
             val = `'${indexVal.value}'`
         } else {
@@ -83,4 +90,8 @@ function serialize_array(arr: ArrayVal, nestedLevel = 1): string {
 
 function serialize_int(int: IntVal): string {
     return int.value.toString()
+}
+
+function serialize_function(func: FunctionValue): string {
+    return `[Function: ${func.name}]`
 }

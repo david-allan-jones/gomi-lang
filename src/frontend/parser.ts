@@ -542,7 +542,6 @@ export default class GomiParser {
                     index: false
                 } as MemberExpr
             }
-            // @ts-ignore
             else if (this.at.type === TT.OpenBracket) {
                 this.eat_token()
                 let index = this.parse_expr()
