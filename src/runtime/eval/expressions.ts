@@ -244,6 +244,12 @@ function eval_object_prop_assignment(assignment: VarAssignment, scope: Scope): R
         nestedProps.push(prop)
         current = (current as MemberExpr).object
     }
+
+    // Add a check for non-identifier
+    if (current.kind !== 'Identifier') {
+        throw `You can not do object property assingment where the root is not an identifer.`
+    }
+
     // Lookup root object
     let { val: obj, mutable } = scope.lookupVar((current as Identifier).symbol)
     if (mutable === false) {
