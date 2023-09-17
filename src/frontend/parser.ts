@@ -528,17 +528,32 @@ export default class GomiParser {
 
     private parse_member_expr(): Expr {
         let object = this.parse_primary_expr()
-        while (this.at.type === TT.Period) {
-            this.eat_token()
-            let prop = this.parse_primary_expr()
-            if (prop.kind !== 'Identifier') {
-                throw 'Cannot access props on an object that are not identifiers'
+        while (this.at.type === TT.Period || this.at.type === TT.OpenBracket) {
+            if (this.at.type === TT.Period) {
+                this.eat_token()
+                let prop = this.parse_primary_expr()
+                if (prop.kind !== 'Identifier') {
+                    throw 'Cannot access props on an object that are not identifiers'
+                }
+                object = {
+                    kind: 'MemberExpr',
+                    object,
+                    prop,
+                    index: false
+                } as MemberExpr
             }
-            object = {
-                kind: 'MemberExpr',
-                object,
-                prop
-            } as MemberExpr
+            // @ts-ignore
+            else if (this.at.type === TT.OpenBracket) {
+                this.eat_token()
+                let index = this.parse_expr()
+                object = {
+                    kind: 'MemberExpr',
+                    object,
+                    prop: index,
+                    index: true
+                } as MemberExpr
+                this.validate_and_eat_token(TT.CloseBracket, `Array index expression is missing closing brace. Check line ${this.at.line}, column ${this.at.column}`)
+            }
         }
         return object
     }

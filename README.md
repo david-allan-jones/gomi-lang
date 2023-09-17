@@ -128,6 +128,7 @@ Here is a specification of the grammar. <> indicates a non-terminal symbol. ϵ i
 
 <member-expr>           | <primary-expr>
                         | <primary-expr>.<id>
+                        | <primary-expr>[<expr>]
 
 <call-expr>             | (<exprs>)<call-expr>
                         | ϵ

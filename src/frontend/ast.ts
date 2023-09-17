@@ -111,6 +111,7 @@ export interface MemberExpr extends Expr {
     kind: "MemberExpr",
     object: Expr,
     prop: Expr
+    index: boolean
 }
 
 // !flag, -n

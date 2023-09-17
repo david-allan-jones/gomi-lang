@@ -154,24 +154,4 @@ describe('Gomi Interpreter', () => {
             expect(e).toInclude("'a'")
         }
     })
-    
-    // it('member expressin', () => {
-    //     const stmt = {
-    //         kind: 'MemberExpr',
-    //         object: {
-    //             kind: 'Identifier',
-    //             value: 'a'
-    //         },
-    //         prop:{
-    //             kind: 'Identifier',
-    //             value: 'b'
-    //         }
-    //     } as MemberExpr
-    //     const result = evaluate(stmt, new Scope()) as ObjectVal
-    //     console.log(result)
-    //     expect(result.type).toBe('object')
-    //     const a = result.value?.get('a')
-    //     expect(a?.type).toBe('int')
-    //     expect(a?.value).toBe(1n)
-    // })
 })

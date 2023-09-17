@@ -420,6 +420,17 @@ describe('Gomi Parser', () => {
         expect(object.object.kind).toBe('Identifier')
     })
 
+    it('parses array index', () => {
+        const stmt = 'foo[a][b]'
+        const program = parser.produceAST(stmt)
+        const node = program.body[0] as MemberExpr
+        expect(node.kind).toBe('MemberExpr')
+        console.log(node)
+        const object = node.object as MemberExpr
+        expect(object.prop.kind).toBe('Identifier')
+        expect(object.object.kind).toBe('Identifier')
+    })
+
     it('ternary with two assignments', () => {
         const stmt = 'a ? a = 1 : a = 2'
         const program = parser.produceAST(stmt)

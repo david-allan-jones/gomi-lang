@@ -268,6 +268,9 @@ export function eval_array_expr(arr: ArrayLiteral, scope: Scope): ArrayVal {
 }
 
 export function eval_member_expr(expr: MemberExpr, scope: Scope): RuntimeVal<unknown> {
+    if (expr.index) {
+        return eval_index_expr(expr, scope)
+    }
     const { type, value } = evaluate(expr.object, scope) as ObjectVal
     if (type !== 'object') {
         throw `Member expressions only supported for object types. Received: ${type}`
@@ -281,6 +284,22 @@ export function eval_member_expr(expr: MemberExpr, scope: Scope): RuntimeVal<unk
     }
     // @ts-ignore
     return value.get(symbol)
+}
+
+export function eval_index_expr(expr: MemberExpr, scope: Scope): RuntimeVal<unknown> {
+    const { type, value } = evaluate(expr.object, scope) as ArrayVal
+    if (type !== 'array') {
+        throw `Array index expressions only supported for array types. Received: ${type}`
+    }
+    const index = evaluate(expr.prop, scope) as IntVal
+    if (index.type !== 'int') {
+        throw `Indexing expressions must evaluate to an int. Received: ${index.type}`
+    }
+    const result = value[Number(index.value)]
+    if (result === undefined) {
+        throw `Attempted to access an invalid index. The max index of the array is ${value.length - 1} but you accessed ${index.value}`
+    }
+    return result
 }
 
 export function eval_call_expr(expr: CallExpr, scope: Scope): RuntimeVal<unknown> {
