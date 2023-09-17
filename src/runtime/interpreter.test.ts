@@ -126,6 +126,34 @@ describe('Gomi Interpreter', () => {
         expect(result.type).toBe('int')
         expect(scope.lookupVar('a')?.val.value).toBe(2n)
     })
+
+    it('const assignment throws an error', () => {
+        const declaration = {
+            kind: 'VarDeclaration',
+            declarations: [
+                {
+                    identifier: 'a',
+                    value: mk_numeric_literal(1n)
+                }
+            ],
+            mutable: false
+        } as VarDeclaration
+        const scope = new Scope()
+        evaluate(declaration, scope) as VoidVal
+
+        const stmt = {
+            kind: 'VarAssignment',
+            assignee: mk_identifier('a'),
+            value: mk_numeric_literal(2n)
+        } as VarAssignment
+
+        try {
+            const result = evaluate(stmt, scope)
+            fail('You were able to assign to a const')
+        } catch(e) {
+            expect(e).toInclude("'a'")
+        }
+    })
     
     // it('member expressin', () => {
     //     const stmt = {
