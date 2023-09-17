@@ -1,9 +1,9 @@
-function doAThing(theThing, arg) {
+func doAThing(theThing, arg) {
     theThing(arg)
 }
 
 let a = 1;
-function add(n) {
+func add(n) {
     a = a + n
 }
 

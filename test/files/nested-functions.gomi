@@ -1,6 +1,6 @@
-function test1(n) {
-    function test2(m) {
-        function test3(k) {
+func test1(n) {
+    func test2(m) {
+        func test3(k) {
             k
         }
         test3(m)

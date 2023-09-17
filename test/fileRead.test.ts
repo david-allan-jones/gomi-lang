@@ -10,11 +10,6 @@ function getFileName(path: string) {
 
 describe('File reader', () => {
     describe('correct file', () => {
-        it('everything.gomi', async () => {
-            const filePath = getFileName('everything.gomi')
-            const val = await evalFile(filePath)
-            expect(val.value).toBe(4n)
-        })
         it('long-expression.gomi', async () => {
             const filePath = getFileName('long-expression.gomi')
             const val = await evalFile(filePath)

@@ -525,7 +525,7 @@ describe('Gomi Parser', () => {
 
     it('function declaration', () => {
         const stmt = `
-            function add (n, m) {
+            func add(n, m) {
                 let sum = n + m;
                 sum
             } 

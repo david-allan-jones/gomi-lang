@@ -1,4 +1,4 @@
-function digits(n) {
+func digits(n) {
 	let digits = 0;
 	if n == 0 {
 		digits = 1
@@ -12,7 +12,7 @@ function digits(n) {
 	digits
 }
 
-function divisibleBy(n, a, b) {
+func divisibleBy(n, a, b) {
 	(n % a == 0) && (n % b == 0)
 }
 

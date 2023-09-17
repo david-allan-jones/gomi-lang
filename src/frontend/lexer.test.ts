@@ -155,13 +155,13 @@ describe('Gomi Lexer', () => {
         testSources(['const', '定数'], TokenType.Const)
     })
     it('module', () => {
-        testSources(['module', 'モジュールを'], TokenType.Module)
+        testSources(['module', 'モジュール'], TokenType.Module)
     })
     it('import', () => {
-        testSources(['import', 'からインポート'], TokenType.Import)
+        testSources(['import', 'インポート'], TokenType.Import)
     })
     it('function', () => {
-        testSources(['function', '関数'], TokenType.Function)
+        testSources(['func', '関数'], TokenType.Function)
     })
     it('identifier', () => {
         testSources(['a', 'a1', 'あ', 'あ１', 'a_x', 'あ＿え'], TokenType.Identifier)

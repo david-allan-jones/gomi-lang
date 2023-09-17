@@ -1,6 +1,6 @@
 export enum TokenVal {
-	EN_MODULE = 'module', JP_MODULE = 'モジュールを',
-	EN_IMPORT = 'import', JP_IMPORT = 'からインポート',
+	EN_MODULE = 'module', JP_MODULE = 'モジュール',
+	EN_IMPORT = 'import', JP_IMPORT = 'インポート',
 	HW_EQUALS = '=', FW_EQUALS = '＝',
 	HW_OPEN_PAREN = '(', FW_OPEN_PAREN = '（',
 	HW_CLOSE_PAREN = ')', FW_CLOSE_PAREN = '）',
@@ -16,7 +16,7 @@ export enum TokenVal {
 	HW_BANG = '!', FW_BANG = '！',
 	EN_COMMENT = '#', JP_COMMENT = '＃',
 	EN_STRING = "'", JP_STRING = "”",
-	EN_FUNCTION = 'function', JP_FUNCTION = '関数',
+	EN_FUNCTION = 'func', JP_FUNCTION = '関数',
 	EN_WHILE = 'while', JP_WHILE = '繰り返す',
 	EN_LET = 'let', JP_LET = '宣言',
 	EN_CONST = 'const', JP_CONST = '定数',
