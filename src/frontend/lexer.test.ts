@@ -157,6 +157,9 @@ describe('Gomi Lexer', () => {
     it('let', () => {
         testSources(['let', '宣言'], TokenType.Let)
     })
+    it('const', () => {
+        testSources(['const', '定数'], TokenType.Const)
+    })
     it('module', () => {
         testSources(['module', 'モジュールを'], TokenType.Module)
     })

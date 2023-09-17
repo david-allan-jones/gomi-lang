@@ -6,7 +6,7 @@ export function createGlobalScope(): Scope {
     for (let i = 0; i < globals.length; i++) {
         const { identifiers, value } = globals[i]
         for (let j = 0; j < identifiers.length; j++) {
-            scope.declareVar(identifiers[j], value) 
+            scope.declareVar(identifiers[j], value, false) 
         }
     }
     return scope
@@ -20,37 +20,40 @@ export function resolveError(symbol: string): string {
     return `Cannot resolve ${symbol} as it has not be declared.`
 }
 
+type SymbolTableEntry = { val: RuntimeVal<unknown>, mutable: boolean }
+type SymbolTable = Map<string, SymbolTableEntry>
+
 export default class Scope {
     // undefined => global scope
     private parent?: Scope
-    private vars: Map<string, RuntimeVal<unknown>>
+    private symbolTable: SymbolTable
 
     constructor(parent?: Scope) {
         this.parent = parent
-        this.vars = new Map()
+        this.symbolTable = new Map()
     }
 
-    public declareVar(symbol: string, val: RuntimeVal<unknown>): RuntimeVal<unknown> {
-        if (this.vars.has(symbol)) {
+    public declareVar(symbol: string, val: RuntimeVal<unknown>, mutable: boolean): RuntimeVal<unknown> {
+        if (this.symbolTable.has(symbol)) {
             throw declareError(symbol)
         }
-        this.vars.set(symbol, val)
+        this.symbolTable.set(symbol, { val, mutable })
         return val
     }
 
     public assignVar(symbol: string, val: RuntimeVal<unknown>): RuntimeVal<unknown> {
         const scope = this.resolve(symbol) 
-        scope.vars.set(symbol, val)
+        scope.symbolTable.set(symbol, { val, mutable: true })
         return val
     }
 
-    public lookupVar(symbol: string): RuntimeVal<unknown> {
+    public lookupVar(symbol: string): SymbolTableEntry {
         const scope = this.resolve(symbol)
-        return scope.vars.get(symbol) as RuntimeVal<unknown>
+        return scope.symbolTable.get(symbol) as SymbolTableEntry
     }
 
     public resolve(symbol: string): Scope {
-        if (this.vars.has(symbol)) return this
+        if (this.symbolTable.has(symbol)) return this
         if (this.parent === undefined) {
             throw resolveError(symbol)
         }

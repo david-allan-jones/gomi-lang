@@ -18,8 +18,8 @@ describe('Scope class', () => {
         const symbol = 'a'
         try {
             const scope = new Scope()
-            scope.declareVar(symbol, { value: 0, type: 'int' })
-            scope.declareVar(symbol, { value: 0, type: 'int' })
+            scope.declareVar(symbol, { value: 0, type: 'int' }, true)
+            scope.declareVar(symbol, { value: 0, type: 'int' }, true)
             fail(`Was able to declare a variable twice: ${symbol}`)
         } catch(e) {
             expect(e).toBe(declareError(symbol))
@@ -29,7 +29,7 @@ describe('Scope class', () => {
     it('can declare variables', () => {
         const symbol = 'a'
         const scope = new Scope()
-        const val = scope.declareVar(symbol, { value: 0, type: 'int' })
+        const val = scope.declareVar(symbol, { value: 0, type: 'int' }, true)
         expect(val.type).toBe('int')
         expect(val.value).toBe(0)
     })
@@ -37,7 +37,7 @@ describe('Scope class', () => {
     it('can reassign variables', () => {
         const symbol = 'a'
         const scope = new Scope()
-        scope.declareVar(symbol, { value: 0, type: 'int' })
+        scope.declareVar(symbol, { value: 0, type: 'int' }, true)
         const val = scope.assignVar(symbol, { value: 1, type: 'int' })
         expect(val.type).toBe('int')
         expect(val.value).toBe(1)
@@ -46,16 +46,17 @@ describe('Scope class', () => {
     it('can lookup variables', () => {
         const symbol = 'a'
         const scope = new Scope()
-        scope.declareVar(symbol, { value: 0, type: 'int' })
-        const val = scope.lookupVar(symbol)
+        scope.declareVar(symbol, { value: 0, type: 'int' }, true)
+        const { val, mutable } = scope.lookupVar(symbol)
         expect(val.type).toBe('int')
         expect(val.value).toBe(0)
+        expect(mutable).toBe(true)
     })
 
     it('can assign variables in parent scope', () => {
         const symbol = 'a'
         const globalScope = new Scope()
-        globalScope.declareVar(symbol, { value: 0, type: 'int' })
+        globalScope.declareVar(symbol, { value: 0, type: 'int' }, true)
         const childScope = new Scope(globalScope)
         const val = childScope.assignVar(symbol, { value: 1, type: 'int' })
         expect(val.type).toBe('int')
@@ -65,10 +66,11 @@ describe('Scope class', () => {
     it('can lookup variables in parent scope', () => {
         const symbol = 'a'
         const globalScope = new Scope()
-        globalScope.declareVar(symbol, { value: 0, type: 'int' })
+        globalScope.declareVar(symbol, { value: 0, type: 'int' }, true)
         const childScope = new Scope(globalScope)
-        const val = childScope.lookupVar(symbol)
+        const { val, mutable } = childScope.lookupVar(symbol)
         expect(val.type).toBe('int')
         expect(val.value).toBe(0)
+        expect(mutable).toBe(true)
     })
 })

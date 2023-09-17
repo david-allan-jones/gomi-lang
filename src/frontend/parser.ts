@@ -1,5 +1,5 @@
 import { normalizeInt } from '../utils/japanese'
-import { Stmt, Program, Expr, BinaryExpr, Identifier, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, CallExpr, MemberExpr, FunctionDeclaration, IfStatement, WhileStatement, ArrayLiteral, mk_numeric_literal, mk_string_literal, mk_identifier, mk_nil_literal, mk_boolean_literal, ModuleImport } from './ast'
+import { Stmt, Program, Expr, BinaryExpr, Identifier, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, CallExpr, MemberExpr, FunctionDeclaration, IfStatement, WhileStatement, ArrayLiteral, mk_numeric_literal, mk_string_literal, mk_identifier, mk_nil_literal, mk_boolean_literal, ModuleImport, Declaration } from './ast'
 import GomiLexer, { Token, TokenType as TT, TokenVal, TokenType } from './lexer'
 
 export default class GomiParser {
@@ -51,6 +51,7 @@ export default class GomiParser {
             case TT.Module:
                 return this.parse_module_import()
             case TT.Let:
+            case TT.Const:
                 return this.parse_var_declaration()
             case TT.Function:
                 return this.parse_function_declaration()
@@ -101,7 +102,8 @@ export default class GomiParser {
     }
 
     private parse_var_declaration(): VarDeclaration {
-        // Consume the let keyword
+        // Consume the let/const keyword
+        const mutable = this.at.type === TT.Let ? true : false
         this.eat_token()
 
         const identifiers = []
@@ -139,17 +141,18 @@ export default class GomiParser {
             throw `Declaration error. Number of identifiers and expressions did not match.`
         }
 
-        const declarations: { identifier: string, value: Expr }[] = []
+        const declarations: Declaration[] = []
         for (let i = 0; i < identifiers.length; i++) {
             declarations.push({
                 identifier: identifiers[i],
-                value: values[i]
+                value: values[i],
             })
         }
 
         return {
             kind: 'VarDeclaration',
             declarations,
+            mutable
         }
     }
 

@@ -90,15 +90,16 @@ describe('Gomi Interpreter', () => {
                     identifier: 'b',
                     value: mk_numeric_literal(2n)
                 },
-            ] 
+            ],
+            mutable: true
         } as VarDeclaration
         const scope = new Scope()
         const result = evaluate(stmt, scope) as VoidVal
         expect(result.type).toBe('void')
         expect(result.value).toBe(null)
 
-        expect(scope.lookupVar('a')?.value).toBe(1n)
-        expect(scope.lookupVar('b')?.value).toBe(2n)
+        expect(scope.lookupVar('a')?.val.value).toBe(1n)
+        expect(scope.lookupVar('b')?.val.value).toBe(2n)
     })
 
     it('var assignment', () => {
@@ -109,7 +110,8 @@ describe('Gomi Interpreter', () => {
                     identifier: 'a',
                     value: mk_numeric_literal(1n)
                 }
-            ] 
+            ],
+            mutable: true
         } as VarDeclaration
         const scope = new Scope()
         evaluate(declaration, scope) as VoidVal
@@ -122,7 +124,7 @@ describe('Gomi Interpreter', () => {
 
         const result = evaluate(stmt, scope)
         expect(result.type).toBe('int')
-        expect(scope.lookupVar('a')?.value).toBe(2n)
+        expect(scope.lookupVar('a')?.val.value).toBe(2n)
     })
     
     // it('member expressin', () => {

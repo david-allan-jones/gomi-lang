@@ -4,8 +4,7 @@ import Scope from "../scope/scope"
 import { BooleanValue, FloatVal, NativeFunctionValue, IntVal, NumberVal, ObjectVal, RuntimeVal, StringVal, FunctionValue, VoidVal, ArrayVal } from "../types"
 
 export function eval_identifier(identifier: Identifier, scope: Scope): RuntimeVal<unknown> {
-    const val = scope.lookupVar(identifier.symbol)
-    return val
+    return scope.lookupVar(identifier.symbol).val
 }
 
 export function eval_unary_expr(unary: UnaryExpr, scope: Scope): RuntimeVal<unknown> {
@@ -231,10 +230,13 @@ export function eval_assignment_expr(assignment: VarAssignment, scope: Scope): R
     }
     const identifier = (assignment.assignee as Identifier).symbol
 
-    const oldValue = scope.lookupVar(identifier) as RuntimeVal<unknown>
+    const { val, mutable } = scope.lookupVar(identifier)
+    if (mutable === false) {
+        throw `You attempted to assign a value to '${identifier}' but it is not mutable`
+    }
     const newValue = evaluate(assignment.value, scope)
-    if (oldValue.type !== newValue.type) {
-        throw `Mismatched assignment. Both sides of the = must be the same type. Received '${oldValue.type}' and '${newValue.type}'.`
+    if (val.type !== newValue.type) {
+        throw `Mismatched assignment. Both sides of the = must be the same type. Received '${val.type}' and '${newValue.type}'.`
     }
     return scope.assignVar(
         identifier,
@@ -249,7 +251,7 @@ export function eval_object_expr(obj: ObjectLiteral | NilLiteral, scope: Scope):
     const object: ObjectVal =  { type: "object", value: new Map() }
     for (const { key, value } of obj.props) {
         const runtimeVal = (value === undefined) 
-            ? scope.lookupVar(key)
+            ? scope.lookupVar(key).val
             : evaluate(value, scope)
         object.value?.set(key, runtimeVal)
     }
@@ -297,7 +299,7 @@ export function eval_call_expr(expr: CallExpr, scope: Scope): RuntimeVal<unknown
 
         //Create the variables
         for (let i = 0; i < func.parameters.length; i++) {
-            funcScope.declareVar(func.parameters[i], args[i])
+            funcScope.declareVar(func.parameters[i], args[i], true)
         }
         let result: RuntimeVal<unknown> = { type: 'void', value: null }
         for (let i = 0; i < func.body.length; i++) {

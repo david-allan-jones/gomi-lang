@@ -31,19 +31,20 @@ export function eval_module_import(moduleImport: ModuleImport, scope: Scope): Vo
 
     // Copy over requested identifiers to current scope
     for (let i = 0; i < moduleImport.identifiers.length; i++) {
-        const moduleVal = moduleScope.lookupVar(moduleImport.identifiers[i])
-        scope.declareVar(moduleImport.identifiers[i], moduleVal)
+        const moduleVal = moduleScope.lookupVar(moduleImport.identifiers[i]).val
+        scope.declareVar(moduleImport.identifiers[i], moduleVal, false)
     }
 
     return { type: 'void' } as VoidVal
 }
 
 export function eval_var_declaration(varDeclarations: VarDeclarations, scope: Scope): VoidVal {
-    const { declarations } = varDeclarations
+    const { declarations, mutable } = varDeclarations
     for (let i = 0; i < declarations.length; i++) {
         scope.declareVar(
             declarations[i].identifier,
-            evaluate(declarations[i].value, scope)
+            evaluate(declarations[i].value, scope),
+            mutable
         )
     }
     return { type: 'void', value: null }
@@ -57,7 +58,7 @@ export function eval_function_declaration(declaration: FunctionDeclaration, scop
         declarationScope: scope,
         body: declaration.body
     } as FunctionValue
-    return scope.declareVar(declaration.name, fn)
+    return scope.declareVar(declaration.name, fn, false)
 }
 
 export function eval_if_statement(ifStatement: IfStatement, scope: Scope): VoidVal {

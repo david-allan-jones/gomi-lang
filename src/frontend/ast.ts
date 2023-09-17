@@ -43,13 +43,16 @@ export interface ModuleImport extends Stmt {
     identifiers: string[]
 }
 
+export interface Declaration {
+    identifier: string
+    value: Expr
+}
+
 // let n = 0;
 export interface VarDeclaration extends Stmt {
     kind: "VarDeclaration"
-    declarations: {
-        identifier: string,
-        value: Expr
-    }[]
+    declarations: Declaration[]
+    mutable: boolean
 }
 
 /**
