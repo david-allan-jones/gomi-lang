@@ -1,5 +1,5 @@
-import { IntVal, ObjectVal, RuntimeVal, StringVal } from './types'
-import { ArrayLiteral, BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, IfStatement, MemberExpr, ModuleImport, IntLiteral, ObjectLiteral, Program, Stmt, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration, WhileStatement } from '../frontend/ast'
+import { FloatVal, IntVal, ObjectVal, RuntimeVal, StringVal } from './types'
+import { ArrayLiteral, BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, IfStatement, MemberExpr, ModuleImport, IntLiteral, ObjectLiteral, Program, Stmt, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration, WhileStatement, FloatLiteral } from '../frontend/ast'
 import Scope from './scope/scope'
 import { eval_binary_expr, eval_ternary_expr, eval_identifier, eval_assignment_expr, eval_unary_expr, eval_object_expr, eval_call_expr, eval_member_expr, eval_array_expr } from './eval/expressions'
 import { eval_function_declaration, eval_if_statement, eval_module_import, eval_program, eval_var_declaration, eval_while_statement } from './eval/statements'
@@ -44,6 +44,11 @@ export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
                 type: 'int',
                 value: (ast as IntLiteral).value
             } as IntVal
+        case "FloatLiteral":
+            return {
+                type: 'float',
+                value: (ast as FloatLiteral).value
+            } as FloatVal
         case "StringLiteral":
             return {
                 type: 'string',
