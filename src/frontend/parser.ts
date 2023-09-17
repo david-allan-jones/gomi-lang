@@ -528,7 +528,8 @@ export default class GomiParser {
 
     private parse_member_expr(): Expr {
         let object = this.parse_primary_expr()
-        while (this.at.type === TT.Period || this.at.type === TT.OpenBracket) {
+        while (this.at.type === TT.Period || this.at.type === TT.OpenBracket || this.at.type === TT.OpenParen) {
+            // Member Expression
             if (this.at.type === TT.Period) {
                 this.eat_token()
                 let prop = this.parse_primary_expr()
@@ -542,6 +543,7 @@ export default class GomiParser {
                     index: false
                 } as MemberExpr
             }
+            // Array Index
             else if (this.at.type === TT.OpenBracket) {
                 this.eat_token()
                 let index = this.parse_expr()
@@ -552,6 +554,21 @@ export default class GomiParser {
                     index: true
                 } as MemberExpr
                 this.validate_and_eat_token(TT.CloseBracket, `Array index expression is missing closing brace. Check line ${this.at.line}, column ${this.at.column}`)
+            }
+            // Call Expression
+            else if (this.at.type === TT.OpenParen) {
+                this.eat_token()
+                // @ts-ignore
+                const args = this.at.type === TT.CloseParen
+                    ? []
+                    : this.parse_arg_lit()
+                let callExpr: CallExpr = {
+                    kind: 'CallExpr',
+                    callee: object,
+                    args
+                }
+                this.validate_and_eat_token(TT.CloseParen, 'Missing closing paren in call expression')
+                object = callExpr
             }
         }
         return object

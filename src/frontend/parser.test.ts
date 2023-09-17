@@ -479,26 +479,29 @@ describe('Gomi Parser', () => {
         expect((node.callee as MemberExpr).prop.kind).toBe('Identifier')
     })
 
-    // it('call expr & array index combined', () => {
-    //     const stmt = 'foo(bar)[baz]'
-    //     const program = parser.produceAST(stmt)
-    //     const node = program.body[0] as MemberExpr
-    //     console.log(node)
-    //     expect(node.kind).toBe('MemberExpr')
-    //     const object = node.object as MemberExpr
-    //     expect(object.prop.kind).toBe('Identifier')
-    //     expect(object.object.kind).toBe('Identifier')
-    // })
+    it('call expr & array index combined', () => {
+        const stmt = 'foo(bar)[baz]'
+        const program = parser.produceAST(stmt)
+        const node = program.body[0] as MemberExpr
+        expect(node.kind).toBe('MemberExpr')
+        expect((node.prop as Identifier).symbol).toBe('baz')
+        expect(node.index).toBe(true)
+        const object = node.object as CallExpr
+        expect((object.args[0] as Identifier).symbol).toBe('bar')
+        expect((object.callee as Identifier).symbol).toBe('foo')
+    })
 
-    // it('call expr & member expression combined', () => {
-    //     const stmt = 'foo(bar).foo'
-    //     const program = parser.produceAST(stmt)
-    //     const node = program.body[0] as MemberExpr
-    //     expect(node.kind).toBe('MemberExpr')
-    //     const object = node.object as MemberExpr
-    //     expect(object.prop.kind).toBe('Identifier')
-    //     expect(object.object.kind).toBe('Identifier')
-    // })
+    it('call expr & member expression combined', () => {
+        const stmt = 'foo(bar).baz'
+        const program = parser.produceAST(stmt)
+        const node = program.body[0] as MemberExpr
+        expect(node.kind).toBe('MemberExpr')
+        expect((node.prop as Identifier).symbol).toBe('baz')
+        expect(node.index).toBe(false)
+        const object = node.object as CallExpr
+        expect((object.callee as Identifier).symbol).toBe('foo')
+        expect((object.args[0] as Identifier).symbol).toBe('bar')
+    })
 
     it('ternary with two assignments', () => {
         const stmt = 'a ? a = 1 : a = 2'
