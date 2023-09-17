@@ -115,13 +115,13 @@ export function identifierBeginAllowed(source: string): boolean {
 	return regex.test(source)
 }
 
-export function isInt(source: string): boolean {
-	return /^((0|[1-9]+\d*)|(０|[１-９]+[０-９]*))$/.test(source)
+export function isDigit(source: string): boolean {
+	return /\d|[０-９]/.test(source)
 }
 
 export function identifierAllowed(source: string): boolean {
 	return identifierBeginAllowed(source)
-		|| isInt(source)
+		|| isDigit(source)
 		|| source === '_'
 		|| source === '＿'
 }
@@ -273,9 +273,9 @@ export default class GomiLexer {
 				return this.mk_token(this.src[this.i].repeat(2), TokenType.BinaryOperator)
 			}
 		}
-		if (isInt(this.at())) {
+		if (isDigit(this.at())) {
 			let value = `${this.src[this.i++]}`
-			while (this.i < this.src.length && isInt(this.at())) {
+			while (this.i < this.src.length && isDigit(this.at())) {
 				value += this.src[this.i++]
 			}
 			// Go back to adjust for mk_token side effect

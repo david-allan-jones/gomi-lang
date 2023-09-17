@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test"
-import GomiLexer, { Token, TokenType, TokenVal, identifierBeginAllowed, isInt, unrecognizedError } from "./lexer"
+import GomiLexer, { Token, TokenType, TokenVal, identifierBeginAllowed, isDigit, unrecognizedError } from "./lexer"
 import { fail } from "assert"
 
 describe('identifierBeginAllowed', () => {
@@ -38,27 +38,18 @@ describe('identifierBeginAllowed', () => {
     })
 })
 
-describe('isInteger', () => {
-    it('zero accepted', () => {
-        expect(isInt('0')).toBe(true)
-    });
-    it('positive numbers accepted', () => {
-        expect(isInt('42')).toBe(true)
+describe('isDigit', () => {
+    it('hw digits', () => {
+        const digits = '0123456789'
+        for (const d of digits) {
+            expect(isDigit(d)).toBe(true)
+        }
     })
-    it('floating numbers not accepted', () => {
-        expect(isInt('1.23')).toBe(false)
-    })
-    it('empty string not accepted', () => {
-        expect(isInt('')).toBe(false)
-    })
-    it('no numeric characters not accepted', () => {
-        expect(isInt('abc')).toBe(false)
-    })
-    it('leading zeros not accepted', () => {
-        expect(isInt('01')).toBe(false)
-    })
-    it('negative zero not acceepted', () => {
-        expect(isInt('-0')).toBe(false)
+    it('fw digits', () => {
+        const digits = '０１２３４５６７８９'
+        for (const d of digits) {
+            expect(isDigit(d)).toBe(true)
+        }
     })
 })
 
