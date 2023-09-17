@@ -58,7 +58,7 @@ export default class GomiParser {
             case TT.If:
                 return this.parse_if_stmt()
             case TT.While:
-                return this.parse_while_statement()
+                return this.parse_while_stmt()
             default:
                 return this.parse_expr()
         }
@@ -66,6 +66,7 @@ export default class GomiParser {
 
     private parse_module_import(): ModuleImport {
         // Consume module keyword
+        const importStart = { line: this.at.line, column: this.at.column }
         this.eat_token()
 
         const err = `Module imports must be in the form "module '/somePath.gomi' import { someIdentifier }". Check line ${this.at.line}, column ${this.at.column}`
@@ -97,7 +98,8 @@ export default class GomiParser {
         return {
             kind: "ModuleImport",
             path,
-            identifiers
+            identifiers,
+            ...importStart
         }
     }
 
@@ -196,6 +198,7 @@ export default class GomiParser {
 
     private parse_if_stmt(): IfStatement {
         // Eat the if
+        const ifStart = { line: this.at.line, column: this.at.column }
         this.eat_token()
 
         // Condition
@@ -212,12 +215,14 @@ export default class GomiParser {
         return {
             kind: 'IfStatement',
             condition,
-            body
+            body,
+            ...ifStart
         } as IfStatement
     }
 
-    private parse_while_statement(): WhileStatement {
+    private parse_while_stmt(): WhileStatement {
         // Eat the while
+        const whileStart = { line: this.at.line, column: this.at.column }
         this.eat_token()
 
         // Condition
@@ -234,7 +239,8 @@ export default class GomiParser {
         return {
             kind: 'WhileStatement',
             condition,
-            body
+            body,
+            ...whileStart
         } as WhileStatement
     }
 

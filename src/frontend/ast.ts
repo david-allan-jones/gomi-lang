@@ -41,7 +41,9 @@ export interface Program extends Stmt {
 export interface ModuleImport extends Stmt {
     kind: "ModuleImport"
     path: string
-    identifiers: string[]
+    identifiers: string[],
+    line: number,
+    column: number
 }
 
 export interface Declaration {
@@ -77,6 +79,8 @@ export interface IfStatement extends Stmt {
     kind: "IfStatement"
     condition: Expr
     body: Stmt[]
+    line: number,
+    column: number
 }
 
 /**
@@ -89,6 +93,8 @@ export interface WhileStatement extends Stmt {
     kind: "WhileStatement"
     condition: Expr
     body: Stmt[]
+    line: number,
+    column: number
 }
 
 // a = b

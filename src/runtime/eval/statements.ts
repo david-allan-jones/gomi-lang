@@ -62,10 +62,10 @@ export function eval_function_declaration(declaration: FunctionDeclaration, scop
 }
 
 export function eval_if_statement(ifStatement: IfStatement, scope: Scope): VoidVal {
-    const { condition, body } = ifStatement
+    const { condition, body, line, column } = ifStatement
     const conditionVal = evaluate(condition, scope)
     if (conditionVal.type !== 'boolean') {
-        throw `The condition in an if statement must resolve to a boolean value. Received: ${conditionVal.type}`
+        throw `The condition in an if statement must resolve to a boolean value. Received: ${conditionVal.type} at line ${line}, column ${column}`
     }
     if (conditionVal.value) {
         const ifScope = new Scope(scope)
@@ -77,12 +77,12 @@ export function eval_if_statement(ifStatement: IfStatement, scope: Scope): VoidV
 }
 
 export function eval_while_statement(whileStatement: WhileStatement, scope: Scope): VoidVal {
-    const { condition, body } = whileStatement
+    const { condition, body, line, column } = whileStatement
 
     const whileScope = new Scope(scope)
     let keepLooping = evaluate(condition, whileScope)
     if (keepLooping.type !== 'boolean') {
-        throw `The condition in a while statement must resolve to a boolean value. Received: ${keepLooping.type}`
+        throw `The condition in a while statement must resolve to a boolean value. Received: ${keepLooping.type} at line ${line}, column ${column}`
     }
     while (keepLooping.type === 'boolean' && (keepLooping as BooleanValue).value) {
         for (let i = 0; i < body.length; i++) {
@@ -91,8 +91,9 @@ export function eval_while_statement(whileStatement: WhileStatement, scope: Scop
         keepLooping = evaluate(condition, whileScope)
     }
 
+    // In case somehow it gets reassigned
     if (keepLooping.type !== 'boolean') {
-        throw `The condition in a while statement must resolve to a boolean value. Received: ${keepLooping.type}`
+        throw `The condition in a while statement must resolve to a boolean value. Received: ${keepLooping.type} at line ${line}, column ${column}`
     }
     return { type: 'void', value: null }
 }
