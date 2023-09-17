@@ -245,12 +245,14 @@ function eval_object_prop_assignment(assignment: VarAssignment, scope: Scope): R
         current = (current as MemberExpr).object
     }
     // Lookup root object
-    let { val: obj } = scope.lookupVar((current as Identifier).symbol)
+    let { val: obj, mutable } = scope.lookupVar((current as Identifier).symbol)
+    if (mutable === false) {
+        throw `You attempted to assign a value to '${(current as Identifier).symbol}' but it is not mutable`
+    }
 
     // Walk down the object using nestedProps
     let pointer = obj as ObjectVal
     for (let i = nestedProps.length - 1; i > 0; i--) {
-        console.log(i)
         // @ts-ignore
         pointer = pointer.value?.get(nestedProps[i])
     }

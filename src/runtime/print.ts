@@ -10,7 +10,6 @@ export function print_runtime_val(runtimeVal: RuntimeVal<unknown>, color = true)
 
 function serialize_value(runtimeVal: RuntimeVal<unknown>, nestedLevel = 0) {
     let serialized = ''
-    console.log(runtimeVal)
     switch(runtimeVal.type) {
         case 'object':
             if (nestedLevel > 10) {
