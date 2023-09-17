@@ -114,26 +114,21 @@ Here is a specification of the grammar. <> indicates a non-terminal symbol. ϵ i
                         | /
                         | %
 
-<exponent-expr>         | <unary-expr>
+<exponent-expr>     ->  | <unary-expr>
                         | <unary-expr> ^ <exponent-expr>
 
-<unary-expr>            | <unary-op><call-member-expr>
+<unary-expr>        ->  | <unary-op><call-member-expr>
                         | <call-member-expr>
 
-<unary-op>              | !
+<unary-op>          ->  | !
                         | -
 
-<call-member-expr>      | <member-expr>
-                        | <member-expr><call-expr>
+<call-member-expr>  ->  | <primary-expr>
+                        | <member-expr>.<id>
+                        | <member-expr>[<expr>]
+                        | <member-expr>(<exprs>)
 
-<member-expr>           | <primary-expr>
-                        | <primary-expr>.<id>
-                        | <primary-expr>[<expr>]
-
-<call-expr>             | (<exprs>)<call-expr>
-                        | ϵ
-
-<primary-expr>          | <id>
+<primary-expr>      ->  | <id>
                         | <int>
                         | <float>
                         | <string>

@@ -441,6 +441,46 @@ describe('Gomi Parser', () => {
         expect(object.object.kind).toBe('Identifier')
     })
 
+    it('array index & member expression combined', () => {
+        const stmt = 'foo[bar].baz'
+        const program = parser.produceAST(stmt)
+        const node = program.body[0] as MemberExpr
+        expect(node.kind).toBe('MemberExpr')
+        const object = node.object as MemberExpr
+        expect(object.prop.kind).toBe('Identifier')
+        expect(object.object.kind).toBe('Identifier')
+    })
+
+    it('array index & call expr combined', () => {
+        const stmt = 'foo[bar](baz)'
+        const program = parser.produceAST(stmt)
+        const node = program.body[0] as CallExpr
+        expect(node.kind).toBe('CallExpr')
+        expect(node.callee.kind).toBe('MemberExpr')
+        expect((node.callee as MemberExpr).prop.kind).toBe('Identifier')
+    })
+
+    // it('call expr & array index combined', () => {
+    //     const stmt = 'foo(bar)[baz]'
+    //     const program = parser.produceAST(stmt)
+    //     const node = program.body[0] as MemberExpr
+    //     console.log(node)
+    //     expect(node.kind).toBe('MemberExpr')
+    //     const object = node.object as MemberExpr
+    //     expect(object.prop.kind).toBe('Identifier')
+    //     expect(object.object.kind).toBe('Identifier')
+    // })
+
+    // it('call expr & member expression combined', () => {
+    //     const stmt = 'foo(bar).foo'
+    //     const program = parser.produceAST(stmt)
+    //     const node = program.body[0] as MemberExpr
+    //     expect(node.kind).toBe('MemberExpr')
+    //     const object = node.object as MemberExpr
+    //     expect(object.prop.kind).toBe('Identifier')
+    //     expect(object.object.kind).toBe('Identifier')
+    // })
+
     it('ternary with two assignments', () => {
         const stmt = 'a ? a = 1 : a = 2'
         const program = parser.produceAST(stmt)
