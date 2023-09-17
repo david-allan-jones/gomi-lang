@@ -231,7 +231,49 @@ export function eval_ternary_expr(ternary: TernaryExpr, scope: Scope): RuntimeVa
         : evaluate(ternary.right, scope)
 }
 
+function eval_array_index_assignment(assignment: VarAssignment, scope: Scope): RuntimeVal<unknown> {
+    throw 'Need to implement array index assignment'
+}
+
+function eval_object_prop_assignment(assignment: VarAssignment, scope: Scope): RuntimeVal<unknown> {
+    // Walk the tree down to base expression (identifier)
+    let current = assignment.assignee
+    const nestedProps = [] // Will be in reverse order
+    while (current.kind === 'MemberExpr') {
+        const prop = ((current as MemberExpr).prop as Identifier).symbol
+        nestedProps.push(prop)
+        current = (current as MemberExpr).object
+    }
+    // Lookup root object
+    let { val: obj } = scope.lookupVar((current as Identifier).symbol)
+
+    // Walk down the object using nestedProps
+    let pointer = obj as ObjectVal
+    for (let i = nestedProps.length - 1; i > 0; i--) {
+        console.log(i)
+        // @ts-ignore
+        pointer = pointer.value?.get(nestedProps[i])
+    }
+
+    // Now just set the prop and save it
+    const rhs = evaluate(assignment.value, scope)
+    pointer.value?.set(nestedProps[0], evaluate(assignment.value, scope))
+    return scope.assignVar((current as Identifier).symbol, obj)
+}
+
+function eval_member_expr_assignment(assignment: VarAssignment, scope: Scope): RuntimeVal<unknown> {
+    if ((assignment.assignee as MemberExpr).index) {
+        return eval_array_index_assignment(assignment, scope)
+    }
+    return eval_object_prop_assignment(assignment, scope)
+}
+
 export function eval_assignment_expr(assignment: VarAssignment, scope: Scope): RuntimeVal<unknown> {
+    if (assignment.assignee.kind === 'MemberExpr') {
+        return eval_member_expr_assignment(assignment, scope)
+    }
+
+    // Not a member expression, so just act like it's just a variable
     if (assignment.assignee.kind !== 'Identifier') {
         throw `Invalid LHS inside assingment: ${assignment.assignee.kind}`
     }

@@ -10,12 +10,21 @@ export function print_runtime_val(runtimeVal: RuntimeVal<unknown>, color = true)
 
 function serialize_value(runtimeVal: RuntimeVal<unknown>, nestedLevel = 0) {
     let serialized = ''
+    console.log(runtimeVal)
     switch(runtimeVal.type) {
         case 'object':
-            serialized = serialize_obj(runtimeVal as ObjectVal, nestedLevel + 1)
+            if (nestedLevel > 10) {
+                serialized += '[object]'
+            } else {
+                serialized = serialize_obj(runtimeVal as ObjectVal, nestedLevel + 1)
+            }
             break
         case 'array':
-            serialized = serialize_array(runtimeVal as ArrayVal, nestedLevel + 1)
+            if (nestedLevel > 10) {
+                serialized += 'array'
+            } else {
+                serialized = serialize_array(runtimeVal as ArrayVal, nestedLevel + 1)
+            }
             break
         case 'int':
             serialized = serialize_int(runtimeVal as IntVal)
