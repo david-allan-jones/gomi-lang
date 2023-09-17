@@ -118,8 +118,11 @@ describe('Gomi Lexer', () => {
     it('bang', () => {
         testSources(['!', '！'], TokenType.Bang)
     })
-    it('number', () => {
+    it('int', () => {
         testSources(['1', '１', '10', '１０'], TokenType.Int)
+    })
+    it('float', () => {
+        testSources(['1.0', '１．０', '10.01', '１０．０１'], TokenType.Float)
     })
     it('string', () => {
         const tests = ["''", "'Test'", '””', '”テスト”']

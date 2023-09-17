@@ -135,6 +135,7 @@ Here is a specification of the grammar. <> indicates a non-terminal symbol. ϵ i
 
 <primary-expr>          | <id>
                         | <int>
+                        | <float>
                         | <string>
                         | nil
                         | true

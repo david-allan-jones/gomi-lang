@@ -31,6 +31,7 @@ export enum TokenType {
 	Module = 'MODULE',
 	Import = 'IMPORT',
 	Int = 'INT',
+	Float = 'FLOAT',
 	Boolean = 'BOOLEAN',
 	String = 'STRING',
 	Nil = 'NIL',
@@ -274,13 +275,26 @@ export default class GomiLexer {
 			}
 		}
 		if (isDigit(this.at())) {
+			let float = false
 			let value = `${this.src[this.i++]}`
-			while (this.i < this.src.length && isDigit(this.at())) {
-				value += this.src[this.i++]
+			while (this.i < this.src.length && (isDigit(this.at()) || this.at() === '.' || this.at() === '．')) {
+				// it's a float. Go to end of numbers
+				if (this.at() === '.' || this.at() === '．') {
+					float = true
+					value += this.src[this.i++]
+					if (!isDigit(this.at())) {
+						throw `Unexpected character while parsing float: '${this.at()}'`
+					}
+					while (this.i < this.src.length && isDigit(this.at())) {
+						value += this.src[this.i++]
+					}
+				} else {
+					value += this.src[this.i++]
+				}
 			}
 			// Go back to adjust for mk_token side effect
 			this.i--
-			return this.mk_token(value, TokenType.Int)
+			return this.mk_token(value, float ? TokenType.Float : TokenType.Int)
 		}
 		if (identifierBeginAllowed(this.at())) {
 			let value = `${this.src[this.i++]}`
