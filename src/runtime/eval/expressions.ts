@@ -233,7 +233,7 @@ export function eval_ternary_expr(ternary: TernaryExpr, scope: Scope): RuntimeVa
 
 export function eval_assignment_expr(assignment: VarAssignment, scope: Scope): RuntimeVal<unknown> {
     if (assignment.assignee.kind !== 'Identifier') {
-        throw `Invalid LHS inside assingment expr ${JSON.stringify(assignment.assignee)}`
+        throw `Invalid LHS inside assingment: ${assignment.assignee.kind}`
     }
     const identifier = (assignment.assignee as Identifier).symbol
 
