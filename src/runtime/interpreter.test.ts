@@ -1,16 +1,23 @@
 import { describe, expect, it } from "bun:test";
 import { evaluate } from "./interpreter";
-import { ArrayLiteral, BooleanLiteral, Expr, MemberExpr, NilLiteral, IntLiteral, ObjectLiteral, StringLiteral, VarAssignment, VarDeclaration, mk_identifier, mk_int_literal } from "../frontend/ast";
+import { ArrayLiteral, BooleanLiteral, Expr, MemberExpr, NilLiteral, IntLiteral, ObjectLiteral, StringLiteral, VarAssignment, VarDeclaration, mk_identifier, mk_int_literal, mk_float_literal } from "../frontend/ast";
 import Scope from "./scope/scope";
 import { fail } from "assert";
 import { IntVal, ObjectVal, VoidVal } from "./types";
 
 describe('Gomi Interpreter', () => {
-    it('numeric literals', () => {
+    it('int literal', () => {
         const stmt = mk_int_literal(1n)
         const result = evaluate(stmt, new Scope())
         expect(result.type).toBe('int')
         expect(result.value).toBe(1n)
+    })
+
+    it('float literal', () => {
+        const stmt = mk_float_literal(1)
+        const result = evaluate(stmt, new Scope())
+        expect(result.type).toBe('float')
+        expect(result.value).toBe(1)
     })
 
     it('boolean literals', () => {
