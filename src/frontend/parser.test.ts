@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import GomiParser from "./parser";
 import { fail } from "assert";
-import { ArrayLiteral, BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, IfStatement, MemberExpr, ModuleImport, NilLiteral, IntLiteral, ObjectLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration } from "./ast";
+import { ArrayLiteral, BinaryExpr, BooleanLiteral, CallExpr, FunctionDeclaration, Identifier, IfStatement, MemberExpr, ModuleImport, NilLiteral, IntLiteral, ObjectLiteral, StringLiteral, TernaryExpr, UnaryExpr, VarAssignment, VarDeclaration, FloatLiteral } from "./ast";
 
 describe('Gomi Parser', () => {
     let parser: GomiParser
@@ -41,6 +41,17 @@ describe('Gomi Parser', () => {
             expect(node.value).toBe(BigInt(i + 1))
         }
     })
+
+    it('float', () => {
+        const tests = ["0.0", "10.1", "１０．１", '０．０']
+        for (let i = 0; i < tests.length; i++) {
+            const program = parser.produceAST(tests[i]) 
+            const node = program.body[0] as FloatLiteral
+            expect(node.kind).toBe('FloatLiteral')
+            expect(node.value).toBe(parseFloat(tests[i]))
+        }
+    })
+
     it('string', () => {
         const tests = ["''", "'Test'", '””', '”テスト”']
         for (let i = 0; i < tests.length; i++) {
@@ -425,7 +436,6 @@ describe('Gomi Parser', () => {
         const program = parser.produceAST(stmt)
         const node = program.body[0] as MemberExpr
         expect(node.kind).toBe('MemberExpr')
-        console.log(node)
         const object = node.object as MemberExpr
         expect(object.prop.kind).toBe('Identifier')
         expect(object.object.kind).toBe('Identifier')

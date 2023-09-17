@@ -19,6 +19,7 @@ export type NodeType =
     | "TernaryExpr"
     | "Identifier"
     | "IntLiteral"
+    | "FloatLiteral"
     | "StringLiteral"
     | "NilLiteral"
     | "BooleanLiteral"
@@ -151,6 +152,12 @@ export interface IntLiteral extends PrimaryExpr {
     value: bigint
 }
 
+// 1.0
+export interface FloatLiteral extends PrimaryExpr {
+    kind: "FloatLiteral"
+    value: number
+}
+
 // 'finished'
 export interface StringLiteral extends PrimaryExpr {
     kind: "StringLiteral"
@@ -213,6 +220,10 @@ export type NormalizedUnaryOperator =
 
 export function mk_int_literal(value: bigint): IntLiteral {
     return { kind: 'IntLiteral', value }
+}
+
+export function mk_float_literal(value: number): FloatLiteral {
+    return { kind: 'FloatLiteral', value }
 }
 
 export function mk_string_literal(value: string): StringLiteral {
