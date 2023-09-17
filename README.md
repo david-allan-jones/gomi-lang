@@ -53,7 +53,10 @@ Here is a specification of the grammar. <> indicates a non-terminal symbol. ϵ i
 <ids>               ->  | <id>
                         | <id>, <ids>
 
-<var-declaration>   ->  | let <ids> = <exprs>;
+<var-declaration>   ->  | <mutable-keyword> <ids> = <exprs>;
+
+<mutable-keyword>   ->  | let
+                        | const
 
 <func-declaration>  ->  | function <id>(<params>){<stmt-list>}
 
