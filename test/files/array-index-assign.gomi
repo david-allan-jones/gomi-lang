@@ -1,0 +1,10 @@
+func zero() {
+	0
+}
+
+let z = 0;
+
+let a = [ [0, 1] ];
+a[z][zero()] = zero() + 2
+
+a[0][0]

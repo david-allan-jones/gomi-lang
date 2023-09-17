@@ -40,10 +40,15 @@ describe('File reader', () => {
             const val = await evalFile(filePath)
             expect(val.value).toBe(2n)
         })
-        it('if-statement.gomi', async () => {
-            const filePath = getFileName('if-statement.gomi')
+        it('array-index-assign.gomi', async () => {
+            const filePath = getFileName('array-index-assign.gomi')
             const val = await evalFile(filePath)
-            expect(val.value).toBe(1n)
+            expect(val.value).toBe(2n)
+        })
+        it('object-prop-assign.gomi', async () => {
+            const filePath = getFileName('object-prop-assign.gomi')
+            const val = await evalFile(filePath)
+            expect(val.value).toBe(2n)
         })
         it('while-loop.gomi', async () => {
             const filePath = getFileName('while-loop.gomi')

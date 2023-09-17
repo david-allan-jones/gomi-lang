@@ -1,7 +1,7 @@
 import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, NilLiteral, ObjectLiteral, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment, CallExpr, MemberExpr, ArrayLiteral } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope/scope"
-import { BooleanValue, FloatVal, NativeFunctionValue, IntVal, NumberVal, ObjectVal, RuntimeVal, StringVal, FunctionValue, VoidVal, ArrayVal } from "../types"
+import { BooleanValue, FloatVal, NativeFunctionValue, IntVal, NumberVal, ObjectVal as ArrayVal, RuntimeVal, StringVal, FunctionValue, VoidVal, ArrayVal } from "../types"
 
 export function eval_identifier(identifier: Identifier, scope: Scope): RuntimeVal<unknown> {
     return scope.lookupVar(identifier.symbol).val
@@ -232,7 +232,39 @@ export function eval_ternary_expr(ternary: TernaryExpr, scope: Scope): RuntimeVa
 }
 
 function eval_array_index_assignment(assignment: VarAssignment, scope: Scope): RuntimeVal<unknown> {
-    throw 'Need to implement array index assignment'
+     // Walk the tree down to base expression (identifier)
+    let current = assignment.assignee
+    const nestedIndices = [] // Will be in reverse order
+    while (current.kind === 'MemberExpr') {
+        const { value: idx } = evaluate((current as MemberExpr).prop, scope)
+        nestedIndices.push(Number(idx))
+        current = (current as MemberExpr).object
+    }
+
+    // Add a check for non-identifier
+    if (current.kind !== 'Identifier') {
+        throw `You can not do array index assingment where the root is not an identifer.`
+    }
+
+    // Lookup root object
+    let { val: arr, mutable } = scope.lookupVar((current as Identifier).symbol)
+    if (mutable === false) {
+        throw `You attempted to assign a value to '${(current as Identifier).symbol}' but it is not mutable`
+    }
+
+    // Walk down the array using nestedProps
+    let pointer = arr as ArrayVal
+    for (let i = nestedIndices.length - 1; i > 0; i--) {
+        // @ts-ignore
+        pointer = pointer.value[nestedIndices[i]]
+    }
+
+    // Now just set the prop and save it
+    const rhs = evaluate(assignment.value, scope)
+
+    // @ts-ignore
+    pointer.value[nestedIndices[0]] = rhs
+    return scope.assignVar((current as Identifier).symbol, arr)
 }
 
 function eval_object_prop_assignment(assignment: VarAssignment, scope: Scope): RuntimeVal<unknown> {
@@ -257,7 +289,7 @@ function eval_object_prop_assignment(assignment: VarAssignment, scope: Scope): R
     }
 
     // Walk down the object using nestedProps
-    let pointer = obj as ObjectVal
+    let pointer = obj as ArrayVal
     for (let i = nestedProps.length - 1; i > 0; i--) {
         // @ts-ignore
         pointer = pointer.value?.get(nestedProps[i])
@@ -301,11 +333,11 @@ export function eval_assignment_expr(assignment: VarAssignment, scope: Scope): R
     )
 }
 
-export function eval_object_expr(obj: ObjectLiteral | NilLiteral, scope: Scope): ObjectVal {
+export function eval_object_expr(obj: ObjectLiteral | NilLiteral, scope: Scope): ArrayVal {
     if (obj.kind === 'NilLiteral') {
         return { type: "object" }
     }
-    const object: ObjectVal =  { type: "object", value: new Map() }
+    const object: ArrayVal =  { type: "object", value: new Map() }
     for (const { key, value } of obj.props) {
         const runtimeVal = (value === undefined) 
             ? scope.lookupVar(key).val
@@ -328,7 +360,7 @@ export function eval_member_expr(expr: MemberExpr, scope: Scope): RuntimeVal<unk
     if (expr.index) {
         return eval_index_expr(expr, scope)
     }
-    const { type, value } = evaluate(expr.object, scope) as ObjectVal
+    const { type, value } = evaluate(expr.object, scope) as ArrayVal
     if (type !== 'object') {
         throw `Member expressions only supported for object types. Received: ${type}`
     }
@@ -337,7 +369,7 @@ export function eval_member_expr(expr: MemberExpr, scope: Scope): RuntimeVal<unk
         throw 'No value on an object'
     }
     if (value.has(symbol) === false) {
-        return { type: 'object' } as ObjectVal
+        return { type: 'object' } as ArrayVal
     }
     // @ts-ignore
     return value.get(symbol)
