@@ -26,7 +26,7 @@ export function eval_unary_expr(unary: UnaryExpr, scope: Scope): RuntimeVal<unkn
                 unary.operator
             )
         default:
-            throw `An unexpected type was provided in a unary expression. The type '${value.type}' is not supported.`
+            throw `An unexpected type was provided in a unary expression. The type '${value.type}' is not supported. Line ${unary.line}, column ${unary.column}`
     }
 }
 

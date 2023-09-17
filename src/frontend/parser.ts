@@ -67,8 +67,9 @@ export default class GomiParser {
     }
 
     private parse_module_import(): ModuleImport {
+        const pos = { line: this.at.line, column: this.at.column }
+        
         // Consume module keyword
-        const importStart = { line: this.at.line, column: this.at.column }
         this.eat_token()
 
         const err = `Module imports must be in the form "module '/somePath.gomi' import { someIdentifier }". Check line ${this.at.line}, column ${this.at.column}`
@@ -101,12 +102,12 @@ export default class GomiParser {
             kind: "ModuleImport",
             path,
             identifiers,
-            ...importStart
+            ...pos
         }
     }
 
     private parse_var_declaration(): VarDeclaration {
-        const startPos = { line: this.at.line, column: this.at.column }
+        const pos = { line: this.at.line, column: this.at.column }
         const mutable = this.at.type === TT.Let ? true : false
 
         // Consume the let/const keyword
@@ -144,7 +145,7 @@ export default class GomiParser {
         }
 
         if (identifiers.length !== values.length) {
-            throw `Declaration error. Number of identifiers and expressions did not match. Line ${startPos.line}, column ${startPos.column}`
+            throw `Declaration error. Number of identifiers and expressions did not match. Line ${pos.line}, column ${pos.column}`
         }
 
         const declarations: Declaration[] = []
@@ -159,11 +160,12 @@ export default class GomiParser {
             kind: 'VarDeclaration',
             declarations,
             mutable,
-            ...startPos
+            ...pos
         }
     }
 
     private parse_function_declaration(): FunctionDeclaration {
+        const pos = { line: this.at.line, column: this.at.column }
         // Eat the function keyword
         this.eat_token()
 
@@ -195,13 +197,14 @@ export default class GomiParser {
             kind: 'FunctionDeclaration',
             name,
             params,
-            body
+            body,
+            ...pos
         } as FunctionDeclaration
     }
 
     private parse_if_stmt(): IfStatement {
+        const pos = { line: this.at.line, column: this.at.column }
         // Eat the if
-        const ifStart = { line: this.at.line, column: this.at.column }
         this.eat_token()
 
         // Condition
@@ -219,13 +222,13 @@ export default class GomiParser {
             kind: 'IfStatement',
             condition,
             body,
-            ...ifStart
+            ...pos
         } as IfStatement
     }
 
     private parse_while_stmt(): WhileStatement {
         // Eat the while
-        const whileStart = { line: this.at.line, column: this.at.column }
+        const pos = { line: this.at.line, column: this.at.column }
         this.eat_token()
 
         // Condition
@@ -243,7 +246,7 @@ export default class GomiParser {
             kind: 'WhileStatement',
             condition,
             body,
-            ...whileStart
+            ...pos
         } as WhileStatement
     }
 
@@ -252,6 +255,7 @@ export default class GomiParser {
     }
 
     private parse_assign_expr(): Expr {
+        const pos = { line: this.at.line, column: this.at.column }
         const left = this.parse_array_expr()
         if (this.at.type === TT.Equals) {
             this.eat_token()
@@ -260,6 +264,7 @@ export default class GomiParser {
                 kind: 'VarAssignment',
                 assignee: left,
                 value,
+                ...pos
             } as VarAssignment
         }
         return left
@@ -331,6 +336,7 @@ export default class GomiParser {
     }
 
     private parse_ternary_expr(): Expr {
+        const pos = { line: this.at.line, column: this.at.column }
         let left = this.parse_equality_expr()
         if (this.at.type === TT.Question) {
             this.eat_token()
@@ -340,7 +346,8 @@ export default class GomiParser {
                 kind: 'TernaryExpr',
                 left,
                 mid,
-                right: this.parse_assign_expr()
+                right: this.parse_assign_expr(),
+                ...pos
             } as TernaryExpr
         }
         return left
@@ -350,12 +357,14 @@ export default class GomiParser {
         let left = this.parse_logical_or_expr()
         while (['==', '＝＝'].includes(this.at.value)) {
             this.eat_token()
+            const pos = { line: this.at.line, column: this.at.column }
             const right = this.parse_logical_or_expr()
             left = {
                 kind: 'BinaryExpr',
                 left,
                 right,
-                operator: '=='
+                operator: '==',
+                ...pos
             } as BinaryExpr
         }
         return left
@@ -365,12 +374,14 @@ export default class GomiParser {
         let left = this.parse_logical_and_expr()
         while (['||', '｜｜'].includes(this.at.value)) {
             this.eat_token()
+            const pos = { line: this.at.line, column: this.at.column }
             const right = this.parse_logical_and_expr()
             left = {
                 kind: 'BinaryExpr',
                 left,
                 right,
-                operator: '||'
+                operator: '||',
+                ...pos
             } as BinaryExpr
         }
         return left
@@ -380,12 +391,14 @@ export default class GomiParser {
         let left = this.parse_comparison_expr()
         while (['&&', '＆＆'].includes(this.at.value)) {
             this.eat_token()
+            const pos = { line: this.at.line, column: this.at.column }
             const right = this.parse_comparison_expr()
             left = {
                 kind: 'BinaryExpr',
                 left,
                 right,
-                operator: '&&'
+                operator: '&&',
+                ...pos
             } as BinaryExpr
         }
         return left
@@ -398,12 +411,14 @@ export default class GomiParser {
             this.eat_token()
             operator = (operator === '>' || operator === '＞') ? '>' : '<'
 
+            const pos = { line: this.at.line, column: this.at.column }
             const right = this.parse_additive_expr()
             left = {
                 kind: 'BinaryExpr',
                 left,
                 right,
-                operator
+                operator,
+                ...pos
             } as BinaryExpr
         }
         return left
@@ -416,12 +431,14 @@ export default class GomiParser {
             this.eat_token()
             operator = (operator === '-') ? '-' : '+'
 
+            const pos = { line: this.at.line, column: this.at.column }
             const right = this.parse_multiplication_expr()
             left = {
                 kind: 'BinaryExpr',
                 left,
                 right,
-                operator
+                operator,
+                ...pos
             } as BinaryExpr
         }
         return left
@@ -441,13 +458,14 @@ export default class GomiParser {
             else {
                 operator = '%'
             }
-
+            const pos = { line: this.at.line, column: this.at.column }
             const right = this.parse_exponential_expr()
             left = {
                 kind: 'BinaryExpr',
                 left,
                 right,
-                operator
+                operator,
+                ...pos
             } as BinaryExpr
         }
         return left
@@ -457,12 +475,14 @@ export default class GomiParser {
         let left = this.parse_unary_expr()
         while (['^', '＾'].includes(this.at.value)) {
             this.eat_token()
+            const pos = { line: this.at.line, column: this.at.column }
             const right = this.parse_exponential_expr()
             left = {
                 kind: 'BinaryExpr',
                 left,
                 right,
-                operator: '^'
+                operator: '^',
+                ...pos
             } as BinaryExpr
         }
         return left
@@ -479,24 +499,28 @@ export default class GomiParser {
     }
 
     private parse_bang_expr(): Expr {
+        const pos = { line: this.at.line, column: this.at.column }
         // Consume the bang
         this.eat_token()
         const operand = this.parse_call_member_expr()
         return {
             kind: 'UnaryExpr',
             operator: '!',
-            operand
+            operand,
+            ...pos
         } as UnaryExpr
     }
 
     private parse_negative_expr(): Expr {
+        const pos = { line: this.at.line, column: this.at.column }
         // Consume the negative sign
         this.eat_token()
         const operand = this.parse_call_member_expr()
         return {
             kind: 'UnaryExpr',
             operator: '-',
-            operand
+            operand,
+            ...pos
         } as UnaryExpr
     }
 
