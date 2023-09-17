@@ -1,4 +1,4 @@
-import { TokenVal } from "./lexer"
+import { Token, TokenVal } from "./lexer"
 
 export type NodeType =
     // Statements
@@ -29,6 +29,8 @@ export type NodeType =
 
 export interface Stmt {
     kind: NodeType
+    line: number,
+    column: number
 }
 
 export interface Program extends Stmt {
@@ -224,29 +226,31 @@ export type NormalizedUnaryOperator =
 // Helper Factories
 //=================================
 
-export function mk_int_literal(value: bigint): IntLiteral {
-    return { kind: 'IntLiteral', value }
+export function mk_int_literal(value: bigint, line: number, column: number): IntLiteral {
+    return { kind: 'IntLiteral', value, line, column }
 }
 
-export function mk_float_literal(value: number): FloatLiteral {
-    return { kind: 'FloatLiteral', value }
+export function mk_float_literal(value: number, line: number, column: number): FloatLiteral {
+    return { kind: 'FloatLiteral', value, line, column }
 }
 
-export function mk_string_literal(value: string): StringLiteral {
-    return { kind: 'StringLiteral', value }
+export function mk_string_literal(value: string, line: number, column: number): StringLiteral {
+    return { kind: 'StringLiteral', value, line, column }
 }
 
-export function mk_identifier(symbol: string): Identifier {
-    return { kind: 'Identifier', symbol }
+export function mk_identifier(symbol: string, line: number, column: number): Identifier {
+    return { kind: 'Identifier', symbol, line, column }
 }
 
-export function mk_nil_literal(): NilLiteral {
-    return { kind: 'NilLiteral', value: null }
+export function mk_nil_literal(line: number, column: number): NilLiteral {
+    return { kind: 'NilLiteral', value: null, line, column }
 }
 
-export function mk_boolean_literal(value: TokenVal): BooleanLiteral {
+export function mk_boolean_literal(value: TokenVal, line: number, column: number): BooleanLiteral {
     return {
         kind: 'BooleanLiteral',
-        value: [TokenVal.EN_TRUE, TokenVal.JP_TRUE].includes(value) ? true : false
+        value: [TokenVal.EN_TRUE, TokenVal.JP_TRUE].includes(value) ? true : false,
+        line,
+        column,
     }
 }

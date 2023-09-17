@@ -14,7 +14,9 @@ export default class GomiParser {
     private parse_program(): Program {
         const program: Program = {
             kind: "Program",
-            body: []
+            body: [],
+            line: 0,
+            column: 0
         }
         this.at = this.tokenizer.read_token()
         while (this.at.type !== TT.EOF) {
@@ -156,7 +158,8 @@ export default class GomiParser {
         return {
             kind: 'VarDeclaration',
             declarations,
-            mutable
+            mutable,
+            ...startPos
         }
     }
 
@@ -301,23 +304,23 @@ export default class GomiParser {
         // @ts-ignore
         while (this.not_eof() && this.at.type !== TT.CloseBrace) {
             this.validate_token(TT.Identifier, 'Object literal key expected')
-            const key = this.at.value
+            const propData = { key: this.at.value, line: this.at.line, column: this.at.column }
             this.eat_token()
 
             // @ts-ignore
             if (this.at.type === TT.Comma) {
                 this.eat_token()
-                props.push({ key, kind: 'Property' })
+                props.push({ ...propData, kind: 'Property' })
                 continue
                 // @ts-ignore
             } else if (this.at.type === TT.CloseBrace) {
-                props.push({ key, kind: 'Property' })
+                props.push({ ...propData, kind: 'Property' })
                 continue
             }
 
             this.validate_and_eat_token(TT.Colon, 'Colon expected in object literal')
             const value = this.parse_expr()
-            props.push({ kind: 'Property', value, key })
+            props.push({ kind: 'Property', value, ...propData })
             // @ts-ignore
             if (this.at.type !== TokenType.CloseBrace) {
                 this.validate_and_eat_token(TT.Comma, 'Expected comma following object literal property')
@@ -509,6 +512,8 @@ export default class GomiParser {
         let callExpr: CallExpr = {
             kind: 'CallExpr',
             callee,
+            line: this.at.line,
+            column: this.at.column,
             args: this.parse_args()
         }
         if (this.at.type === TT.OpenParen) {
@@ -575,6 +580,8 @@ export default class GomiParser {
                 let callExpr: CallExpr = {
                     kind: 'CallExpr',
                     callee: object,
+                    line: this.at.line,
+                    column: this.at.column,
                     args
                 }
                 this.validate_and_eat_token(TT.CloseParen, 'Missing closing paren in call expression')
@@ -585,28 +592,28 @@ export default class GomiParser {
     }
 
     private parse_primary_expr(): Expr {
-        const prev = this.at
+        const { value, line, column, type } = this.at
         this.eat_token()
-        switch (prev.type) {
+        switch (type) {
             case TT.Identifier:
-                return mk_identifier(prev.value)
+                return mk_identifier(value, line, column)
             case TT.Int:
-                return mk_int_literal(normalizeInt(prev.value))
+                return mk_int_literal(normalizeInt(value), line, column)
             case TT.Float:
-                return mk_float_literal(normalizeFloat(prev.value))
+                return mk_float_literal(normalizeFloat(value), line, column)
             case TT.String:
-                return mk_string_literal(prev.value)
+                return mk_string_literal(value, line, column)
             case TT.Nil:
-                return mk_nil_literal()
+                return mk_nil_literal(line, column)
             case TT.Boolean:
-                return mk_boolean_literal(prev.value as TokenVal)
+                return mk_boolean_literal(value as TokenVal, line, column)
             case TT.OpenParen:
                 const expr = this.parse_expr()
                 this.validate_token(TT.CloseParen)
                 this.eat_token()
                 return expr
             default:
-                throw `Unexpected token found during parsing: '${prev.value}' at line ${prev.line}, column ${prev.column}`
+                throw `Unexpected token found during parsing: '${value}' at line ${line}, column ${column}`
         }
     }
 }
