@@ -59,11 +59,13 @@ rl.on('line', (input: string) => {
     }
 
     // Execute
-    if (stack.length || input === '') {
-        buffer += `\n${input}`
-    } else {
-        runRepl(`${buffer}\n${input}`)
-        buffer = ''
+    if (input !== '') {
+        if (stack.length) {
+            buffer += `\n${input}`
+        } else {
+            runRepl(`${buffer} ${input}`)
+            buffer = ''
+        }
     }
     rl.prompt()
 })
