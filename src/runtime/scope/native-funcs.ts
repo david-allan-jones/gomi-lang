@@ -1,5 +1,5 @@
 import { print_runtime_val } from "../print"
-import { ArrayVal, IntVal, RuntimeVal, mk_native_function } from "../types"
+import { ArrayVal, FloatVal, IntVal, RuntimeVal, mk_native_function } from "../types"
 
 const nativeFuncs = [
     {
@@ -19,10 +19,45 @@ const nativeFuncs = [
         }))
     },
     {
+        identifiers: ["floor", "床関数"],
+        value: mk_native_function(args => {
+            if (args.length !== 1) {
+                throw 'floor only takes one argument'
+            }
+            if (args[0].type !== 'float') {
+                throw 'floor only works with floats'
+            }
+            const { value } = args[0] as FloatVal
+            return { type: 'float', value: Math.floor(value) }
+        })
+    },
+    {
+        identifiers: ["ceil", "天井関数"],
+        value: mk_native_function(args => {
+            if (args.length !== 1) {
+                throw 'ceil only takes one argument'
+            }
+            if (args[0].type !== 'float') {
+                throw 'ceil only works with floats'
+            }
+            const { value } = args[0] as FloatVal
+            return { type: 'float', value: Math.ceil(value) }
+        })
+    },
+    {
+        identifiers: ["random", "ランダム"],
+        value: mk_native_function(args => {
+            if (args.length !== 0) {
+                throw 'random does not take any arguments'
+            }
+            return { type: 'float', value: Math.random() }
+        })
+    },
+    {
         identifiers: ["len", "サイス"],
         value: mk_native_function(args => {
             if (args.length > 1) {
-                throw `This function only takes one argument`
+                throw `len only takes one argument`
             }
             if (args[0].type !== 'array') {
                 throw `Argument must be of type array`
