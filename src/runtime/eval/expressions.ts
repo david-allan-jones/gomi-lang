@@ -290,6 +290,9 @@ export function eval_call_expr(expr: CallExpr, scope: Scope): RuntimeVal<unknown
     }
     if (fn.type === 'function') {
         const func = fn as FunctionValue
+        if (func.parameters.length !== expr.args.length) {
+            throw `The call expression for ${func.name} has an invalid number of args. Expected ${func.parameters.length} but received ${expr.args.length}`
+        }
         const funcScope = new Scope(func.declarationScope)
 
         //Create the variables
