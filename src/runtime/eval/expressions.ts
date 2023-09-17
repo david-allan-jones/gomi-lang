@@ -17,7 +17,12 @@ export function eval_unary_expr(unary: UnaryExpr, scope: Scope): RuntimeVal<unkn
             )
         case 'int':
             return eval_numeric_unary_expr(
-                value as NumberVal,
+                value as IntVal,
+                unary.operator
+            )
+        case 'float':
+            return eval_float_unary_expr(
+                value as FloatVal,
                 unary.operator
             )
         default:
@@ -68,6 +73,8 @@ function eval_float_unary_expr(
     op: NormalizedUnaryOperator
 ): FloatVal {
     switch (op) {
+        case '-':
+            return { type: 'float', value: -1 * value.value }
         default:
             throw `Runtime Error: An unexpected numeric unary operator was received by the interpreter: '${op}'`
     }
