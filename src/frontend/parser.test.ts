@@ -460,6 +460,25 @@ describe('Gomi Parser', () => {
         expect((node.callee as MemberExpr).prop.kind).toBe('Identifier')
     })
 
+    it('member expression & array index combined', () => {
+        const stmt = 'foo.bar[baz]'
+        const program = parser.produceAST(stmt)
+        const node = program.body[0] as MemberExpr
+        expect(node.kind).toBe('MemberExpr')
+        const object = node.object as MemberExpr
+        expect(object.prop.kind).toBe('Identifier')
+        expect(object.object.kind).toBe('Identifier')
+    })
+
+    it('member expression & call expr combined', () => {
+        const stmt = 'foo.bar(baz)'
+        const program = parser.produceAST(stmt)
+        const node = program.body[0] as CallExpr
+        expect(node.kind).toBe('CallExpr')
+        expect(node.callee.kind).toBe('MemberExpr')
+        expect((node.callee as MemberExpr).prop.kind).toBe('Identifier')
+    })
+
     // it('call expr & array index combined', () => {
     //     const stmt = 'foo(bar)[baz]'
     //     const program = parser.produceAST(stmt)
