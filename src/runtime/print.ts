@@ -1,13 +1,21 @@
 import { ArrayVal, FunctionValue, IntVal, ObjectVal, RuntimeVal } from './types'
 
 export function print_runtime_val(runtimeVal: RuntimeVal<unknown>, color = true): void {
-    let serialized
+    let serialized = serialize_value(runtimeVal)
+    if (color) {
+        serialized = `\x1b[33m${serialized}\x1b[0m`
+    }
+    console.log(serialized)
+}
+
+function serialize_value(runtimeVal: RuntimeVal<unknown>, nestedLevel = 0) {
+    let serialized = ''
     switch(runtimeVal.type) {
         case 'object':
-            serialized = serialize_obj(runtimeVal as ObjectVal)
+            serialized = serialize_obj(runtimeVal as ObjectVal, nestedLevel + 1)
             break
         case 'array':
-            serialized = serialize_array(runtimeVal as ArrayVal)
+            serialized = serialize_array(runtimeVal as ArrayVal, nestedLevel + 1)
             break
         case 'int':
             serialized = serialize_int(runtimeVal as IntVal)
@@ -22,66 +30,55 @@ export function print_runtime_val(runtimeVal: RuntimeVal<unknown>, color = true)
             serialized = `${runtimeVal.value}`
             break
     }
-    if (color) serialized = `\x1b[33m${serialized}\x1b[0m`
-    console.log(serialized)
+    return serialized
 }
 
-function serialize_obj(obj: ObjectVal, nestedLevel = 1): string {
+function calc_front_padding(nestedLevel: number) {
+    return nestedLevel === 0
+        ? ''
+        : ' '.repeat(nestedLevel * 2)
+}
+
+function calc_end_padding(nestedLevel: number) {
+    return nestedLevel === 0
+        ? ''
+        : ' '.repeat((nestedLevel - 1) * 2)
+}
+
+function serialize_obj(obj: ObjectVal, nestedLevel: number): string {
     if (obj.value === undefined) {
         return 'nil'
     }
-    const keyPadding = ' '.repeat((nestedLevel)*2)
-    const closingBracePadding = ' '.repeat((nestedLevel - 1)*2)
     const entries = [...obj.value.entries()]
     if (entries.length === 0) {
         return '{}'
     }
 
+    const keyPadding = calc_front_padding(nestedLevel)
+    const closingBracePadding = calc_end_padding(nestedLevel)
+
     let serialized = '{\n'
     for (let i = 0; i < entries.length; i++) {
         const [key, value] = entries[i]
-        let val
-        if (value.type === 'object') {
-            val = serialize_obj(value as ObjectVal, nestedLevel + 1)
-        } else if (value.type === 'string') {
-            val = `'${value.value}'`
-        } else if (value.type === 'array') {
-            val = serialize_array(value as ArrayVal, nestedLevel + 1)
-        } else if (value.type === 'function') {
-            val = serialize_function(value as FunctionValue)
-        } else {
-            val = value.value
-        }
-        serialized += `${keyPadding}${key}: ${val}\n`
+        serialized += `${keyPadding}${key}: ${serialize_value(value, nestedLevel)}\n`
     }
     serialized += `${closingBracePadding}}`
 
     return serialized
 }
 
-function serialize_array(arr: ArrayVal, nestedLevel = 1): string {
-    const padding = ' '.repeat((nestedLevel)*2)
-    const bracketPadding = ' '.repeat((nestedLevel - 1)*2)
+function serialize_array(arr: ArrayVal, nestedLevel: number): string {
     if (arr.value.length === 0) {
         return '[]'
     }
 
+    const padding = calc_front_padding(nestedLevel)
+    const bracketPadding = calc_end_padding(nestedLevel)
+
     let serialized = '[\n'
     for (let i = 0; i < arr.value.length; i++) {
         const indexVal = arr.value[i]
-        let val
-        if (indexVal.type === 'object') {
-            val = serialize_obj(indexVal as ObjectVal, nestedLevel + 1)
-        } else if (indexVal.type === 'array') {
-            val = serialize_array(indexVal as ArrayVal, nestedLevel + 1)
-        } else if (indexVal.type === 'function') {
-            val = serialize_function(indexVal as FunctionValue)
-        } else if (indexVal.type === 'string') {
-            val = `'${indexVal.value}'`
-        } else {
-            val = indexVal.value
-        }
-        serialized += `${padding}${val},\n`
+        serialized += `${padding}${serialize_value(indexVal, nestedLevel)},\n`
     }
     serialized += `${bracketPadding}]`
 
