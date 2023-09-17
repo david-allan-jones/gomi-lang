@@ -176,7 +176,14 @@ describe('Gomi Lexer', () => {
         )
     })
     it('multi character binary operators', () => {
-        testSources(['||', '&&', '==', '｜｜', '＆＆', '＝＝'], TokenType.BinaryOperator)
+        testSources([
+            '||', 
+            '&&', 
+            '==', 
+            '｜｜', 
+            '＆＆', 
+            '＝＝',
+        ], TokenType.BinaryOperator)
     })
 
     it('skips whitespace at end of file', () => {

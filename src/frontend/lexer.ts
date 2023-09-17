@@ -245,8 +245,8 @@ export default class GomiLexer {
 		// Equality check
 		if (this.at() === TokenVal.HW_EQUALS || this.at() === TokenVal.FW_EQUALS) {
 			let value = this.src[this.i++]
-			if (this.at() === TokenVal.HW_EQUALS || this.at() === TokenVal.FW_EQUALS) {
-				return this.mk_token(value + this.src[this.i], TokenType.BinaryOperator)
+			if (this.at() === this.src[this.i - 1]) {
+				return this.mk_token(this.src[this.i].repeat(2), TokenType.BinaryOperator)
 			}
 			// Make up for the factory side effect
 			this.i--
