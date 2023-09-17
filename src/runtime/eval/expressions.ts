@@ -1,7 +1,7 @@
 import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, NilLiteral, ObjectLiteral, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment, CallExpr, MemberExpr, ArrayLiteral } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope/scope"
-import { BooleanValue, FloatVal, NativeFunctionValue, IntVal, NumberVal, ObjectVal as ArrayVal, RuntimeVal, StringVal, FunctionValue, VoidVal, ArrayVal } from "../types"
+import { BooleanValue, FloatVal, NativeFunctionValue, IntVal, NumberVal, ObjectVal as ArrayVal, RuntimeVal, StringVal, FunctionValue, VoidVal, ArrayVal, ObjectVal } from "../types"
 
 export function eval_identifier(identifier: Identifier, scope: Scope): RuntimeVal<unknown> {
     return scope.lookupVar(identifier.symbol).val
@@ -162,6 +162,19 @@ export function eval_boolean_binary_expr(
     }
 }
 
+export function eval_object_binary_expr(
+    left: ObjectVal,
+    right: ObjectVal,
+    op: NormalizedBinaryOperator
+): BooleanValue {
+    switch (op) { 
+        case '==':
+            return { type: 'boolean', value: left.value === right.value }
+        default:
+            throw `Runtime Error: An unexpected boolean operator was received by the interpreter: '${op}'`
+    }
+}
+
 export function eval_string_binary_expr(
     left: StringVal,
     right: StringVal,
@@ -214,6 +227,12 @@ export function eval_binary_expr(expr: BinaryExpr, scope: Scope): RuntimeVal<unk
             return eval_boolean_binary_expr(
                 left as BooleanValue,
                 right as BooleanValue,
+                expr.operator
+            )
+        case 'object':
+            return eval_object_binary_expr(
+                left as ObjectVal,
+                right as ObjectVal,
                 expr.operator
             )
         default:

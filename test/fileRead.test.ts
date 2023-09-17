@@ -65,6 +65,11 @@ describe('File reader', () => {
             const val = await evalFile(filePath)
             expect(val.value).toBe(10n)
         })
+        it('remove-nth-linked-list-node.gomi', async () => {
+            const filePath = getFileName('remove-nth-linked-list-node.gomi')
+            const val = await evalFile(filePath)
+            expect(val.value).toBe(true)
+        })
     })
     describe('invalid files', () => {
         it('invalid-character.gomi', async () => {

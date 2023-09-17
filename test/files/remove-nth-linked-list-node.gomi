@@ -1,0 +1,53 @@
+func linkedListLen(node) {
+    let current, length = node, 1;
+    while !(node.next == nil) {
+        node = node.next
+        length = length + 1
+    }
+    length
+}
+
+func removeNthNode(node, n) {
+    let result = nil;
+    
+    # Not nil, so let's make a fast and slow pointer
+    if !(node == nil) {
+        let dummy = { val: 0, next: nil };
+        dummy.next = node
+        let fast = dummy;
+        let slow = dummy;
+
+        # Move fast n nodes ahead
+        let i = 0;
+        while (i < n) || (i == n) {
+            fast = fast.next
+            i = i + 1
+        }
+
+        while !(fast == nil) {
+            fast = fast.next
+            slow = slow.next
+        }
+
+        slow.next = slow.next.next
+
+        result = dummy.next
+    } 
+    result
+}
+
+let linkedList = {
+    val: 1,
+    next: {
+        val: 2,
+        next: {
+            val: 3,
+            next: nil
+        }
+    }
+};
+
+removeNthNode(linkedList, 2)
+
+# Confirm was removed
+!(linkedListLen(linkedList) == 3)
