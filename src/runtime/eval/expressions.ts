@@ -200,7 +200,7 @@ export function eval_binary_expr(expr: BinaryExpr, scope: Scope): RuntimeVal<unk
     const left = evaluate(expr.left, scope)
     const right = evaluate(expr.right, scope)
     if (left.type !== right.type) {
-        throw `Both sides of binary expression must be the same type. Recevied: ${left.type} & ${right.type}`
+        throw `Both sides of binary expression must be the same type. Received: ${left.type} & ${right.type}`
     }
     
     // We know they are the same type

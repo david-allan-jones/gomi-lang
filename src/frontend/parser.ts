@@ -29,7 +29,7 @@ export default class GomiParser {
 
     private validate_token(type: TT, hint?: string): void {
         if (!this.at || this.at.type !== type) {
-            let message = `ゴミ Parser Error\nExpected: '${type}'\nReceived: '${this.at.type}'`
+            let message = `ゴミ Parser Error\nExpected: '${type}'\nReceived: '${this.at.type}'\nLine:${this.at.line}\nColumn:${this.at.column}`
             if (hint !== undefined) {
                 message += `\nHint: ${hint}`
             }
@@ -102,8 +102,10 @@ export default class GomiParser {
     }
 
     private parse_var_declaration(): VarDeclaration {
-        // Consume the let/const keyword
+        const startPos = { line: this.at.line, column: this.at.column }
         const mutable = this.at.type === TT.Let ? true : false
+
+        // Consume the let/const keyword
         this.eat_token()
 
         const identifiers = []
@@ -138,7 +140,7 @@ export default class GomiParser {
         }
 
         if (identifiers.length !== values.length) {
-            throw `Declaration error. Number of identifiers and expressions did not match.`
+            throw `Declaration error. Number of identifiers and expressions did not match. Line ${startPos.line}, column ${startPos.column}`
         }
 
         const declarations: Declaration[] = []
@@ -166,11 +168,12 @@ export default class GomiParser {
         this.eat_token()
 
         // Parse the arguments and verify identifiers
+        const argsStart = { line: this.at.line, column: this.at.column}
         const args = this.parse_args()
         const params: string[] = []
         for (let i = 0; i < args.length; i++) {
             if (args[i].kind !== 'Identifier') {
-                throw `Expected identifiers inside function parameteres. Received ${args[i]}`
+                throw `Expected identifiers inside function parameters. Received ${args[i].kind} at line ${argsStart.line}, column ${argsStart.column}`
             }
             params.push((args[i] as Identifier).symbol)
         }
@@ -532,9 +535,10 @@ export default class GomiParser {
             // Member Expression
             if (this.at.type === TT.Period) {
                 this.eat_token()
+                const propPos = { line: this.at.line, column: this.at.column }
                 let prop = this.parse_primary_expr()
                 if (prop.kind !== 'Identifier') {
-                    throw 'Cannot access props on an object that are not identifiers'
+                    throw `Cannot access props on an object that are not identifiers. Line ${propPos.line}, column ${propPos.column}`
                 }
                 object = {
                     kind: 'MemberExpr',
