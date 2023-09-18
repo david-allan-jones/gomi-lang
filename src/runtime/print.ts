@@ -20,7 +20,7 @@ function serialize_value(runtimeVal: RuntimeVal<unknown>, nestedLevel = 0) {
             break
         case 'array':
             if (nestedLevel > 10) {
-                serialized += 'array'
+                serialized += `[array size: ${(runtimeVal as ArrayVal).value.length}]`
             } else {
                 serialized = serialize_array(runtimeVal as ArrayVal, nestedLevel + 1)
             }

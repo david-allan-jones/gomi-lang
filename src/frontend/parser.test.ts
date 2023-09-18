@@ -539,6 +539,31 @@ describe('Gomi Parser', () => {
         expect(node.body.length).toBe(2)
     })
 
+    it('function declaration throws error on missing opening brace', () => {
+        try {
+            parser.produceAST(`
+                func add(n, m) 
+                        let sum = n + m;
+                        sum
+                }
+            `)
+        } catch(e) {
+            expect(e).toInclude('Block scopes must have an opening brace')
+        }
+    })
+
+    it('function declaration', () => {
+        try {
+            parser.produceAST(`
+                func add(n, m) {
+                        let sum = n + m;
+                        sum
+            `)
+        } catch(e) {
+            expect(e).toInclude('Block scopes must have a closing brace')
+        }
+    })
+
     it('if statement', () => {
         const stmt = `
             if (condition) {
@@ -566,7 +591,7 @@ describe('Gomi Parser', () => {
             parser.produceAST(stmt)
             fail('Was able to parse if with missing closing brace')
         } catch(e) {
-            expect(e).toInclude('If statements must have an opening brace.')
+            expect(e).toInclude('Block scopes must have an opening brace.')
         }
     })
 
@@ -580,7 +605,7 @@ describe('Gomi Parser', () => {
             parser.produceAST(stmt)
             fail('Was able to parse if with missing closing brace')
         } catch(e) {
-            expect(e).toInclude('If statements must have a closing brace.')
+            expect(e).toInclude('Block scopes must have a closing brace.')
         }
     })
 
@@ -611,7 +636,7 @@ describe('Gomi Parser', () => {
             parser.produceAST(stmt)
             fail('Was able to parse while with missing opening brace')
         } catch(e) {
-            expect(e).toInclude('While statements must have an opening brace.')
+            expect(e).toInclude('Block scopes must have an opening brace.')
         }
     })
 
@@ -625,7 +650,7 @@ describe('Gomi Parser', () => {
             parser.produceAST(stmt)
             fail('Was able to parse while with missing closing brace')
         } catch(e) {
-            expect(e).toInclude('While statements must have a closing brace.')
+            expect(e).toInclude('Block scopes must have a closing brace.')
         }
     })
 

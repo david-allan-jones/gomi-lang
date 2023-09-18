@@ -185,14 +185,8 @@ export default class GomiParser {
             params.push((args[i] as Identifier).symbol)
         }
 
-        // Get function body
-        this.validate_and_eat_token(TT.OpenBrace, 'Function declarations must be enclosed in braces')
-        const body: Stmt[] = []
-        while (this.not_eof() && this.at.type !== TT.CloseBrace) {
-            body.push(this.parse_stmt())
-        }
-        this.validate_and_eat_token(TT.CloseBrace, 'Function declarations must be enclosed in braces')
-
+        // Body
+        const body = this.parse_block_scope()
         return {
             kind: 'FunctionDeclaration',
             name,
@@ -211,12 +205,7 @@ export default class GomiParser {
         const condition = this.parse_expr()
 
         // Body
-        this.validate_and_eat_token(TT.OpenBrace, `If statements must have an opening brace. Check line ${this.at.line}, column ${this.at.column}`)
-        const body: Stmt[] = []
-        while (this.not_eof() && this.at.type !== TT.CloseBrace) {
-            body.push(this.parse_stmt())
-        }
-        this.validate_and_eat_token(TT.CloseBrace, `If statements must have a closing brace. Check line ${this.at.line}, column ${this.at.column}`)
+        const body = this.parse_block_scope()
 
         return {
             kind: 'IfStatement',
@@ -235,12 +224,7 @@ export default class GomiParser {
         const condition = this.parse_expr()
 
         // Body
-        this.validate_and_eat_token(TT.OpenBrace, `While statements must have an opening brace. Check line ${this.at.line}, column ${this.at.column}`)
-        const body: Stmt[] = []
-        while (this.not_eof() && this.at.type !== TT.CloseBrace) {
-            body.push(this.parse_stmt())
-        }
-        this.validate_and_eat_token(TT.CloseBrace, `While statements must have a closing brace. Check line ${this.at.line}, column ${this.at.column}`)
+        const body = this.parse_block_scope()
 
         return {
             kind: 'WhileStatement',
@@ -248,6 +232,16 @@ export default class GomiParser {
             body,
             ...pos
         } as WhileStatement
+    }
+
+    private parse_block_scope(): Stmt[] {
+        this.validate_and_eat_token(TT.OpenBrace, `Block scopes must have an opening brace. Check line ${this.at.line}, column ${this.at.column}`)
+        const body: Stmt[] = []
+        while (this.not_eof() && this.at.type !== TT.CloseBrace) {
+            body.push(this.parse_stmt())
+        }
+        this.validate_and_eat_token(TT.CloseBrace, `Block scopes must have a closing brace. Check line ${this.at.line}, column ${this.at.column}`)
+        return body
     }
 
     private parse_expr(): Expr {
