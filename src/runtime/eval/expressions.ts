@@ -1,7 +1,7 @@
-import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, NilLiteral, ObjectLiteral, PrimaryExpr, TernaryExpr, UnaryExpr, VarAssignment, CallExpr, MemberExpr, ArrayLiteral } from "../../frontend/ast"
+import { BinaryExpr, Identifier, NormalizedBinaryOperator, NormalizedUnaryOperator, NilLiteral, ObjectLiteral, TernaryExpr, UnaryExpr, VarAssignment, CallExpr, MemberExpr, ArrayLiteral } from "../../frontend/ast"
 import { evaluate } from "../interpreter"
 import Scope from "../scope/scope"
-import { BooleanValue, FloatVal, NativeFunctionValue, IntVal, NumberVal, ObjectVal as ArrayVal, RuntimeVal, StringVal, FunctionValue, VoidVal, ArrayVal, ObjectVal } from "../types"
+import { BooleanValue, FloatVal, NativeFunctionValue, IntVal, NumberVal, ObjectVal, RuntimeVal, StringVal, FunctionValue, ArrayVal } from "../types"
 
 export function eval_identifier(identifier: Identifier, scope: Scope): RuntimeVal<unknown> {
     return scope.lookupVar(identifier.symbol).val
@@ -322,7 +322,7 @@ function eval_object_prop_assignment(assignment: VarAssignment, scope: Scope): R
     }
 
     // Walk down the object using nestedProps
-    let pointer = obj as ArrayVal
+    let pointer = obj as ObjectVal
     for (let i = nestedProps.length - 1; i > 0; i--) {
         // @ts-ignore
         pointer = pointer.value?.get(nestedProps[i])
@@ -330,7 +330,7 @@ function eval_object_prop_assignment(assignment: VarAssignment, scope: Scope): R
 
     // Now just set the prop and save it
     const rhs = evaluate(assignment.value, scope)
-    pointer.value?.set(nestedProps[0], evaluate(assignment.value, scope))
+    pointer.value?.set(nestedProps[0], rhs)
     return scope.assignVar((current as Identifier).symbol, obj)
 }
 
@@ -366,11 +366,11 @@ export function eval_assignment_expr(assignment: VarAssignment, scope: Scope): R
     )
 }
 
-export function eval_object_expr(obj: ObjectLiteral | NilLiteral, scope: Scope): ArrayVal {
+export function eval_object_expr(obj: ObjectLiteral | NilLiteral, scope: Scope): ObjectVal {
     if (obj.kind === 'NilLiteral') {
         return { type: "object" }
     }
-    const object: ArrayVal =  { type: "object", value: new Map() }
+    const object: ObjectVal =  { type: "object", value: new Map() }
     for (const { key, value } of obj.props) {
         const runtimeVal = (value === undefined) 
             ? scope.lookupVar(key).val
@@ -393,7 +393,7 @@ export function eval_member_expr(expr: MemberExpr, scope: Scope): RuntimeVal<unk
     if (expr.index) {
         return eval_index_expr(expr, scope)
     }
-    const { type, value } = evaluate(expr.object, scope) as ArrayVal
+    const { type, value } = evaluate(expr.object, scope) as ObjectVal
     if (type !== 'object') {
         throw `Member expressions only supported for object types. Received: ${type}`
     }
@@ -402,7 +402,7 @@ export function eval_member_expr(expr: MemberExpr, scope: Scope): RuntimeVal<unk
         throw 'No value on an object'
     }
     if (value.has(symbol) === false) {
-        return { type: 'object' } as ArrayVal
+        return { type: 'object' } as ObjectVal
     }
     // @ts-ignore
     return value.get(symbol)
