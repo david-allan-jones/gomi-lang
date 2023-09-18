@@ -103,7 +103,7 @@ The binary operators for strings may have some surprising behaviors you are not 
 
 ### Ternary Expression
 
-Gomi also has a ternary expression. When composing one, ensure the first operand evaluates to a `boolean` type or an error will occur. If it does, then the entire expression will evaluate to the second operand if the first one is true, and the second if it is false.
+Gomi also has a ternary expression. When composing one, ensure the first operand evaluates to a `boolean` type or an error will occur. If it does evaluate to a `boolean`, then the entire expression will evaluate to the first operand if the first one is true, and the second if it is false.
 
 ```
 true  ? 1 : 0   # 1
