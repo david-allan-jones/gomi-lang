@@ -1,4 +1,4 @@
-import { normalizeFloat, normalizeInt } from '../utils/japanese'
+import { normalizeBinaryOp, normalizeFloat, normalizeInt } from '../utils/japanese'
 import { Stmt, Program, Expr, BinaryExpr, Identifier, VarDeclaration, VarAssignment, TernaryExpr, UnaryExpr, Property, ObjectLiteral, CallExpr, MemberExpr, FunctionDeclaration, IfStatement, WhileStatement, ArrayLiteral, mk_int_literal, mk_string_literal, mk_identifier, mk_nil_literal, mk_boolean_literal, ModuleImport, Declaration, mk_float_literal } from './ast'
 import GomiLexer, { Token, TokenType as TT, TokenVal, TokenType } from './lexer'
 
@@ -355,7 +355,8 @@ export default class GomiParser {
 
     private parse_equality_expr(): Expr {
         let left = this.parse_logical_or_expr()
-        while (['==', '＝＝'].includes(this.at.value)) {
+        while (['==', '＝＝', '!=', '！＝', '<=', '＜＝', '>=', '＞＝'].includes(this.at.value)) {
+            const operator = normalizeBinaryOp(this.at.value)
             this.eat_token()
             const pos = { line: this.at.line, column: this.at.column }
             const right = this.parse_logical_or_expr()
@@ -363,7 +364,7 @@ export default class GomiParser {
                 kind: 'BinaryExpr',
                 left,
                 right,
-                operator: '==',
+                operator,
                 ...pos
             } as BinaryExpr
         }

@@ -11,7 +11,7 @@ func removeNthNode(node, n) {
     let result = nil;
     
     # Not nil, so let's make a fast and slow pointer
-    if !(node == nil) {
+    if node != nil {
         let dummy = { val: 0, next: nil };
         dummy.next = node
         let fast = dummy;
@@ -24,7 +24,7 @@ func removeNthNode(node, n) {
             i = i + 1
         }
 
-        while !(fast == nil) {
+        while fast != nil {
             fast = fast.next
             slow = slow.next
         }

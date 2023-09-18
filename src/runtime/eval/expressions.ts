@@ -182,6 +182,8 @@ export function eval_object_binary_expr(
     switch (op) { 
         case '==':
             return { type: 'boolean', value: left.value === right.value }
+        case '!=':
+            return { type: 'boolean', value: left.value !== right.value }
         default:
             throw `Runtime Error: An unexpected boolean operator was received by the interpreter: '${op}'`
     }

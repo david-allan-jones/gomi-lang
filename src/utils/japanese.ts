@@ -49,3 +49,16 @@ export function normalizeFloat(numString: string): number {
     }
     return Number(normalized)
 }
+
+export function normalizeBinaryOp(opString: string): string {
+    if (opString[0] === '＝') {
+        return '=='
+    } else if (opString[0] === '！') {
+        return '!='
+    } else if (opString[0] === '＞') {
+        return '>='
+    } else if (opString[0] === '＜') {
+        return '<='
+    }
+    return opString
+}
