@@ -1,4 +1,4 @@
-import { ArrayVal, FunctionValue, IntVal, ObjectVal, RuntimeVal } from './types'
+import { ArrayVal, FloatVal, FunctionValue, IntVal, ObjectVal, RuntimeVal } from './types'
 
 export function print_runtime_val(runtimeVal: RuntimeVal<unknown>, color = true): void {
     let serialized = serialize_value(runtimeVal)
@@ -27,6 +27,9 @@ function serialize_value(runtimeVal: RuntimeVal<unknown>, nestedLevel = 0) {
             break
         case 'int':
             serialized = serialize_int(runtimeVal as IntVal)
+            break
+        case 'float':
+            serialized = serialize_float(runtimeVal as FloatVal)
             break
         case 'string':
             serialized = `'${runtimeVal.value}'`
@@ -95,6 +98,10 @@ function serialize_array(arr: ArrayVal, nestedLevel: number): string {
 
 function serialize_int(int: IntVal): string {
     return int.value.toString()
+}
+
+function serialize_float(float: FloatVal): string {
+    return float.value.toFixed(16)
 }
 
 function serialize_function(func: FunctionValue): string {
