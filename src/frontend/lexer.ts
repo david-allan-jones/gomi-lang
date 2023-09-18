@@ -309,6 +309,9 @@ export default class GomiLexer {
 			let value = ''
 			this.i++
 			while (this.at() !== TokenVal.EN_STRING && this.at() !== TokenVal.JP_STRING) {
+				if (this.at() === '\\') {
+					this.i++
+				}
 				if (this.at() === '\n' || !this.not_eof()) {
 					throw 'Strings must be closed and expressed on one line.'
 				}

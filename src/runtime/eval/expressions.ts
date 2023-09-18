@@ -412,8 +412,11 @@ export function eval_index_expr(expr: MemberExpr, scope: Scope): RuntimeVal<unkn
     const { type, value } = evaluate(expr.object, scope) as ArrayVal
     // @ts-ignore
     if (type === 'string') {
-        const index = evaluate(expr.prop, scope) as IntVal
-        return { type: 'string', value: value[Number(index.value)] }
+        const { value: idx }= evaluate(expr.prop, scope) as IntVal
+        if (idx < 0 || idx >= value.length) {
+            throw `You attempted to access a index outside. Received ${idx}`
+        }
+        return { type: 'string', value: value[Number(idx)] }
     }
     if (type !== 'array') {
         throw `Array index expressions only supported for array types. Received: ${type}`
