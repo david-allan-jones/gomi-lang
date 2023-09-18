@@ -66,7 +66,6 @@ export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
 
         // Error
         default:
-            console.error("This AST Node has not yet been setup for interpretation:", ast)
-            process.exit(1)
+            throw `This AST Node has not yet been setup for interpretation:\n${ast}`
     }
 }
