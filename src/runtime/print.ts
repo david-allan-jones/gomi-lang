@@ -35,7 +35,7 @@ function serialize_value(runtimeVal: RuntimeVal<unknown>, nestedLevel = 0) {
             serialized = `'${runtimeVal.value}'`
             break
         case 'function':
-            serialized = `[Function: ${(runtimeVal as FunctionValue).name}]`
+            serialized = serialize_function(runtimeVal as FunctionValue)
             break
         default:
             serialized = `${runtimeVal.value}`
