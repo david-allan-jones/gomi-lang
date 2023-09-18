@@ -84,10 +84,7 @@ Here is a specification of the grammar. <> indicates a non-terminal symbol. ϵ i
 
 <kv-pair>           ->  | <id>: <expr>
 
-<ternary-expr>      ->  | <equality-expr> ? <expr> : <expr>
-
-<equality-expr>     ->  | <logical-or-expr>
-                        | <logical-or-expr> == <equality-expr>
+<ternary-expr>      ->  | <logical-or-expr> ? <expr> : <expr>
 
 <logical-or-expr>   ->  | <logical-and-expr>
                         | <logical-and-expr> || <logical-or-expr>
@@ -100,6 +97,10 @@ Here is a specification of the grammar. <> indicates a non-terminal symbol. ϵ i
 
 <compare-op>        ->  | >
                         | <
+                        | >=
+                        | <=
+                        | ==
+                        | !=
 
 <additive-expr>     ->  | <multiply-expr>
                         | <multiply-expr><additive-op><additive-expr>

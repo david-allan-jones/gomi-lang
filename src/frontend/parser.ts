@@ -331,7 +331,7 @@ export default class GomiParser {
 
     private parse_ternary_expr(): Expr {
         const pos = { line: this.at.line, column: this.at.column }
-        let left = this.parse_equality_expr()
+        let left = this.parse_logical_or_expr()
         if (this.at.type === TT.Question) {
             this.eat_token()
             const mid = this.parse_assign_expr()
@@ -343,24 +343,6 @@ export default class GomiParser {
                 right: this.parse_assign_expr(),
                 ...pos
             } as TernaryExpr
-        }
-        return left
-    }
-
-    private parse_equality_expr(): Expr {
-        let left = this.parse_logical_or_expr()
-        while (['==', '＝＝', '!=', '！＝', '<=', '＜＝', '>=', '＞＝'].includes(this.at.value)) {
-            const operator = normalizeBinaryOp(this.at.value)
-            this.eat_token()
-            const pos = { line: this.at.line, column: this.at.column }
-            const right = this.parse_logical_or_expr()
-            left = {
-                kind: 'BinaryExpr',
-                left,
-                right,
-                operator,
-                ...pos
-            } as BinaryExpr
         }
         return left
     }
@@ -401,11 +383,9 @@ export default class GomiParser {
 
     private parse_comparison_expr(): Expr {
         let left = this.parse_additive_expr()
-        while (['<', '>', '＜', '＞'].includes(this.at.value)) {
-            let operator = this.at.value
+        while (['<', '>', '>=', '<=', '==', '!=', '＜', '＞', '＞＝', '＜＝', '＝＝', '！＝'].includes(this.at.value)) {
+            let operator = normalizeBinaryOp(this.at.value)
             this.eat_token()
-            operator = (operator === '>' || operator === '＞') ? '>' : '<'
-
             const pos = { line: this.at.line, column: this.at.column }
             const right = this.parse_additive_expr()
             left = {

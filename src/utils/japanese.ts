@@ -56,9 +56,15 @@ export function normalizeBinaryOp(opString: string): string {
     } else if (opString[0] === '！') {
         return '!='
     } else if (opString[0] === '＞') {
-        return '>='
+        if (opString[1] === '＝') {
+            return '>='
+        }
+        return '>'
     } else if (opString[0] === '＜') {
-        return '<='
+        if (opString[1] === '＝') {
+            return '<='
+        }
+        return '<'
     }
     return opString
 }

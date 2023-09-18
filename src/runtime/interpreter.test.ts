@@ -380,4 +380,60 @@ describe('Gomi Interpreter', () => {
             expect(e).toInclude('This AST Node has not yet been setup for interpretation')
         }
     })
+
+    it('equality has more precedence than logical and', () => {
+        const result = runProgram(`
+            1 == 2 && 1 == 1
+        `, new Scope())
+        expect(result.type).toBe('boolean')
+        expect(result.value).toBe(false)
+    })
+
+    it('inequality has more precedence than logical and', () => {
+        const result = runProgram(`
+            1 != 2 && 1 != 1
+        `, new Scope())
+        expect(result.type).toBe('boolean')
+        expect(result.value).toBe(false)
+    })
+
+    it('greater than has more precedence than logical and', () => {
+        const result = runProgram(`
+            1 < 2 && 1 < 1
+        `, new Scope())
+        expect(result.type).toBe('boolean')
+        expect(result.value).toBe(false)
+    })
+
+    it('less than has more precedence than logical and', () => {
+        const result = runProgram(`
+            1 > 2 && 1 > 1
+        `, new Scope())
+        expect(result.type).toBe('boolean')
+        expect(result.value).toBe(false)
+    })
+    
+    it('greater than or equal to has more precedence than logical and', () => {
+        const result = runProgram(`
+            1 >= 2 && 1 >= 1
+        `, new Scope())
+        expect(result.type).toBe('boolean')
+        expect(result.value).toBe(false)
+    })
+
+    it('less than or equal to has more precedence than logical and', () => {
+        const result = runProgram(`
+            1 <= 1 && 2 <= 1
+        `, new Scope())
+        expect(result.type).toBe('boolean')
+        expect(result.value).toBe(false)
+    })
+
+    it('logical and has greater precedence than logical or', () => {
+        const result = runProgram(`
+            false && false || true && true
+        `, new Scope())
+        expect(result.type).toBe('boolean')
+        expect(result.value).toBe(true)
+    })
 })
