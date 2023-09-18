@@ -99,8 +99,12 @@ export type BinaryOperator =
 	| '<' | '＜'
 	| '||' | '｜｜'
 	| '&&' | '＆＆'
+	| '==' | '＝＝'
+	| '!=' | '！＝'
+	| '<=' | '＜＝'
+	| '>=' | '＞＝'
 
-const binaryOperators: BinaryOperator[] = [
+const singleCharBinaryOps: BinaryOperator[] = [
 	'+', '＋',
 	'-',
 	'*', '＊',
@@ -230,17 +234,32 @@ export default class GomiLexer {
 		if (this.at() === TokenVal.HW_QUESTION || this.at() === TokenVal.FW_QUESTION) {
 			return this.mk_token(this.src[this.i], TokenType.Question)
 		}
-		if (this.at() === TokenVal.HW_BANG || this.at() === TokenVal.FW_BANG) {
-			return this.mk_token(this.src[this.i], TokenType.Bang)
-		}
 		// We need to lie to the TS compiler here just to check
-		if (binaryOperators.includes(this.at() as BinaryOperator)) {
+		if (singleCharBinaryOps.includes(this.at() as BinaryOperator)) {
 			return this.mk_token(this.src[this.i], TokenType.BinaryOperator)
 		}
 
 		// =========================
 		// Multiple character tokens
 		// =========================
+
+		// Bang, inequality check
+		if (this.at() === TokenVal.HW_BANG) {
+			this.i++
+			if (this.at() === TokenVal.HW_EQUALS) {
+				return this.mk_token(this.src[this.i - 1] + this.at(), TokenType.BinaryOperator)
+			}
+			this.i--
+			return this.mk_token(this.src[this.i], TokenType.Bang)
+		}
+		if (this.at() === TokenVal.FW_BANG) {
+			this.i++
+			if (this.at() === TokenVal.FW_EQUALS) {
+				return this.mk_token(this.src[this.i - 1] + this.at(), TokenType.BinaryOperator)
+			}
+			this.i--
+			return this.mk_token(this.src[this.i], TokenType.Bang)
+		}
 
 		// Equality check
 		if (this.at() === TokenVal.HW_EQUALS || this.at() === TokenVal.FW_EQUALS) {
