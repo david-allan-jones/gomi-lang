@@ -216,6 +216,9 @@ export type NormalizedBinaryOperator =
     | '%'
     | '^'
     | '=='
+    | '!='
+    | '>='
+    | '<='
 
 export type NormalizedUnaryOperator =
     | '!'

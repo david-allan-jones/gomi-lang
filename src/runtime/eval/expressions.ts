@@ -110,6 +110,12 @@ export function eval_int_binary_expr(
             return { type: 'boolean', value: left.value < right.value }
         case '==':
             return { type: 'boolean', value: left.value === right.value}
+        case '!=':
+            return { type: 'boolean', value: left.value !== right.value}
+        case '>=':
+            return { type: 'boolean', value: left.value >= right.value}
+        case '<=':
+            return { type: 'boolean', value: left.value <= right.value}
         default:
             throw `Runtime Error: An unexpected int operator was received by the interpreter: '${op}'`
     }
@@ -140,6 +146,12 @@ export function eval_float_binary_expr(
             return { type: 'boolean', value: left.value < right.value }
         case '==':
             return { type: 'boolean', value: left.value === right.value }
+        case '!=':
+            return { type: 'boolean', value: left.value !== right.value}
+        case '>=':
+            return { type: 'boolean', value: left.value >= right.value}
+        case '<=':
+            return { type: 'boolean', value: left.value <= right.value}
         default:
             throw `Runtime Error: An unexpected float operator was received by the interpreter: '${op}'`
     }
