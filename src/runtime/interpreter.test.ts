@@ -436,4 +436,13 @@ describe('Gomi Interpreter', () => {
         expect(result.type).toBe('boolean')
         expect(result.value).toBe(true)
     })
+
+    it('indexing into string', () => {
+        const result = runProgram(`
+            let s = 'abc';
+            s[0]
+        `, new Scope())
+        expect(result.type).toBe('string')
+        expect(result.value).toBe('a')
+    })
 })
