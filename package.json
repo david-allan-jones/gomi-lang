@@ -1,5 +1,5 @@
 {
-  "name": "risei-lang",
+  "name": "gomi-lang",
   "module": "index.ts",
   "devDependencies": {
     "bun-types": "latest"
