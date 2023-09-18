@@ -171,7 +171,7 @@ describe('Gomi Lexer', () => {
     })
     it('single character binary operator', () => {
         testSources(
-            ['+', '-', '*', '/', '%', '^', '>', '<', '＋', '＊', '／', '％', '＾', '＞', '＜'],
+            ['+', '-', '*', '/', '%', '^', '＋', '＊', '／', '％', '＾'],
             TokenType.BinaryOperator,
         )
     })

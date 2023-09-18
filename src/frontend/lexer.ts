@@ -111,8 +111,6 @@ const singleCharBinaryOps: BinaryOperator[] = [
 	'/', '／',
 	'%', '％',
 	'^', '＾',
-	'>', '＞',
-	'<', '＜',
 ]
 
 export function identifierBeginAllowed(source: string): boolean {
@@ -253,6 +251,40 @@ export default class GomiLexer {
 			return this.mk_token(this.src[this.i], TokenType.Bang)
 		}
 		if (this.at() === TokenVal.FW_BANG) {
+			this.i++
+			if (this.at() === TokenVal.FW_EQUALS) {
+				return this.mk_token(this.src[this.i - 1] + this.at(), TokenType.BinaryOperator)
+			}
+			this.i--
+			return this.mk_token(this.src[this.i], TokenType.Bang)
+		}
+
+		// Greater than or equal, less than or equal
+		if (this.at() === '<') {
+			this.i++
+			if (this.at() === TokenVal.HW_EQUALS) {
+				return this.mk_token(this.src[this.i - 1] + this.at(), TokenType.BinaryOperator)
+			}
+			this.i--
+			return this.mk_token(this.src[this.i], TokenType.Bang)
+		}
+		if (this.at() === '＜') {
+			this.i++
+			if (this.at() === TokenVal.FW_EQUALS) {
+				return this.mk_token(this.src[this.i - 1] + this.at(), TokenType.BinaryOperator)
+			}
+			this.i--
+			return this.mk_token(this.src[this.i], TokenType.Bang)
+		}
+		if (this.at() === '>') {
+			this.i++
+			if (this.at() === TokenVal.HW_EQUALS) {
+				return this.mk_token(this.src[this.i - 1] + this.at(), TokenType.BinaryOperator)
+			}
+			this.i--
+			return this.mk_token(this.src[this.i], TokenType.Bang)
+		}
+		if (this.at() === '＞') {
 			this.i++
 			if (this.at() === TokenVal.FW_EQUALS) {
 				return this.mk_token(this.src[this.i - 1] + this.at(), TokenType.BinaryOperator)
