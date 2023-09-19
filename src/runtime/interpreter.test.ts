@@ -367,7 +367,7 @@ describe('Gomi Interpreter', () => {
             let n = 1.0;
             1.0 - -n
         `, new Scope())
-        expect(result.type).toBe('int')
+        expect(result.type).toBe('float')
         expect(result.value).toBe(2)
     })
 
