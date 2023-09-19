@@ -445,4 +445,13 @@ describe('Gomi Interpreter', () => {
         expect(result.type).toBe('string')
         expect(result.value).toBe('a')
     })
+
+    it('declaration inside while loop', () => {
+        const result = runProgram(`
+            let i = 0;
+            while i < 10 {
+                let j = i = i + 1;
+            }
+        `, new Scope())
+    })
 })

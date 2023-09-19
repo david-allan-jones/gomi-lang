@@ -79,12 +79,12 @@ export function eval_if_statement(ifStatement: IfStatement, scope: Scope): VoidV
 export function eval_while_statement(whileStatement: WhileStatement, scope: Scope): VoidVal {
     const { condition, body, line, column } = whileStatement
 
-    const whileScope = new Scope(scope)
-    let keepLooping = evaluate(condition, whileScope)
+    let keepLooping = evaluate(condition, new Scope(scope))
     if (keepLooping.type !== 'boolean') {
         throw `The condition in a while statement must resolve to a boolean value. Received: ${keepLooping.type} at line ${line}, column ${column}`
     }
     while (keepLooping.type === 'boolean' && (keepLooping as BooleanValue).value) {
+        const whileScope = new Scope(scope)
         for (let i = 0; i < body.length; i++) {
             evaluate(body[i], whileScope)
         }
