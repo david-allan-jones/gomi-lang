@@ -53,6 +53,25 @@ func factorial(n) {
 factorial(4)    # 24
 ```
 
+### Closures
+
+Every function forms a closure. See the following example.
+
+```
+func makeIncrement() {
+    let i = 0;
+    func increment() {
+        i = i + 1
+    }
+}
+const increment = makeIncrement()
+increment()     # 1
+increment()     # 2
+```
+Using closures, you can achieve statefulness by composing functions that operate on the variables within.
+
+
+
 That's enough on functions. It's time to move on to control flow mechanisms.
 
 [Previous: Variable Declaration](./variable-declaration.md)

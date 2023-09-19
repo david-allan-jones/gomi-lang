@@ -1,5 +1,7 @@
 # Gomi (ゴミ)
 
+**Disclaimer:** This language was created merely as a hobby and learning exercise for myself. It should **NOT** be used for any production applications.
+
 Welcome to Gomi (ゴミ), a programming language for those who like Japanese and scripting languages. I wrote this initial implementation in TypeScript because who cares about performance? I sure don't! Well, I cared enough to use Bun as the recommended runtime at least.
 
 To install dependencies:
@@ -39,10 +41,9 @@ This file can also be built in Bun into a native binary for improved performance
 5.  [Arrays & Objects](./doc/arrays-and-objects.md)
 6.  [Runtime Functions](./doc/runtime-functions.md)
 7.  [Module Imports](./doc/module-import.md)
-8.  [Sample Programs](./doc/sample-programs.md)
-9.  [Grammar](./doc/grammar.md)
-10. [Japanese Aliases](./doc/japanese-aliases.md)
-11. [Contributions](./doc/contributions.md)
+8.  [Grammar](./doc/grammar.md)
+9.  [Japanese Aliases](./doc/japanese-aliases.md)
+10. [Contributions](./doc/contributions.md)
 
 ## Special Thanks
 

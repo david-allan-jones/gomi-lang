@@ -110,4 +110,9 @@ Listed below is a full description of the grammar of the language.
 
 <string>            ->  | '<string-value>'
 
+<id>                ->  | # Any combination of alphanum and CJK; must not start with number
 ```
+
+[Previous: Module Imports](./module-import.md)
+
+[Next: Japanese Aliases](./japanese-aliases.md)

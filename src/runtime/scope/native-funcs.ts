@@ -28,7 +28,7 @@ const nativeFuncs = [
                 throw 'floor only works with floats'
             }
             const { value } = args[0] as FloatVal
-            return { type: 'float', value: Math.floor(value) }
+            return { type: 'int', value: Math.floor(value) }
         })
     },
     {
@@ -41,7 +41,7 @@ const nativeFuncs = [
                 throw 'ceil only works with floats'
             }
             const { value } = args[0] as FloatVal
-            return { type: 'float', value: Math.ceil(value) }
+            return { type: 'int', value: Math.ceil(value) }
         })
     },
     {

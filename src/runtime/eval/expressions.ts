@@ -128,18 +128,18 @@ export function eval_float_binary_expr(
 ): RuntimeVal<number | boolean> {
     switch (op) {
         case '+':
-            return { type: 'int', value: left.value + right.value }
+            return { type: 'float', value: left.value + right.value }
         case '-':
-            return { type: 'int', value: left.value - right.value }
+            return { type: 'float', value: left.value - right.value }
         case '*':
-            return { type: 'int', value: left.value * right.value }
+            return { type: 'float', value: left.value * right.value }
         case '/':
             if (right.value === 0) {
                 throw 'You can not divide by zero'
             }
-            return { type: 'int', value: left.value / right.value }
+            return { type: 'float', value: left.value / right.value }
         case '^':
-            return { type: 'int', value: left.value ** right.value }
+            return { type: 'float', value: left.value ** right.value }
         case '>':
             return { type: 'boolean', value: left.value > right.value }
         case '<':
