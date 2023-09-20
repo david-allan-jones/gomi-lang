@@ -9,7 +9,7 @@ Here are some examples of variable declaration.
 ```
 let n = 1;
 const featureEnabled = false;
-const canAccess = authorized && isAdmin
+const canAccess = authorized && isAdmin;
 ```
 Notice how you can provide expressions on the right hand side including other variables.
 

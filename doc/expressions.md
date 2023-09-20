@@ -56,14 +56,14 @@ Gomi currently supports two kinds of unary expressions, the bang operator and th
 First, let's start with the straight-forward bang operator. This just inverts the value of a `boolean` type expressions.
 
 ```
-!true       #false
+!true       # false
 ```
 
 The negative operator is actually the mechanism used to make numeric values negative and is not inherit to the numeric literals themselves. Treating `-` as a unary operator also has the property of allowing you to use it on identifiers (variables) or even more complex expressions.
 
 ```
-1 - -1      #2
--(1 + 4)    #-5
+1 - -1      # 2
+-(1 + 4)    # -5
 ```
 
 ### Binary Expressions
@@ -103,7 +103,7 @@ The binary operators for strings may have some surprising behaviors you are not 
 
 ### Ternary Expression
 
-Gomi also has a ternary expression. When composing one, ensure the first operand evaluates to a `boolean` type or an error will occur. If it does evaluate to a `boolean`, then the entire expression will evaluate to the first operand if the first one is true, and the second if it is false.
+Gomi also has a ternary expression. When composing one, ensure the first operand evaluates to a `boolean` type or an error will occur. If it does evaluate to a `boolean`, then the entire expression will evaluate to the second operand if the first one is true, and the third if it is false.
 
 ```
 true  ? 1 : 0   # 1

@@ -70,8 +70,6 @@ increment()     # 2
 ```
 Using closures, you can achieve statefulness by composing functions that operate on the variables within.
 
-
-
 That's enough on functions. It's time to move on to control flow mechanisms.
 
 [Previous: Variable Declaration](./variable-declaration.md)

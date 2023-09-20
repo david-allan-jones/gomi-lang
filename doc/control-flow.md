@@ -37,4 +37,4 @@ And that's all of the control structures currently supported in Gomi! Let's move
 
 [Previous: Functions](./functions.md)
 
-[Next: Arrays & Objects](./arrays.md)
+[Next: Arrays & Objects](./arrays-and-objects.md)
