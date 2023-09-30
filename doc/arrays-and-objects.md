@@ -4,7 +4,7 @@ The `array` and `object` types are complex types that can be composed of arbitra
 
 ### Arrays
 
-An array in Gomi is simply a list of values. These values do not all have to be the same type. To declare an array literall, just use bracket syntax with a list of expressions within.
+An array in Gomi is simply a list of values. These values do not all have to be the same type. To declare an array literal, just use bracket syntax with a list of expressions within.
 
 ```
 []                  # Empty array
@@ -56,9 +56,9 @@ For non-nil objects, they will look very familiar to those who have worked with 
 let obj = {
     name: 'Ken',
     age: 26,
-    registered: true
+    registered: true,
     metadata: {
-        version: '3.5.0'
+        version: '3.5.0',
         os: 'Ubuntu'
     }
 };

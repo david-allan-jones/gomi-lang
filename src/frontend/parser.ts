@@ -68,7 +68,7 @@ export default class GomiParser {
 
     private parse_module_import(): ModuleImport {
         const pos = { line: this.at.line, column: this.at.column }
-        
+
         // Consume module keyword
         this.eat_token()
 
@@ -175,7 +175,7 @@ export default class GomiParser {
         this.eat_token()
 
         // Parse the arguments and verify identifiers
-        const argsStart = { line: this.at.line, column: this.at.column}
+        const argsStart = { line: this.at.line, column: this.at.column }
         const args = this.parse_args()
         const params: string[] = []
         for (let i = 0; i < args.length; i++) {
