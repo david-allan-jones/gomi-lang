@@ -55,4 +55,4 @@ I would like to dedicate this section to everyone who has been a huge help in fu
 
 ## Contact
 
-If you like to contact me, please reach out to me through [my website](https://www.davidjonesdev.com/contact).
+If you like to contact me, please reach out to me through [my website](https://david-allan-jones.github.io/personal-website/).
