@@ -1,4 +1,7 @@
 name: Run Unit Tests
+
+on: [pull_request]
+
 jobs:
   my-job:
     name: Unit Tests
