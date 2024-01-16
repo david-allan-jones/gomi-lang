@@ -16,11 +16,13 @@ export function eval_program(program: Program, scope: Scope, filePath: string): 
 
 export function eval_module_import(moduleImport: ModuleImport, scope: Scope, filePath: string): VoidVal {
 
-    // Read source file and prepare AST
+    // Read source file
     const fs = require('fs')
 	const dir = path.dirname(filePath)
     const file = fs.readFileSync(`${dir}/${moduleImport.path}`)
     const src = file.toString()
+
+	// Prepare AST
     const parser = new GomiParser()
     const program = parser.produceAST(src)
 
