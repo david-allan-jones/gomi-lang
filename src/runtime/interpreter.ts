@@ -4,21 +4,21 @@ import Scope from './scope/scope'
 import { eval_binary_expr, eval_ternary_expr, eval_identifier, eval_assignment_expr, eval_unary_expr, eval_object_expr, eval_call_expr, eval_member_expr, eval_array_expr } from './eval/expressions'
 import { eval_function_declaration, eval_if_statement, eval_module_import, eval_program, eval_var_declaration, eval_while_statement } from './eval/statements'
 
-export function evaluate(ast: Stmt, scope: Scope): RuntimeVal<unknown> {
+export function evaluate(ast: Stmt, scope: Scope, filePath: string): RuntimeVal<unknown> {
     switch (ast.kind) {
         // Statements
         case "Program":
-            return eval_program(ast as Program, scope)
+            return eval_program(ast as Program, scope, filePath)
         case "ModuleImport":
-            return eval_module_import(ast as ModuleImport, scope)
+            return eval_module_import(ast as ModuleImport, scope, filePath)
         case "VarDeclaration":
-            return eval_var_declaration(ast as VarDeclaration, scope)
+            return eval_var_declaration(ast as VarDeclaration, scope, filePath)
         case "FunctionDeclaration":
             return eval_function_declaration(ast as FunctionDeclaration, scope)
         case "IfStatement":
-            return eval_if_statement(ast as IfStatement, scope)
+            return eval_if_statement(ast as IfStatement, scope, filePath)
         case "WhileStatement":
-            return eval_while_statement(ast as WhileStatement, scope)
+            return eval_while_statement(ast as WhileStatement, scope, filePath)
 
         // Expressions
         case "VarAssignment":

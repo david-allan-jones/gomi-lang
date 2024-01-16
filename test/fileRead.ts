@@ -10,5 +10,5 @@ export async function evalFile(fileName: string) {
     const scope = createGlobalScope()
     const program = parser.produceAST(src)
 
-    return evaluate(program, scope)
+    return evaluate(program, scope, `${process.cwd()}/${fileName}`)
 }
