@@ -2,8 +2,7 @@ import GomiParser from "./src/frontend/parser"
 import { evaluate } from "./src/runtime/interpreter"
 import { print_runtime_val } from "./src/runtime/print"
 import { createGlobalScope } from "./src/runtime/scope/scope"
-
-const readline = require('readline')
+import readline from 'readline'
 
 // Create a readline interface for input and output
 const rl = readline.createInterface({
@@ -19,7 +18,7 @@ const scope = createGlobalScope()
 function runRepl(code: string) {
     try {
         const program = parser.produceAST(code)
-        const runtimeVal = evaluate(program, scope)
+        const runtimeVal = evaluate(program, scope, '.')
         if (runtimeVal.type === 'void' || runtimeVal.type === 'function' || runtimeVal.type === 'native-function') {
             return
         }

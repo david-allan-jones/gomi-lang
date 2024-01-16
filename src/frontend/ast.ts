@@ -39,7 +39,6 @@ export interface Program extends Stmt {
 }
 
 // module './somePath.gomi' import { someIdentifier }
-// Paths are always relative to GOMI_PATH env variable
 export interface ModuleImport extends Stmt {
     kind: "ModuleImport"
     path: string

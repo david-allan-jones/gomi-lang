@@ -35,14 +35,6 @@ linkedListLen(myList)       # 2
 ```
 Gomi does not have any explicit module export keywords like some languages. Any identifier (including functions or other values) declared at the top level of a file are exported by that file as far as the runtime is concerned. If you care about minimizing the identifiers exported from a file, take care to organize your code in a way where you can accomplish that.
 
-### The GOMI_PATH Environment Variable
-
-In the current implementation of the runtime, all paths declared in a module import are relative to the `GOMI_PATH` environment variable. For example, let's imagine my environment variable is set to `/home/my-user/modules`. Then the following
-```
-module '/path/to/module.gomi' import { myFunction }
-```
-Would look for a file at `/home/my-user/modules/path/to/module.gomi`, execute that Gomi file line by line and then finally copy the identifier values into the current scope.
-
 ### Conclusion
 
 We've basically arrived at the end of the documentation! The remaining sections will include information you don't necessarily need to get started making interesting programs. Have fun!
