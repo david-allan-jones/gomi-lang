@@ -1,0 +1,3 @@
+func increment(n) {
+    n + 1
+}

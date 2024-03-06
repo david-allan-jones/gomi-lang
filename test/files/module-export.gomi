@@ -1,7 +1,0 @@
-func minusOne(n) {
-    n - 1
-}
-
-func addOne(n) {
-    n + 1
-}

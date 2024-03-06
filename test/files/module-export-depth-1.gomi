@@ -1,0 +1,5 @@
+module './module-export-depth-2.gomi' import { increment }
+
+func incrementWrapper(n) {
+    increment(n)
+}
